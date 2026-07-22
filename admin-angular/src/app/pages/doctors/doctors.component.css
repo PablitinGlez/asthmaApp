@@ -1,0 +1,77 @@
+.doctor-row:hover {
+  background-color: var(--bg-body) !important;
+}
+
+/* Side Panel Background Overlay */
+.side-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.side-panel-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Animated Side Drawer */
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: -500px;
+  /* Hidden off-screen by default */
+  width: 100%;
+  max-width: 450px;
+  height: 100vh;
+  background-color: var(--white);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  z-index: 110;
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.side-panel.open {
+  right: 0;
+  /* Slide in */
+}
+
+/* Close Button Override */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: var(--text-color);
+}
+
+/* Detail Groups */
+.detail-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.detail-group p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 500;
+}

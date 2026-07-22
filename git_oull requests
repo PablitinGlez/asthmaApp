@@ -1,0 +1,938 @@
+Skip to content
+PablitinGlez
+asthma-predictor-api
+Repository navigation
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+Settings
+Important update
+On April 24 we'll start using GitHub Copilot interaction data for AI model training unless you opt out. Review this update and manage your preferences in your GitHub account settings.
+Commit a2810da
+its-emma08claude
+its-emma08
+and
+claude
+committed
+3 weeks ago
+feat(doctor): add POST /doctor/profile upsert endpoint + fix ensure_doctor_profile
+- Add POST /api/doctor/profile: creates Doctor row if missing, returns profile (idempotent)
+- Fix _ensure_doctor_profile to catch DB errors with try/except + rollback
+- Patient schemas and clinical profile model updates for dashboard integration
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+main(#3)
+1 parent 
+72ade84
+ commit 
+a2810da
+File tree
+Filter files…
+app
+domain/schemas
+patient_schemas.py
+infrastructure
+models
+clinical_profile.py
+repositories
+user_repository.py
+presentation/routes
+auth.py
+doctor.py
+5 files changed
++133
+-8
+lines changed
+Search within code
+ 
+‎app/domain/schemas/patient_schemas.py‎
++20
+Lines changed: 20 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -110,6 +110,26 @@ class PatientFullUpdate(BaseModel):
+    spirometer_id: Optional[str] = None
+    inhaler_id: Optional[str] = None
+
+    # Antecedentes familiares
+    family_history_mother: Optional[str] = None
+    family_history_father: Optional[str] = None
+    family_history_siblings: Optional[str] = None
+    family_history_grandparents: Optional[str] = None
+    # Historia no patológica personal
+    smoking: Optional[str] = None
+    alcohol: Optional[str] = None
+    exercise: Optional[str] = None
+    diet: Optional[str] = None
+    # Historia patológica personal
+    surgeries_traumas: Optional[str] = None
+    # Foto y dispositivos
+    photo_url: Optional[str] = None
+    spirometer_id: Optional[str] = None
+    inhaler_id: Optional[str] = None
+    # Medicamentos — si se envía la lista, REEMPLAZA los existentes
+    medications: Optional[List[MedicationInput]] = None
+
+‎app/infrastructure/models/clinical_profile.py‎
++2
+-2
+Lines changed: 2 additions & 2 deletions
+Original file line number	Diff line number	Diff line change
+@@ -26,13 +26,13 @@ class ClinicalProfile(Base):
+    family_history_siblings = Column(Text, nullable=True)
+    family_history_grandparents = Column(Text, nullable=True)
+
+    # Historia no patológica
+    # Historia no patológica personal
+    smoking = Column(String(100), nullable=True)
+    alcohol = Column(String(100), nullable=True)
+    exercise = Column(String(100), nullable=True)
+    diet = Column(Text, nullable=True)
+
+    # Historia patológica
+    # Historia patológica personal
+    surgeries_traumas = Column(Text, nullable=True)
+
+    # Foto y dispositivos
+‎app/infrastructure/repositories/user_repository.py‎
++22
+-4
+Lines changed: 22 additions & 4 deletions
+Original file line number	Diff line number	Diff line change
+@@ -68,8 +68,14 @@ def create_user(
+    def create_profile(self, user_id: int, profile_data: dict) -> dict:
+        """Crea o actualiza el perfil del usuario (Idempotente)"""
+        civic_keys = ['first_name', 'last_name', 'age', 'gender', 'phone_number', 'address_street', 'address_city', 'address_state', 'address_zip', 'health_insurance_number']
+        medical_keys = ['height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type', 'diagnosis_date', 'known_allergies', 'current_medications', 'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents', 'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas', 'photo_url', 'spirometer_id', 'inhaler_id']
+        medical_keys = [
+            'height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type',
+            'diagnosis_date', 'known_allergies', 'current_medications',
+            'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents',
+            'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas',
+            'photo_url', 'spirometer_id', 'inhaler_id',
+        ]
+        
+        civic_data = {k: profile_data[k] for k in civic_keys if k in profile_data}
+        medical_data = {k: profile_data[k] for k in medical_keys if k in profile_data}
+
+@@ -100,7 +106,13 @@ def get_profile(self, user_id: int) -> Optional[dict]:
+        if civic:
+            result.update({k: getattr(civic, k) for k in ['first_name', 'last_name', 'age', 'gender', 'phone_number', 'address_street', 'address_city', 'address_state', 'address_zip', 'health_insurance_number']})
+        if clinical:
+            result.update({k: getattr(clinical, k) for k in ['height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type', 'diagnosis_date', 'known_allergies', 'current_medications', 'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents', 'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas', 'photo_url', 'spirometer_id', 'inhaler_id']})
+            result.update({k: getattr(clinical, k) for k in [
+                'height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type',
+                'diagnosis_date', 'known_allergies', 'current_medications',
+                'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents',
+                'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas',
+                'photo_url', 'spirometer_id', 'inhaler_id',
+            ] if hasattr(clinical, k)})
+
+        # 3. Obtener doctor vinculado (NUEVO)
+        link = self.db.query(DoctorPatient).filter(DoctorPatient.patient_id == user_id, DoctorPatient.is_active == True).first()
+@@ -123,7 +135,13 @@ def update_profile(self, user_id: int, profile_data: dict) -> Optional[dict]:
+        clinical = self.db.query(ClinicalProfile).filter(ClinicalProfile.user_id == user_id).first()
+
+        civic_keys = ['first_name', 'last_name', 'age', 'gender', 'phone_number', 'address_street', 'address_city', 'address_state', 'address_zip', 'health_insurance_number']
+        medical_keys = ['height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type', 'diagnosis_date', 'known_allergies', 'current_medications', 'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents', 'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas', 'photo_url', 'spirometer_id', 'inhaler_id']
+        medical_keys = [
+            'height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type',
+            'diagnosis_date', 'known_allergies', 'current_medications',
+            'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents',
+            'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas',
+            'photo_url', 'spirometer_id', 'inhaler_id',
+        ]
+
+        # Si no existe alguno, lo creamos (Upsert)
+        if not civic:
+‎app/presentation/routes/auth.py‎
++36
+-2
+Lines changed: 36 additions & 2 deletions
+Original file line number	Diff line number	Diff line change
+@@ -1,14 +1,33 @@
+import secrets
+import string
+from fastapi import APIRouter, Depends, HTTPException, Header
+from sqlalchemy.orm import Session
+from app.config.database import get_db
+from app.domain.schemas.auth_schemas import RegisterRequest, AuthResponse, UserResponse, UserProfileRequest, UpdateAvatarRequest, UserProfileResponse
+from app.infrastructure.repositories.user_repository import UserRepository
+from app.infrastructure.services.supabase_service import verify_supabase_token as verify_token
+from app.infrastructure.repositories.doctor_repository import DoctorRepository
+from app.infrastructure.models.doctor import Doctor
+
+from app.domain.schemas.auth_schemas import CheckEmailRequest
+
+
+def _ensure_doctor_profile(db: Session, user_id: int, full_name: str) -> None:
+    """Crea el perfil de doctor si no existe aún."""
+    existing = db.query(Doctor).filter(Doctor.user_id == user_id).first()
+    if existing:
+        return
+    first = (full_name or "DOC").split()[0].upper()[:4]
+    suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+    code = f"DOC-{first}-{suffix}"
+    # Reintentar si hay colisión de código (altamente improbable)
+    while db.query(Doctor).filter(Doctor.doctor_code == code).first():
+        suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+        code = f"DOC-{first}-{suffix}"
+    db.add(Doctor(user_id=user_id, doctor_code=code, is_verified=False))
+    db.commit()
+router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+def verify_supabase_token(authorization: str = Header(None)):
+@@ -37,20 +56,33 @@ def register(
+    # 1. Buscar si ya lo conocemos por su UID exacto
+    existing_user_by_uid = repo.get_by_supabase_uid(token_data["supabase_uid"])
+    if existing_user_by_uid:
+        # Sincronizar rol si cambió (ej. usuario migrado o rol corregido)
+        if data.role and existing_user_by_uid.role != data.role:
+            existing_user_by_uid.role = data.role
+            if data.full_name:
+                existing_user_by_uid.full_name = data.full_name
+            repo.db.commit()
+            repo.db.refresh(existing_user_by_uid)
+        # Garantizar que el doctor tenga su fila en la tabla doctors
+        if existing_user_by_uid.role == 'doctor':
+            _ensure_doctor_profile(db, existing_user_by_uid.id, existing_user_by_uid.full_name)
+        return {
+            "message": "Usuario ya registrado",
+            "user": existing_user_by_uid
+        }
+
+    # 2. EL PARCHE DE FUSIÓN (Upsert / Identity Linking): 
+    # 2. EL PARCHE DE FUSIÓN (Upsert / Identity Linking):
+    # Buscar si ya existe alguien con ese CORREO, aunque tenga otro UID (Google vs Contraseña)
+    existing_user_by_email = repo.get_by_email(token_data["email"])
+    if existing_user_by_email:
+        # Actualizamos su UID viejo por el UID nuevo para "fusionar" las sesiones
+        existing_user_by_email.supabase_uid = token_data["supabase_uid"]
+        if data.role and existing_user_by_email.role != data.role:
+            existing_user_by_email.role = data.role
+        repo.db.commit()
+        repo.db.refresh(existing_user_by_email)
+        
+        if existing_user_by_email.role == 'doctor':
+            _ensure_doctor_profile(db, existing_user_by_email.id, existing_user_by_email.full_name)
+        return {
+            "message": "Fusión de identidades exitosa",
+            "user": existing_user_by_email
+@@ -63,6 +95,8 @@ def register(
+        full_name=data.full_name,
+        role=data.role
+    )
+    if new_user.role == 'doctor':
+        _ensure_doctor_profile(db, new_user.id, new_user.full_name)
+
+    return {
+        "message": "Usuario registrado exitosamente",
+‎app/presentation/routes/doctor.py‎
++53
+Lines changed: 53 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -1,3 +1,5 @@
+import secrets
+import string
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+@@ -8,9 +10,60 @@
+from app.infrastructure.repositories.measurement_repository import MeasurementRepository
+from app.infrastructure.repositories.prediction_repository import PredictionRepository
+from app.presentation.routes.auth import verify_supabase_token
+from app.infrastructure.models.doctor import Doctor
+
+router = APIRouter(prefix="/api/doctor", tags=["Doctor Panel"])
+
+@router.post("/profile")
+def ensure_my_profile(
+        db: Session = Depends(get_db),
+        token_data: dict = Depends(verify_supabase_token)
+):
+    """Crea el perfil del doctor si no existe y lo devuelve (upsert)."""
+    user_repo = UserRepository(db)
+    user = user_repo.get_by_supabase_uid(token_data["supabase_uid"])
+    if not user or user.role != 'doctor':
+        # Auto-upgrade to doctor if role is missing
+        if user and not user.role:
+            user.role = 'doctor'
+            db.commit()
+            db.refresh(user)
+        elif not user:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado.")
+        else:
+            raise HTTPException(status_code=403, detail="Acceso denegado. Solo para doctores.")
+    doctor_profile = db.query(Doctor).filter(Doctor.user_id == user.id).first()
+    if not doctor_profile:
+        first = (user.full_name or "DOC").split()[0].upper()[:4]
+        suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+        code = f"DOC-{first}-{suffix}"
+        while db.query(Doctor).filter(Doctor.doctor_code == code).first():
+            suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+            code = f"DOC-{first}-{suffix}"
+        try:
+            doctor_profile = Doctor(user_id=user.id, doctor_code=code, is_verified=False)
+            db.add(doctor_profile)
+            db.commit()
+            db.refresh(doctor_profile)
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=f"Error creando perfil: {str(e)}")
+    return {
+        "id": user.id,
+        "email": user.email,
+        "full_name": user.full_name,
+        "role": user.role,
+        "doctor_code": doctor_profile.doctor_code,
+        "specialty": doctor_profile.specialty,
+        "license_number": doctor_profile.license_number,
+        "hospital_name": doctor_profile.hospital_name,
+        "is_verified": doctor_profile.is_verified
+    }
+@router.get("/profile")
+def get_my_profile(
+        db: Session = Depends(get_db),
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
+
+
+
+
+------------- seugndapull eques
+Skip to content
+PablitinGlez
+asthma-predictor-api
+Repository navigation
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+Settings
+Important update
+On April 24 we'll start using GitHub Copilot interaction data for AI model training unless you opt out. Review this update and manage your preferences in your GitHub account settings.
+Commit a2810da
+its-emma08claude
+its-emma08
+and
+claude
+committed
+3 weeks ago
+feat(doctor): add POST /doctor/profile upsert endpoint + fix ensure_doctor_profile
+- Add POST /api/doctor/profile: creates Doctor row if missing, returns profile (idempotent)
+- Fix _ensure_doctor_profile to catch DB errors with try/except + rollback
+- Patient schemas and clinical profile model updates for dashboard integration
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+main(#3)
+1 parent 
+72ade84
+ commit 
+a2810da
+File tree
+Filter files…
+app
+domain/schemas
+patient_schemas.py
+infrastructure
+models
+clinical_profile.py
+repositories
+user_repository.py
+presentation/routes
+auth.py
+doctor.py
+5 files changed
++133
+-8
+lines changed
+Search within code
+ 
+‎app/domain/schemas/patient_schemas.py‎
++20
+Lines changed: 20 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -110,6 +110,26 @@ class PatientFullUpdate(BaseModel):
+    spirometer_id: Optional[str] = None
+    inhaler_id: Optional[str] = None
+
+    # Antecedentes familiares
+    family_history_mother: Optional[str] = None
+    family_history_father: Optional[str] = None
+    family_history_siblings: Optional[str] = None
+    family_history_grandparents: Optional[str] = None
+    # Historia no patológica personal
+    smoking: Optional[str] = None
+    alcohol: Optional[str] = None
+    exercise: Optional[str] = None
+    diet: Optional[str] = None
+    # Historia patológica personal
+    surgeries_traumas: Optional[str] = None
+    # Foto y dispositivos
+    photo_url: Optional[str] = None
+    spirometer_id: Optional[str] = None
+    inhaler_id: Optional[str] = None
+    # Medicamentos — si se envía la lista, REEMPLAZA los existentes
+    medications: Optional[List[MedicationInput]] = None
+
+‎app/infrastructure/models/clinical_profile.py‎
++2
+-2
+Lines changed: 2 additions & 2 deletions
+Original file line number	Diff line number	Diff line change
+@@ -26,13 +26,13 @@ class ClinicalProfile(Base):
+    family_history_siblings = Column(Text, nullable=True)
+    family_history_grandparents = Column(Text, nullable=True)
+
+    # Historia no patológica
+    # Historia no patológica personal
+    smoking = Column(String(100), nullable=True)
+    alcohol = Column(String(100), nullable=True)
+    exercise = Column(String(100), nullable=True)
+    diet = Column(Text, nullable=True)
+
+    # Historia patológica
+    # Historia patológica personal
+    surgeries_traumas = Column(Text, nullable=True)
+
+    # Foto y dispositivos
+‎app/infrastructure/repositories/user_repository.py‎
++22
+-4
+Lines changed: 22 additions & 4 deletions
+Original file line number	Diff line number	Diff line change
+@@ -68,8 +68,14 @@ def create_user(
+    def create_profile(self, user_id: int, profile_data: dict) -> dict:
+        """Crea o actualiza el perfil del usuario (Idempotente)"""
+        civic_keys = ['first_name', 'last_name', 'age', 'gender', 'phone_number', 'address_street', 'address_city', 'address_state', 'address_zip', 'health_insurance_number']
+        medical_keys = ['height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type', 'diagnosis_date', 'known_allergies', 'current_medications', 'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents', 'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas', 'photo_url', 'spirometer_id', 'inhaler_id']
+        medical_keys = [
+            'height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type',
+            'diagnosis_date', 'known_allergies', 'current_medications',
+            'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents',
+            'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas',
+            'photo_url', 'spirometer_id', 'inhaler_id',
+        ]
+        
+        civic_data = {k: profile_data[k] for k in civic_keys if k in profile_data}
+        medical_data = {k: profile_data[k] for k in medical_keys if k in profile_data}
+
+@@ -100,7 +106,13 @@ def get_profile(self, user_id: int) -> Optional[dict]:
+        if civic:
+            result.update({k: getattr(civic, k) for k in ['first_name', 'last_name', 'age', 'gender', 'phone_number', 'address_street', 'address_city', 'address_state', 'address_zip', 'health_insurance_number']})
+        if clinical:
+            result.update({k: getattr(clinical, k) for k in ['height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type', 'diagnosis_date', 'known_allergies', 'current_medications', 'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents', 'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas', 'photo_url', 'spirometer_id', 'inhaler_id']})
+            result.update({k: getattr(clinical, k) for k in [
+                'height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type',
+                'diagnosis_date', 'known_allergies', 'current_medications',
+                'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents',
+                'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas',
+                'photo_url', 'spirometer_id', 'inhaler_id',
+            ] if hasattr(clinical, k)})
+
+        # 3. Obtener doctor vinculado (NUEVO)
+        link = self.db.query(DoctorPatient).filter(DoctorPatient.patient_id == user_id, DoctorPatient.is_active == True).first()
+@@ -123,7 +135,13 @@ def update_profile(self, user_id: int, profile_data: dict) -> Optional[dict]:
+        clinical = self.db.query(ClinicalProfile).filter(ClinicalProfile.user_id == user_id).first()
+
+        civic_keys = ['first_name', 'last_name', 'age', 'gender', 'phone_number', 'address_street', 'address_city', 'address_state', 'address_zip', 'health_insurance_number']
+        medical_keys = ['height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type', 'diagnosis_date', 'known_allergies', 'current_medications', 'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents', 'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas', 'photo_url', 'spirometer_id', 'inhaler_id']
+        medical_keys = [
+            'height_cm', 'personal_best_pef', 'weight_kg', 'blood_type', 'asthma_type',
+            'diagnosis_date', 'known_allergies', 'current_medications',
+            'family_history_mother', 'family_history_father', 'family_history_siblings', 'family_history_grandparents',
+            'smoking', 'alcohol', 'exercise', 'diet', 'surgeries_traumas',
+            'photo_url', 'spirometer_id', 'inhaler_id',
+        ]
+
+        # Si no existe alguno, lo creamos (Upsert)
+        if not civic:
+‎app/presentation/routes/auth.py‎
++36
+-2
+Lines changed: 36 additions & 2 deletions
+Original file line number	Diff line number	Diff line change
+@@ -1,14 +1,33 @@
+import secrets
+import string
+from fastapi import APIRouter, Depends, HTTPException, Header
+from sqlalchemy.orm import Session
+from app.config.database import get_db
+from app.domain.schemas.auth_schemas import RegisterRequest, AuthResponse, UserResponse, UserProfileRequest, UpdateAvatarRequest, UserProfileResponse
+from app.infrastructure.repositories.user_repository import UserRepository
+from app.infrastructure.services.supabase_service import verify_supabase_token as verify_token
+from app.infrastructure.repositories.doctor_repository import DoctorRepository
+from app.infrastructure.models.doctor import Doctor
+
+from app.domain.schemas.auth_schemas import CheckEmailRequest
+
+
+def _ensure_doctor_profile(db: Session, user_id: int, full_name: str) -> None:
+    """Crea el perfil de doctor si no existe aún."""
+    existing = db.query(Doctor).filter(Doctor.user_id == user_id).first()
+    if existing:
+        return
+    first = (full_name or "DOC").split()[0].upper()[:4]
+    suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+    code = f"DOC-{first}-{suffix}"
+    # Reintentar si hay colisión de código (altamente improbable)
+    while db.query(Doctor).filter(Doctor.doctor_code == code).first():
+        suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+        code = f"DOC-{first}-{suffix}"
+    db.add(Doctor(user_id=user_id, doctor_code=code, is_verified=False))
+    db.commit()
+router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+def verify_supabase_token(authorization: str = Header(None)):
+@@ -37,20 +56,33 @@ def register(
+    # 1. Buscar si ya lo conocemos por su UID exacto
+    existing_user_by_uid = repo.get_by_supabase_uid(token_data["supabase_uid"])
+    if existing_user_by_uid:
+        # Sincronizar rol si cambió (ej. usuario migrado o rol corregido)
+        if data.role and existing_user_by_uid.role != data.role:
+            existing_user_by_uid.role = data.role
+            if data.full_name:
+                existing_user_by_uid.full_name = data.full_name
+            repo.db.commit()
+            repo.db.refresh(existing_user_by_uid)
+        # Garantizar que el doctor tenga su fila en la tabla doctors
+        if existing_user_by_uid.role == 'doctor':
+            _ensure_doctor_profile(db, existing_user_by_uid.id, existing_user_by_uid.full_name)
+        return {
+            "message": "Usuario ya registrado",
+            "user": existing_user_by_uid
+        }
+
+    # 2. EL PARCHE DE FUSIÓN (Upsert / Identity Linking): 
+    # 2. EL PARCHE DE FUSIÓN (Upsert / Identity Linking):
+    # Buscar si ya existe alguien con ese CORREO, aunque tenga otro UID (Google vs Contraseña)
+    existing_user_by_email = repo.get_by_email(token_data["email"])
+    if existing_user_by_email:
+        # Actualizamos su UID viejo por el UID nuevo para "fusionar" las sesiones
+        existing_user_by_email.supabase_uid = token_data["supabase_uid"]
+        if data.role and existing_user_by_email.role != data.role:
+            existing_user_by_email.role = data.role
+        repo.db.commit()
+        repo.db.refresh(existing_user_by_email)
+        
+        if existing_user_by_email.role == 'doctor':
+            _ensure_doctor_profile(db, existing_user_by_email.id, existing_user_by_email.full_name)
+        return {
+            "message": "Fusión de identidades exitosa",
+            "user": existing_user_by_email
+@@ -63,6 +95,8 @@ def register(
+        full_name=data.full_name,
+        role=data.role
+    )
+    if new_user.role == 'doctor':
+        _ensure_doctor_profile(db, new_user.id, new_user.full_name)
+
+    return {
+        "message": "Usuario registrado exitosamente",
+‎app/presentation/routes/doctor.py‎
++53
+Lines changed: 53 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -1,3 +1,5 @@
+import secrets
+import string
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+@@ -8,9 +10,60 @@
+from app.infrastructure.repositories.measurement_repository import MeasurementRepository
+from app.infrastructure.repositories.prediction_repository import PredictionRepository
+from app.presentation.routes.auth import verify_supabase_token
+from app.infrastructure.models.doctor import Doctor
+
+router = APIRouter(prefix="/api/doctor", tags=["Doctor Panel"])
+
+@router.post("/profile")
+def ensure_my_profile(
+        db: Session = Depends(get_db),
+        token_data: dict = Depends(verify_supabase_token)
+):
+    """Crea el perfil del doctor si no existe y lo devuelve (upsert)."""
+    user_repo = UserRepository(db)
+    user = user_repo.get_by_supabase_uid(token_data["supabase_uid"])
+    if not user or user.role != 'doctor':
+        # Auto-upgrade to doctor if role is missing
+        if user and not user.role:
+            user.role = 'doctor'
+            db.commit()
+            db.refresh(user)
+        elif not user:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado.")
+        else:
+            raise HTTPException(status_code=403, detail="Acceso denegado. Solo para doctores.")
+    doctor_profile = db.query(Doctor).filter(Doctor.user_id == user.id).first()
+    if not doctor_profile:
+        first = (user.full_name or "DOC").split()[0].upper()[:4]
+        suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+        code = f"DOC-{first}-{suffix}"
+        while db.query(Doctor).filter(Doctor.doctor_code == code).first():
+            suffix = ''.join(secrets.choice(string.digits) for _ in range(4))
+            code = f"DOC-{first}-{suffix}"
+        try:
+            doctor_profile = Doctor(user_id=user.id, doctor_code=code, is_verified=False)
+            db.add(doctor_profile)
+            db.commit()
+            db.refresh(doctor_profile)
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=f"Error creando perfil: {str(e)}")
+    return {
+        "id": user.id,
+        "email": user.email,
+        "full_name": user.full_name,
+        "role": user.role,
+        "doctor_code": doctor_profile.doctor_code,
+        "specialty": doctor_profile.specialty,
+        "license_number": doctor_profile.license_number,
+        "hospital_name": doctor_profile.hospital_name,
+        "is_verified": doctor_profile.is_verified
+    }
+@router.get("/profile")
+def get_my_profile(
+        db: Session = Depends(get_db),
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
+
+-------------
+
+tercera Skip to content
+PablitinGlez
+asthma-predictor-api
+Repository navigation
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+Settings
+Important update
+On April 24 we'll start using GitHub Copilot interaction data for AI model training unless you opt out. Review this update and manage your preferences in your GitHub account settings.
+Commit 3f1dcf6
+its-emma08
+its-emma08
+committed
+2 weeks ago
+fix(merge): resolver conflictos con main — integrar patient_alerts y rutas del dashboard
+main(#4)
+2 parents 
+62a7dbd
+ + 
+e8925fc
+ commit 
+3f1dcf6
+File tree
+Filter files…
+app
+domain/schemas
+patient_alert_schemas.py
+infrastructure/models
+__init__.py
+patient_alert.py
+main.py
+presentation/routes
+admin.py
+patient_alerts.py
+patients.py
+7 files changed
++155
+-30
+lines changed
+Search within code
+ 
+‎app/domain/schemas/patient_alert_schemas.py‎
++21
+Lines changed: 21 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,21 @@
+from typing import Optional
+from pydantic import BaseModel, Field
+from datetime import datetime
+class PatientAlertCreate(BaseModel):
+    pef_value: int = Field(..., description="El valor PEF que detonó la alerta")
+    risk_level: str = Field(..., description="Nivel de riesgo, pej: 'red', 'yellow'")
+class PatientAlertResponse(BaseModel):
+    id: int
+    user_id: int
+    pef_value: int
+    risk_level: str
+    is_viewed_by_doctor: bool
+    created_at: datetime
+    class Config:
+        from_attributes = True
+class PatientAlertUpdate(BaseModel):
+    is_viewed_by_doctor: bool
+‎app/infrastructure/models/__init__.py‎
++2
+Lines changed: 2 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -17,6 +17,7 @@
+from app.infrastructure.models.appointment import Appointment
+from app.infrastructure.models.intervention import Intervention
+from app.infrastructure.models.hospital import Hospital, HospitalBranch, DoctorHospital
+from app.infrastructure.models.patient_alert import PatientAlert
+
+__all__ = [
+    "User",
+@@ -40,4 +41,5 @@
+    "Hospital",
+    "HospitalBranch",
+    "DoctorHospital",
+    "PatientAlert",
+]
+‎app/infrastructure/models/patient_alert.py‎
++17
+Lines changed: 17 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,17 @@
+from typing import Optional
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, ForeignKey, func
+from sqlalchemy.orm import relationship
+from app.config.database import Base
+class PatientAlert(Base):
+    __tablename__ = "patient_alerts"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    pef_value = Column(Integer, nullable=False)
+    risk_level = Column(String(20), nullable=False) # 'red' or 'yellow'
+    is_viewed_by_doctor = Column(Boolean, default=False)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    # Relación con usuario
+    user = relationship("User", backref="alerts")
+‎app/main.py‎
++3
+-1
+Lines changed: 3 additions & 1 deletion
+Original file line number	Diff line number	Diff line change
+@@ -10,7 +10,7 @@
+    VitalSign, SpirometerReading, ManualEntry,
+    Device, Prediction, Notification,
+    ActionPlan, ActionStep, AppSettings, DoctorPatient, Doctor,
+    Intervention, Hospital, HospitalBranch, DoctorHospital
+    Intervention, Hospital, HospitalBranch, DoctorHospital, PatientAlert
+)
+
+# Crear tablas nuevas si no existen
+@@ -32,6 +32,7 @@
+    interventions,
+    reports,
+    hospitals,
+    patient_alerts,
+)
+
+def _run_migrations():
+@@ -95,6 +96,7 @@ def on_startup():
+app.include_router(interventions.router)
+app.include_router(reports.router)
+app.include_router(hospitals.router)
+app.include_router(patient_alerts.router)
+
+@app.get("/")
+def read_root():
+‎app/presentation/routes/admin.py‎
++1
+-1
+Lines changed: 1 addition & 1 deletion
+Original file line number	Diff line number	Diff line change
+@@ -61,7 +61,7 @@ def invite_doctor(
+        raise HTTPException(status_code=400, detail="Este correo ya está registrado en el sistema.")
+
+    # 2. Lanzar la invitación de Supabase
+    supabase_user = invitation_service.invite_doctor(request.email, request.redirect_url)
+    supabase_user = invitation_service.invite_user(request.email, request.redirect_url)
+
+    # 3. Crear el usuario en la tabla 'users' con rol 'doctor'
+    display_name = request.full_name or request.email.split('@')[0]
+‎app/presentation/routes/patient_alerts.py‎
++67
+Lines changed: 67 additions & 0 deletions
+Original file line number	Diff line number	Diff line change
+@@ -0,0 +1,67 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+from app.config.database import get_db
+from app.infrastructure.models.patient_alert import PatientAlert
+from app.domain.schemas.patient_alert_schemas import PatientAlertCreate, PatientAlertResponse
+from app.infrastructure.auth.supabase_auth import verify_supabase_token
+from app.infrastructure.repositories.user_repository import UserRepository
+router = APIRouter(prefix="/api/patient-alerts", tags=["Patient Alerts"])
+@router.post("", response_model=PatientAlertResponse, status_code=status.HTTP_201_CREATED)
+def create_alert(
+    alert_data: PatientAlertCreate,
+    db: Session = Depends(get_db),
+    token_data: dict = Depends(verify_supabase_token)
+):
+    """
+    Crea una nueva alerta para el paciente autenticado.
+    (Usado por la app móvil cuando el PEF cae en zona roja o amarilla).
+    """
+    user_repo = UserRepository(db)
+    user = user_repo.get_by_supabase_uid(token_data["sub"])
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        
+    new_alert = PatientAlert(
+        user_id=user.id,
+        pef_value=alert_data.pef_value,
+        risk_level=alert_data.risk_level
+    )
+    db.add(new_alert)
+    db.commit()
+    db.refresh(new_alert)
+    return new_alert
+@router.get("/patient/{patient_id}", response_model=List[PatientAlertResponse])
+def get_patient_alerts(
+    patient_id: int,
+    db: Session = Depends(get_db),
+    token_data: dict = Depends(verify_supabase_token)
+):
+    """
+    Obtiene todas las alertas generadas por un paciente específico.
+    (Usado por el dashboard de Angular para el doctor).
+    """
+    alerts = db.query(PatientAlert).filter(PatientAlert.user_id == patient_id).order_by(PatientAlert.created_at.desc()).all()
+    return alerts
+@router.patch("/{alert_id}/view", response_model=PatientAlertResponse)
+def mark_alert_as_viewed(
+    alert_id: int,
+    db: Session = Depends(get_db),
+    token_data: dict = Depends(verify_supabase_token)
+):
+    """
+    Marca una alerta como vista por el doctor.
+    (Usado por el dashboard de Angular).
+    """
+    alert = db.query(PatientAlert).filter(PatientAlert.id == alert_id).first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alerta no encontrada")
+        
+    alert.is_viewed_by_doctor = True
+    db.commit()
+    db.refresh(alert)
+    return alert
+‎app/presentation/routes/patients.py‎
++44
+-28
+Lines changed: 44 additions & 28 deletions
+Original file line number	Diff line number	Diff line change
+@@ -351,23 +351,28 @@ def _apply_full_patient_data(db: Session, user_repo: UserRepository, patient_id:
+            ))
+        db.commit()
+
+    # Plan de acción: si se envía plan_name, reemplazar el plan existente
+    if data.action_plan_name:
+        # Desactivar el plan anterior
+        db.query(ActionPlan).filter(
+            ActionPlan.user_id == patient_id,
+            ActionPlan.is_active == True
+        ).update({"is_active": False})
+        db.flush()
+        new_plan = ActionPlan(user_id=patient_id, plan_name=data.action_plan_name)
+        db.add(new_plan)
+        db.flush()
+        if data.action_steps:
+    # Plan de acción: si se envía plan_name o pasos, manejarlo
+    if data.action_plan_name is not None or data.action_steps:
+        # 1. Buscar plan existente
+        existing_plan = db.query(ActionPlan).filter(ActionPlan.user_id == patient_id).first()
+        
+        if existing_plan:
+            existing_plan.plan_name = data.action_plan_name or "Plan de Emergencia"
+            existing_plan.is_active = True
+            plan_id = existing_plan.id
+        else:
+            new_plan = ActionPlan(user_id=patient_id, plan_name=data.action_plan_name or "Plan de Emergencia")
+            db.add(new_plan)
+            db.flush()
+            plan_id = new_plan.id
+        # Reemplazar pasos
+        if data.action_steps is not None:
+            db.query(ActionStep).filter(ActionStep.action_plan_id == plan_id).delete()
+            db.flush()
+            for step in data.action_steps:
+                db.add(ActionStep(
+                    action_plan_id=new_plan.id,
+                    action_plan_id=plan_id,
+                    step_order=step.step_order,
+                    step_title=step.step_title,
+                    step_description=step.step_description,
+@@ -416,21 +421,26 @@ def update_patient(
+        db.commit()
+
+    # Reemplazar plan de acción si se envía
+    if data.action_plan_name is not None:
+        db.query(ActionPlan).filter(
+            ActionPlan.user_id == patient_id,
+            ActionPlan.is_active == True
+        ).update({"is_active": False})
+        db.flush()
+        new_plan = ActionPlan(user_id=patient_id, plan_name=data.action_plan_name)
+        db.add(new_plan)
+        db.flush()
+        if data.action_steps:
+    if data.action_plan_name is not None or data.action_steps is not None:
+        existing_plan = db.query(ActionPlan).filter(ActionPlan.user_id == patient_id).first()
+        
+        if existing_plan:
+            if data.action_plan_name is not None:
+                existing_plan.plan_name = data.action_plan_name or "Plan de Emergencia"
+            existing_plan.is_active = True
+            plan_id = existing_plan.id
+        else:
+            new_plan = ActionPlan(user_id=patient_id, plan_name=data.action_plan_name or "Plan de Emergencia")
+            db.add(new_plan)
+            db.flush()
+            plan_id = new_plan.id
+        if data.action_steps is not None:
+            db.query(ActionStep).filter(ActionStep.action_plan_id == plan_id).delete()
+            db.flush()
+            for step in data.action_steps:
+                db.add(ActionStep(
+                    action_plan_id=new_plan.id,
+                    action_plan_id=plan_id,
+                    step_order=step.step_order,
+                    step_title=step.step_title,
+                    step_description=step.step_description,
+@@ -524,6 +534,12 @@ def get_patient_action_plan(
+
+# ─── PUT /{patient_id}/action-plan (reemplazar plan de acción) ────────────────
+
+from pydantic import BaseModel
+class ReplaceActionPlanBody(BaseModel):
+    plan_name: str
+    steps: List[ActionStepInput]
+@router.put("/{patient_id}/action-plan")
+def replace_patient_action_plan(
+        patient_id: int,
+0 commit comments
+Comments
+0
+ (0)
+Comment
+You're not receiving notifications from this thread.
+
+

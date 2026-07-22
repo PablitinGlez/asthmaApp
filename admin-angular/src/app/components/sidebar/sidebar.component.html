@@ -1,0 +1,24 @@
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span style="background: var(--primary); padding: 5px; border-radius: 8px;">A</span>
+    <span>Asthma Admin</span>
+  </div>
+
+  <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;" *ngIf="role$ | async as role">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+      <span style="margin-right: 0.75rem;">📊</span> Dashboard
+    </a>
+    
+    <a *ngIf="role === 'doctor'" routerLink="/patients" routerLinkActive="active" class="nav-item">
+      <span style="margin-right: 0.75rem;">👥</span> Mis Pacientes
+    </a>
+
+    <a *ngIf="role === 'admin'" routerLink="/doctors" routerLinkActive="active" class="nav-item">
+      <span style="margin-right: 0.75rem;">👨‍⚕️</span> Doctores
+    </a>
+  </div>
+
+  <button (click)="onLogout()" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; margin-top: auto;">
+    Cerrar Sesión
+  </button>
+</aside>

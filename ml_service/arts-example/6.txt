@@ -1,0 +1,668 @@
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+Sistema para la detección de síntomas de consumo 
+de sustancias adictivas 
+Adán Rosas Beristain 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Redes Inteligentes y 
+Ciberseguridad 
+Cuitláhuac, ver 94910, MEX. 
+20223l001146@utcv.edu.mx 
+ORCID: 0009-0007-5495-532X 
+Fernando Samuel Jiménez Méndez 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Desarrollo y Gestión de 
+Software. 
+Cuitláhuac, ver 94910, MEX. 
+20223l001050@utcv.edu.mx 
+ORCID: 0009-0001-7597-6783 
+Eva María Landa Huerta 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Desarrollo y Gestión de 
+Software. 
+Cuitláhuac, ver 94910, MEX. 
+eva.landa@utcv.edu.mx 
+ORCID: 0000-0002-4665-3985 
+Eduardo Caballero Morales 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Desarrollo y Gestión de 
+Software. 
+Cuitláhuac, ver 94910, MEX. 
+20223l001054@utcv.edu.mx 
+ORCID: 0009-0009-2614-2596 
+Ricardo Castro Valdivia 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Redes Inteligentes y 
+Ciberseguridad 
+Cuitláhuac, ver 94910, MEX. 
+ricardo.castro@utcv.edu.mx 
+ORCID: 0000-0002-9329-3003 
+Luis Rolando Guarneros Nolasco 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Desarrollo y Gestión de 
+Software. 
+Cuitláhuac, ver 94910, MEX. 
+luis.guarneros@utcv.edu.mx 
+ORCID: 0000-0001-6379-4969 
+Resumen— El consumo de sustancias adictivas en 
+estudiantes universitarios representa un problema de salud 
+pública creciente que afecta el rendimiento académico y la 
+permanencia escolar. Este trabajo presenta el desarrollo de 
+un sistema IoT integrado con algoritmos de deep learning 
+para la detección temprana de síntomas asociados al 
+consumo de sustancias adictivas. El sistema utiliza sensores 
+biométricos (frecuencia cardíaca, temperatura corporal, 
+saturación de oxígeno) conectados a una Raspberry Pi 5, 
+análisis de imágenes faciales mediante rPPG (Remote 
+Photoplethysmography), y un modelo de regresión logística 
+entrenado con datasets públicos. Se empleó un enfoque 
+experimental con validación cruzada k-fold sobre 200,000 
+registros biométricos y datos sintéticos de 1,000 estudiantes 
+simulados. Los resultados demuestran una precisión del 90% 
+en la clasificación, con una sensibilidad del 76.2% y 
+especificidad del 98.1%. El sistema mostró mejoras del 2.3% 
+en sensibilidad al integrar técnicas rPPG, alcanzando un F1- 
+Score de 0.847. La implementación incluyó una plataforma 
+web responsiva desarrollada en Angular con backend en 
+Spring Boot y base de datos PostgreSQL. Las pruebas piloto 
+evidenciaron la viabilidad del sistema para implementación 
+en instituciones educativas como herramienta preventiva no 
+invasiva. 
+Erasto Cortés Álvarez 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Redes Inteligentes y 
+Ciberseguridad 
+Cuitláhuac, ver 94910, MEX. 
+20223l001035@utcv.edu.mx 
+ORCID: 0009-0008-5318-7960 
+Michel Orozco Carrera 
+Universidad Tecnológica del Centro de 
+Veracruz 
+Ingeniería en Redes Inteligentes y 
+Ciberseguridad 
+Cuitláhuac, ver 94910, MEX. 
+michel.orozco@utcv.edu.mx 
+ORCID: 0009-0002-6460-0470 
+Se ha identificado que los métodos tradicionales para 
+identificar consumo de sustancias son basados en pruebas de 
+laboratorio, y presentan limitaciones críticas: requieren 
+consentimiento explícito, infraestructura especializada y 
+personal 
+capacitado, 
+reduciendo su viabilidad como 
+herramientas de screening masivo [2]. 
+Tomando en cuenta las consideraciones anteriores y 
+sabiendo que las tecnologías emergentes ofrecen alternativas 
+prometedoras, un ejemplo de ello, son los dispositivos IoT, que 
+permiten monitorización fisiológica en tiempo real, y por otro 
+lado el machine learning que nos identifica patrones complejos 
+en grandes volúmenes de datos [3], y además se identificó que la 
+fotopletismografía remota (rPPG) ha mostrado resultados 
+alentadores en la detección no invasiva de alteraciones 
+cardiovasculares asociadas al consumo de sustancias [4]. Por 
+todo lo mencionado, este trabajo presenta "Identifi-Adicc", un 
+sistema que integra sensores IoT, análisis de imágenes faciales 
+mediante rPPG y deep learning para la detección temprana de 
+síntomas relacionados con el consumo de sustancias. El sistema 
+está diseñado para entornos educativos, priorizando la no 
+invasividad, escalabilidad y privacidad estudiantil. 
+II. 
+Palabras clave— IoT, deep learning, detección de sustancias, 
+rPPG, biometría, educación superior, prevención de adicciones. 
+TRABAJOS RELACIONADOS 
+A. Sistemas de Detección Basados en IoT 
+I. 
+INTRODUCCIÓN 
+El alto consumo de sustancias adictivas en universitarios 
+representa un desafío creciente para la salud pública a nivel 
+mundial. En México, según la Encuesta Nacional de 
+Consumo de Drogas, Alcohol y Tabaco (ENCODAT) 2016- 
+2017, un 6.4% de la población adolescente, con edades de 
+12 a 17 años, ha consumido cualquier droga alguna vez, 
+y un 15% entre la edad de 18 a 34 años, ha consumido 
+cualquier droga alguna vez en la vida. [1]. 
+Los avances en tecnologías IoT han propiciado el 
+desarrollo de sistemas de monitorización fisiológica para 
+diversos propósitos de salud. Sundaravadivel et al. [5] 
+presentaron i-SAD, un dispositivo IoT portátil que 
+monitorea señales fisiológicas como frecuencia cardíaca y 
+acelerómetros para detectar abuso de sustancias, alcanzando 
+una correlación de 0.92 para mediciones de frecuencia 
+cardíaca promedio. La investigación de Pyingkodi et al. [6] 
+exploró la detección de consumo de drogas mediante 
+análisis ocular utilizando redes neuronales convolucionales 
+(CNN), logrando una precisión del 95% en la identificación 
+de 
+ojos 
+ 106
+afectados 
+por 
+sustancias. 
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+B. Aplicaciones de Machine Learning en Detección de 
+Adicciones 
+Qiao et al. [7] desarrollaron un sistema predictivo 
+utilizando técnicas de machine learning para identificar 
+potenciales consumidores de drogas. Su investigación 
+comparó algoritmos Random Forest, XGBoost y LightGBM, 
+donde LightGBM demostró la mayor eficiencia en la 
+predicción de usuarios potenciales y estimación de tiempos de 
+consumo. 
+El trabajo de Jeong et al. [8] presenta un estudio 
+exhaustivo sobre la aplicación de algoritmos de deep learning 
+en trastornos por consumo de alcohol y drogas. Su 
+investigación empleó modelos como Deep Neural Networks y 
+Graph Neural Networks, logrando mejores predicciones 
+después del preprocesamiento de datos mediante técnicas 
+GAIN y SMOTE-NC. 
+C. Técnicas rPPG en Monitorización Biométrica 
+La fotopletismografía remota (rPPG) ha emergido como 
+una técnica prometedora para la extracción de señales 
+cardiovasculares mediante análisis de video facial. Patel et al. 
+[9] demostraron la viabilidad de rPPG para monitorización 
+cardíaca continua, alcanzando precisiones comparables a 
+dispositivos de contacto en condiciones controladas. 
+Investigaciones recientes han explorado la integración de 
+rPPG con algoritmos de deep learning para la detección de 
+alteraciones fisiológicas. Wang et al. [10] propusieron un 
+framework basado en redes neuronales convolucionales para 
+la extracción robusta de señales de pulso desde video facial, 
+mostrando resistencia a variaciones de iluminación y 
+movimiento. 
+III. 
+METODOLOGÍA 
+A. Arquitectura del Sistema 
+El 
+sistema Identifi-Adicc se fundamenta en una 
+arquitectura distribuida de dos módulos que integra 
+componentes IoT, procesamiento edge y análisis inteligente 
+mediante deep learning. La arquitectura se diseñó para 
+maximizar la eficiencia del procesamiento distribuido y 
+garantizar la escalabilidad del sistema. «Fig. 2» 
+Módulo 1 - Adquisición IoT «Fig. 1»: 
+• Cámara IMOU para obtención de imágenes faciales 
+• Sensor infrarrojo MLX90614 para medición de 
+temperatura corporal 
+• Sensor de radar mmWave de 60 GHz para detección 
+de frecuencia cardíaca 
+• Raspberry Pi 5 como hub de procesamiento edge 
+• Comunicación MQTT con broker centralizado 
+Figura 2: Módulo 1. Fuente: Propia. 
+Módulo 2 - Procesamiento y Análisis: 
+• Servidor Ubuntu como plataforma de procesamiento 
+• Backend Spring Boot para–APIs REST 
+• Frontend Angular para interfaz administrativa 
+• Base de datos PostgreSQL para almacenamiento 
+• Modelo PyTorch para análisis de deep learning 
+Tabla I. Componentes de la Arquitectura del Sistema 
+Componente 
+Especificación 
+Protocolo 
+Función 
+Cámara 
+IMOU 
+Obtención de 
+imágenes 
+IP/RTSP 
+Sensor 
+MLX90614 
+Temperatura 
+infrarroja 
+Análisis facial 
+rPPG 
+I2C 
+Radar 
+mmWave 
+60GHz 
+Detección 
+cardíaca 
+UART 
+Medición 
+térmica corporal 
+Monitoreo 
+frecuencia 
+cardíaca 
+Raspberry 
+Pi 5 
+Procesamiento 
+edge 
+GPIO/USB 
+MQTT 
+Broker 
+Comunicación 
+IoT 
+Hub de sensores 
+IoT 
+MQTT 
+Ubuntu 
+Server 
+Servidor 
+principal 
+Intercambio de 
+datos 
+HTTP/HTTPS 
+Spring Boot  
+Backend API 
+Plataforma de 
+procesamiento 
+REST/JWT 
+Angular 
+Frontend web 
+Servicios web y 
+autenticación 
+HTTP 
+PostgreSQL 
+Figura 1: Arquitectura del Sistema. Fuente: Propia. 
+Base de datos 
+TCP/IP 
+Interfaz 
+administrativa 
+Almacenamiento 
+persistente 
+PyTorch 
+Modelo ML 
+Python API 
+Análisis 
+predictivo 
+ 107
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+1) Adquisición y Preprocesamiento de Datos 
+Datasets Utilizados: El entrenamiento del modelo se basó 
+en tres fuentes principales de datos: 
+1. 
+Human Vital Sign Dataset (Kaggle): 200,000 
+registros de datos biométricos reales incluyendo 
+temperatura, ritmo cardíaco y presión arterial 
+2. 
+3. 
+rPPG Dataset (Kaggle): Videos faciales con 
+señales cardiovasculares sincronizadas y mediciones 
+ECG/PPG simultáneas 
+Dataset sintético generado: 1,000 estudiantes 
+simulados con 10 registros biométricos por 
+individuo, aplicando ruido médico realista sobre 
+bases de datos reales 
+2) Desarrollo del Modelo de Deep Learning 
+1) Selección del algoritmo: Tras un análisis 
+comparativo entre múltiples algoritmos de machine 
+learning, se seleccionó la regresión logística con 
+regularización L2 como modelo base, por las 
+siguientes razones: 
+• Interpretabilidad clínica de los coeficientes 
+• Eficiencia 
+computacional 
+implementación en edge computing 
+• Robustez ante desbalance de clases 
+para 
+• Facilidad de implementación en tiempo real 
+2) Variables Predictoras: El modelo incorpora las 
+siguientes variables biométricas como predictores 
+principales: 
+Tabla II. Variables Predictoras del Modelo 
+Variable 
+Coeficiente 
+Tipo de 
+Medición 
+Interpretación 
+Clínica 
+PULSE_PRESS 
+URE_MEAN 
+0.087 
+Presión Arterial 
+HR_MAX 
+0.078 
+Ritmo Cardíaco 
+Diferencia 
+sistólica- 
+diastólica 
+promedio 
+Pico máximo 
+de latidos por 
+minuto 
+HR_MEAN 
+0.068 
+Ritmo Cardíaco 
+Promedio de 
+latidos por minuto 
+TEMP_VARIA 
+TION 
+0.054 
+Temperatura 
+Variación térmica 
+corporal 
+SPO2_MIN 
+0.043 
+Saturación 
+Oxígeno 
+Nivel mínimo 
+de oxigenación 
+3) Integración de Técnicas rPPG 
+La implementación de rPPG se basó en la extracción de 
+señales de pulso desde video facial mediante el siguiente 
+pipeline: 
+1) Detección facial: Utilización de Haar Cascades para 
+localización de ROI facial 
+2) Extracción de señal: Promediado temporal de 
+intensidad en canales RGB 
+3) Filtrado: Aplicación de filtros pasa-banda para 
+aislar frecuencias cardíacas 
+4) Sincronización: Alineación temporal con sensores 
+biométricos de contacto 
+Figura 3. Metodología del proyecto. Fuente: [11] 
+4) Implementación y Validación Técnica del Sistema 
+1) Configuración del Entorno de Desarrollo: La 
+implementación del sistema Identifi-Adicc requirió 
+la 
+configuración de un entorno de desarrollo 
+distribuido que integra múltiples tecnologías. El 
+backend fue desarrollado utilizando Spring Boot 
+(v2.4.3) con Java 21.0.8, proporcionando una 
+arquitectura robusta para el manejo de APIs REST y 
+la gestión de datos biométricos. 
+Configuración del Servidor de Aplicación: 
+• Framework: Spring Boot con Tomcat embebido 
+en puerto 8080 «Fig. 3» 
+• Base de datos: PostgreSQL con HikariCP como 
+pool de conexiones 
+• Persistencia: Spring Data JPA con Hibernate 
+ORM 
+• Configuración de seguridad y autenticación 
+implementada 
+Figura 4: API SpringBoot. Fuente: Propia. 
+ 108
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+2) Implementación 
+del 
+Sistema 
+de 
+Comunicación IoT: La comunicación entre 
+dispositivos IoT se estableció mediante 
+protocolo MQTT «Fig. 4», garantizando 
+transmisión confiable de datos biométricos en 
+tiempo real. El sistema implementa un broker 
+centralizado que gestiona la comunicación 
+bidireccional entre sensores y el servidor de 
+procesamiento. 
+Figura 5: MQTT. Fuente: Propia. 
+Características de la Comunicación MQTT: 
+• Tópicos estructurados para diferentes tipos de 
+sensores 
+• Transmisión de datos de temperatura ambiente 
+y corporal cada segundo 
+• Timestamps precisos para sincronización 
+temporal (formato Unix) 
+• Validación de integridad de datos en tiempo 
+real 
+• Manejo de errores de conexión y reconexión 
+automática 
+3) Integración Hardware-Software: La estación 
+de 
+monitoreo integra físicamente todos los 
+componentes especificados en la arquitectura: 
+Componentes de Hardware Validados: 
+• Cámara IMOU configurada para captura de 
+video facial a 30 FPS 
+• Sensor infrarrojo MLX90614 para medición de 
+temperatura sin contacto 
+• Raspberry Pi 5 funcionando como hub de 
+procesamiento Edge 
+• Sistema de comunicación inalámbrica estable 
+Componentes de Hardware Validados: 
+• Todos los sensores reportan datos 
+correctamente al hub central «Fig. 5» 
+• Latencia promedio de comunicación MQTT: 
+<100ms 
+• Tasa de pérdida de paquetes: <0.1% 
+Figura 6: Componentes de hardware. Fuente: Propia. 
+IV. RESULTADOS 
+Uno de los entregables que nos aportan la información necesaria 
+para entender la interacción del prototipo es el esquema de 
+funcionamiento general que observamos en la fig. 4, que incluye 
+los elementos que son parte de cada módulo, tanto de hardware 
+como de software, de esta manera podemos saber dónde se 
+inician los censados de datos, quien los procesa, quien los 
+almacena y de que forma son tratados por el algoritmo de Deep 
+learning para la determinación de un pre-dictamen de 
+consumidor. 
+Figura 7: Esquema de funcionamiento del prototipo. Fuente: Propia. 
+ 109
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+A. Evaluación del Modelo de Machine Learning 
+Los resultados del entrenamiento y validación del 
+modelo de regresión logística se presentan en la Tabla III. 
+Tabla III. Comparación de Algoritmos de Machine Learning 
+Algoritmo 
+F1- 
+Score 
+Accuracy 
+Sensibilidad 
+Logistic 
+Regression 
+0.8361 
+0.9000 
+Especificidad 
+AUC- 
+ROC 
+0.7391 
+0.977 
+SVM 
+Linear 
+0.7895 
+0.8800 
+0.6522 
+0.753 
+0.939 
+SVM RBF 0.7222 0.8500 
+0.5652 
+0.924 
+0.753 
+0.985 
+El modelo de regresión logística demostró el mejor 
+balance entre precisión y recall, crucial para 
+aplicaciones de screening médico donde tanto los falsos 
+negativos 
+como los falsos positivos tienen 
+implicaciones significativas. 
+B. Impacto de la Integración rPPG 
+La incorporación de técnicas rPPG como modalidad 
+complementaria mostró mejoras cuantificables en las 
+métricas de evaluación: 
+Tabla IV. Impacto de la Integración rPPG 
+Métricas 
+Biometría 
+Biometría + 
+rPPG 
+F1-Score 
+0.836 
+0.847 
+Mejora 
+Sensibilidad 
++1.3% 
+73.9% 
+76.2% 
+Especificidad 
++2.3% 
+97.7% 
+98.1% 
++0.4% 
+C. Análisis de Importancia de Variables 
+El análisis de importancia de variables reveló que 
+los indicadores cardiovasculares son los predictores más 
+influyentes: 
+Tabla V. Top 5 Variables Más Importantes 
+Ranking 
+Variable 
+Importancia 
+1 
+pulse_pressure_mean 
+1.0 
+Interpretación 
+Presión 
+diferencial 
+promedio 
+2 
+hr_max 
+0.89 
+Frecuencia 
+cardíaca 
+máxima 
+3 
+hr_mean 
+0.76 
+Frecuencia 
+cardíaca 
+media 
+4 
+sys_bp_mean 
+0.65 
+Presión 
+sistólica 
+promedio 
+5 
+temp_mean 
+0.54 
+Temperatura 
+corporal 
+media 
+Matriz de Confusión y Análisis de Errores 
+La matriz de confusión del modelo optimizado revela un 
+comportamiento balanceado en la clasificación «Fig. 6»: 
+1) Verdaderos Negativos: 129 casos (alta 
+especificidad) 
+2) Falsos Positivos: 2 casos (minimización de alarmas 
+falsas) 
+3) Falsos Negativos: 18 casos (casos no detectados) 
+4) Verdaderos Positivos: 51 casos (detección exitosa)
+Figura 8: Matriz de confusión. Fuente: Propia. 
+D. Implementación del Prototipo Físico 
+El desarrollo del sistema "Identifi-Adicc" culminó con la 
+construcción de un prototipo físico completamente funcional, 
+implementado en las instalaciones del laboratorio de la 
+Universidad Tecnológica del Centro de Veracruz. El prototipo 
+integra todos los componentes de hardware y software 
+especificados en la arquitectura del sistema. 
+E. Características del Prototipo Implementado: 
+Estación de Monitoreo Integrada: El prototipo consiste en 
+una estación compacta que alberga todos los sensores IoT 
+especificados, incluyendo la cámara IMOU para análisis facial 
+rPPG, sensores de temperatura infrarroja y el sistema de radar 
+mmWave para detección de frecuencia cardíaca. 
+Diseño Ergonómico: La estructura del prototipo fue diseñada 
+considerando la interacción natural del usuario, con una interfaz 
+visual clara que muestra el nombre del sistema "IDENTIFI 
+ADICC" y permite un posicionamiento óptimo para la captura de 
+datos biométricos. 
+Integración de Componentes: El sistema demuestra la exitosa 
+integración entre: 
+• Hardware IoT (Raspberry Pi 5 como hub central) 
+• Sensores biométricos de múltiples modalidades 
+• Sistema de comunicación MQTT en tiempo real 
+• Interfaz de usuario intuitiva 
+F. Impacto en Entorno Real: 
+La implementación física del prototipo representa un paso 
+crucial hacia la viabilidad comercial del sistema, demostrando 
+que la arquitectura propuesta es técnicamente factible y escalable 
+para su despliegue en instituciones educativas. 
+El prototipo sirve como prueba de concepto para futuras 
+implementaciones a mayor escala, validando tanto la efectividad 
+del hardware IoT como la robustez del software de análisis 
+inteligente en condiciones reales de operación «Fig. 9» «Fig. 10». 
+ 110
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+Figura 9: Identifi-Adicc. Fuente: Propia. 
+Figura 10: Identifi-Adicc 2. Fuente: Propia. 
+V. DISCUSIÓN 
+Los resultados obtenidos demuestran la viabilidad técnica 
+del sistema propuesto para la detección temprana de síntomas 
+asociados al consumo de sustancias adictivas. La precisión del 
+90% alcanzada por el modelo de regresión logística, 
+combinada con una especificidad del 98.1%, indica que el 
+sistema minimiza efectivamente las falsas alarmas, un aspecto 
+crítico para su implementación en entornos educativos. 
+La integración de técnicas rPPG mostró mejoras 
+significativas, particularmente en sensibilidad (+2.3%), lo que 
+resulta crucial para la detección temprana. Este incremento 
+sugiere que la información cardiovascular extraída de manera 
+no invasiva complementa efectivamente los datos obtenidos 
+por sensores de contacto. 
+El análisis de importancia de variables confirma que los 
+indicadores cardiovasculares constituyen los predictores más 
+relevantes, alineándose con la literatura médica que establece 
+la relación entre el consumo de sustancias y alteraciones en el 
+sistema cardiovascular. 
+VI. CONCLUSIONES 
+El prototipo del Sistema de Detección de Síntomas de 
+Consumo de Sustancias Adictivas ha sido completado 
+exitosamente, integrando sensores IoT, análisis inteligente 
+con deep learning y una plataforma administrativa 
+operativa. Las pruebas han demostrado su eficacia en la 
+recolección y procesamiento de datos, con una precisión del 
+90% y un F1- Score de 0.847. 
+El sistema representa un avance importante en la detección 
+temprana del consumo de sustancias a través de IoT y 
+algoritmos de machine learning, con alto potencial de 
+aplicación en entornos educativos y de salud como 
+herramienta preventiva no invasiva. 
+Las mejoras futuras incluyen la optimización del modelo 
+mediante técnicas de ensemble learning, la expansión del 
+dataset de entrenamiento con datos de población mexicana, y 
+la implementación de técnicas de explicabilidad de IA para 
+mejorar la confianza clínica del sistema. 
+AGRADECIMIENTOS 
+Los autores agradecen a la Universidad Tecnológica del 
+Centro de Veracruz por el apoyo institucional y recursos 
+proporcionados para el desarrollo de este proyecto. 
+Reconocimiento especial a los docentes miembros del cuerpo 
+académico y a los asesores Ricardo Castro Valdivia y Michel 
+Orozco Carrera por su mentoría técnica y científica. 
+REFERENCIAS 
+[1] Comisión Nacional contra las Adicciones, Consumo de drogas: 
+prevalencias globales, tendencias y variaciones estatales [Informe]. 
+Gobierno  de  México,  2017.  [En  línea].  Disponible  en: 
+https://www.gob.mx/cms/uploads/attachment/file/234856/CONSUM 
+O_DE_DROGAS.pdf 
+[2] J. Gallego, A. Scioli, A. J. Cangas, J. A. Carmona, y Á. I. Langer, 
+"Análisis de la validez del programa de simulación 3D My-School para 
+la detección de alumnos en riesgo de consumo de drogas y acoso 
+escolar," Universitas Psychologica, vol. 17, no. 2, pp. 1-15, abril 2018. 
+[3] H. Jeong, B. Rekabdar, D. L. Albright, J. T. McDaniel, and S. Talafha, 
+"From machine learning to deep learning: A comprehensive study of 
+alcohol and drug use disorder," Health, vol. 2022, p. 100104, ago. 2022. 
+[4] Y. Meng and J. Zhang, "An effective behavior recognition method in 
+the video session using convolutional neural network," PLoS ONE, vol. 
+17, no. 8, Art. no. e0266734, ago. 2022. 
+[5] P. Sundaravadivel, A. Fitzgerald, y P. Indic, "i-SAD: An edge- 
+intelligent IoT-based wearable for substance abuse detection," en Proc. 
+Int. Symp. Embedded Systems (iSES), feb. 2020, pp. 1-6. 
+[6] M. Pyingkodi, K. Thenmozhi, N. R. Wilfred Blessing, K. Archana, X. 
+A. Hiruthik, y V. D. Kumar, "Drug consumption detection by eye using 
+image processing techniques," en Proc. Int. Conf. Computer 
+Communication and Informatics (ICCCI), mayo 2023, pp. 1-5. 
+[7] Z. Qiao, T. Chai, Q. Zhang, X. Zhou, y Z. Chu, "Predicting potential 
+drug abusers using machine learning techniques," en Proc. Int. Conf. 
+Intelligence and Big Data (ICIIBMS), feb. 2020, pp. 1-6. 
+[8] H. Jeong, B. Rekabdar, D. L. Albright, J. T. McDaniel, and S. Talafha, 
+"From machine learning to deep learning: A comprehensive study of 
+alcohol and drug use disorder," Health, vol. 2022, p. 100104, ago. 2022. 
+[9] S. Patel, H. Park, P. Bonato, L. Chan, and M. Rodgers, "A review of 
+wearable sensors and systems with application in rehabilitation," Journal 
+of NeuroEngineering and Rehabilitation, vol. 9, no. 1, p. 21, 2012. 
+[10] W. Wang, A. C. den Brinker, S. Stuijk, and G. de Haan, "Algorithmic 
+principles of remote PPG," IEEE Trans. Biomedical Engineering, vol. 
+64, no. 7, pp. 1479-1491, julio 2017. 
+[11] Cisco, Estrategia de penetración de mercados usando Lifecycle 
+Services 
+de Cisco, 2025. [En línea]. Disponible en: 
+https://www.cisco.com/c/dam/global/es_mx/assets/serviciospartners/o 
+tros_archivos/pdf/Estrategia_de_penetracion_de_mercados_usando_L 
+ifecycle_Services_de_Cisco.pdf 
+[12] A. Thapliyal, A. P. Singh, y R. Priyadarshini, "Detection of 
+Consumption of Alcohol Using Artificial Intelligence," en Advances in 
+Computing and Data Sciences, vol. 1440, mayo 2023, pp. 68-78. 
+ 111

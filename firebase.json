@@ -1,0 +1,25 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "asthma-app-ed177",
+                    "appId": "1:40445796906:android:15fc434121c9f91a379953",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "asthma-app-ed177",
+                    "configurations": {
+                        "android": "1:40445796906:android:15fc434121c9f91a379953",
+                        "ios": "1:40445796906:ios:b828776ec5b22e0e379953",
+                        "macos": "1:40445796906:ios:b828776ec5b22e0e379953",
+                        "web": "1:40445796906:web:51e7f4bcb33ee38a379953",
+                        "windows": "1:40445796906:web:6c54811efa374a68379953"
+                    }
+                }
+            }
+        }
+    }
+}

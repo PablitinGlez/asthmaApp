@@ -1,0 +1,494 @@
+<div class="dashboard-layout">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+
+    <!-- Header -->
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+      <div>
+        <h2 style="font-size: 2rem; font-weight: 800; margin: 0;">Mis Pacientes 🩺</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Administra y monitorea a tus pacientes vinculados.</p>
+      </div>
+      <button (click)="openCreateModal()"
+              style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+        <span>+ Añadir Paciente</span>
+      </button>
+    </header>
+
+    <!-- Tabla de Pacientes -->
+    <div class="admin-card" style="padding: 0; overflow: hidden; position: relative; min-height: 200px;">
+      <div *ngIf="isLoading" style="position: absolute; inset: 0; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; z-index: 10;">
+        <p style="color: var(--primary); font-weight: 700;">Cargando pacientes...</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead style="background: #f8fafc; border-bottom: 1px solid var(--border-color);">
+          <tr>
+            <th style="padding: 1rem 1.5rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Paciente</th>
+            <th style="padding: 1rem 1.5rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Correo</th>
+            <th style="padding: 1rem 1.5rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Riesgo</th>
+            <th style="padding: 1rem 1.5rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Estado</th>
+            <th style="padding: 1rem 1.5rem; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Cuenta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let patient of patients"
+              class="patient-row"
+              (click)="openDetails(patient)"
+              style="border-bottom: 1px solid var(--border-color); cursor: pointer;">
+            <td style="padding: 1rem 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800;">
+                {{ patient.full_name?.charAt(0) || 'P' }}
+              </div>
+              {{ patient.full_name || 'Sin Nombre' }}
+            </td>
+            <td style="padding: 1rem 1.5rem; color: var(--text-muted);">{{ patient.email }}</td>
+            <td style="padding: 1rem 1.5rem;">
+              <ng-container *ngIf="getRiskBadge(patient.risk_level) as badge">
+                <span [style.background]="badge.bg" [style.color]="badge.color"
+                      style="padding: 4px 12px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;">
+                  {{ badge.label }}
+                </span>
+              </ng-container>
+            </td>
+            <td style="padding: 1rem 1.5rem;">
+              <span [style.background]="patient.is_active ? '#d1fae5' : '#fee2e2'"
+                    [style.color]="patient.is_active ? '#065f46' : '#991b1b'"
+                    style="padding: 4px 12px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;">
+                {{ patient.is_active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td style="padding: 1rem 1.5rem;">
+              <span [style.background]="patient.email_verified ? '#dbeafe' : '#fef3c7'"
+                    [style.color]="patient.email_verified ? '#1e40af' : '#92400e'"
+                    style="padding: 4px 12px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;">
+                {{ patient.email_verified ? 'Registrado' : 'Pendiente' }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="!isLoading && patients.length === 0">
+            <td colspan="5" style="padding: 4rem; text-align: center;">
+              <h3 style="color: var(--text-main); font-weight: 700; margin-bottom: 0.5rem;">No tienes pacientes vinculados</h3>
+              <p style="color: var(--text-muted);">Añade un paciente o pídele que ingrese tu código de doctor en la app.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ──────────────── PANEL DE EDICIÓN ──────────────────────────────────── -->
+    <div class="side-panel-overlay" [class.active]="showDetailsPanel" (click)="closeDetails()"></div>
+    <div class="side-panel" [class.open]="showDetailsPanel" style="width: 600px; max-width: 95vw;">
+      <div *ngIf="selectedPatient" style="padding: 2rem; height: 100%; overflow-y: auto; display: flex; flex-direction: column;">
+
+        <!-- Header del panel -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800;">
+              {{ selectedPatient.full_name?.charAt(0) || 'P' }}
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800;">{{ selectedPatient.full_name }}</h3>
+              <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">{{ selectedPatient.email }}</p>
+            </div>
+          </div>
+          <button (click)="closeDetails()" class="close-btn">&times;</button>
+        </div>
+
+        <!-- Tabs -->
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+          <button *ngFor="let tab of [
+              {id:'basic', label:'👤 Datos'},
+              {id:'clinical', label:'🩺 Clínico'},
+              {id:'medications', label:'💊 Medicamentos'},
+              {id:'plan', label:'📋 Plan'}
+            ]"
+            (click)="setTab($any(tab.id))"
+            [style.background]="activeTab === tab.id ? 'var(--primary)' : '#f1f5f9'"
+            [style.color]="activeTab === tab.id ? 'white' : 'var(--text-muted)'"
+            style="padding: 0.5rem 1rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.8rem;">
+            {{ tab.label }}
+          </button>
+        </div>
+
+        <!-- TAB: Datos básicos -->
+        <div *ngIf="activeTab === 'basic'" style="display: grid; gap: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Nombre</label>
+              <input type="text" [(ngModel)]="editBasic.first_name" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Apellido</label>
+              <input type="text" [(ngModel)]="editBasic.last_name" class="field-input">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Edad</label>
+              <input type="number" [(ngModel)]="editBasic.age" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Género</label>
+              <select [(ngModel)]="editBasic.gender" class="field-input">
+                <option value="">Sin definir</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Teléfono</label>
+            <input type="text" [(ngModel)]="editBasic.phone_number" class="field-input">
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Calle / Avenida</label>
+            <input type="text" [(ngModel)]="editBasic.address_street" class="field-input">
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Ciudad</label>
+              <input type="text" [(ngModel)]="editBasic.address_city" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Estado</label>
+              <input type="text" [(ngModel)]="editBasic.address_state" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">CP</label>
+              <input type="text" [(ngModel)]="editBasic.address_zip" class="field-input">
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Número de Seguro / IMSS</label>
+            <input type="text" [(ngModel)]="editBasic.health_insurance_number" class="field-input">
+          </div>
+        </div>
+
+        <!-- TAB: Clínico -->
+        <div *ngIf="activeTab === 'clinical'" style="display: grid; gap: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Tipo de Asma</label>
+              <select [(ngModel)]="editClinical.asthma_type" class="field-input">
+                <option value="">Sin definir</option>
+                <option value="Intermitente">Intermitente</option>
+                <option value="Persistente Leve">Persistente Leve</option>
+                <option value="Persistente Moderada">Persistente Moderada</option>
+                <option value="Persistente Grave">Persistente Grave</option>
+              </select>
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Mejor PEF (L/min)</label>
+              <input type="number" [(ngModel)]="editClinical.personal_best_pef" class="field-input">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Altura (cm)</label>
+              <input type="number" [(ngModel)]="editClinical.height_cm" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Peso (kg)</label>
+              <input type="number" [(ngModel)]="editClinical.weight_kg" class="field-input">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Tipo de Sangre</label>
+              <select [(ngModel)]="editClinical.blood_type" class="field-input">
+                <option value="">Sin definir</option>
+                <option *ngFor="let bt of ['A+','A-','B+','B-','O+','O-','AB+','AB-']" [value]="bt">{{ bt }}</option>
+              </select>
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Fecha Diagnóstico</label>
+              <input type="date" [(ngModel)]="editClinical.diagnosis_date" class="field-input">
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Alergias Conocidas</label>
+            <input type="text" [(ngModel)]="editClinical.known_allergies" placeholder="Ej: Polen, Ácaros..." class="field-input">
+          </div>
+        </div>
+
+        <!-- TAB: Medicamentos -->
+        <div *ngIf="activeTab === 'medications'" style="display: grid; gap: 1rem;">
+          <div *ngFor="let med of editMedications; let i = index"
+               style="background: #f8fafc; border-radius: 12px; padding: 1rem; display: grid; gap: 0.75rem; position: relative;">
+            <button (click)="removeEditMed(i)"
+                    style="position: absolute; top: 0.75rem; right: 0.75rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; padding: 2px 8px; cursor: pointer;">✕</button>
+            <input type="text" [(ngModel)]="med.name" placeholder="Nombre del medicamento" class="field-input">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <input type="text" [(ngModel)]="med.dosage" placeholder="Dosis (Ej: 2 puffs)" class="field-input">
+              <input type="number" [(ngModel)]="med.frequency_hours" placeholder="Cada X horas" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Hora primera toma</label>
+              <input type="datetime-local" [(ngModel)]="med.next_dose" class="field-input">
+            </div>
+          </div>
+          <button (click)="addEditMed()"
+                  style="padding: 0.75rem; border: 2px dashed var(--border-color); border-radius: 12px; background: none; cursor: pointer; color: var(--primary); font-weight: 700;">
+            + Añadir Medicamento
+          </button>
+        </div>
+
+        <!-- TAB: Plan de Acción -->
+        <div *ngIf="activeTab === 'plan'" style="display: grid; gap: 1rem;">
+          <div class="edit-group">
+            <label class="field-label">Nombre del Plan</label>
+            <input type="text" [(ngModel)]="editActionPlan.plan_name" placeholder="Ej: Plan de Emergencia" class="field-input">
+          </div>
+          <div *ngFor="let step of editActionPlan.steps; let i = index"
+               style="background: #f8fafc; border-radius: 12px; padding: 1rem; display: grid; gap: 0.75rem; position: relative;">
+            <button (click)="removeEditStep(i)"
+                    style="position: absolute; top: 0.75rem; right: 0.75rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; padding: 2px 8px; cursor: pointer;">✕</button>
+            <div style="display: grid; grid-template-columns: 60px 1fr; gap: 0.75rem;">
+              <input type="number" [(ngModel)]="step.step_order" placeholder="#" class="field-input">
+              <input type="text" [(ngModel)]="step.step_title" placeholder="Título del paso" class="field-input">
+            </div>
+            <textarea [(ngModel)]="step.step_description" rows="2" placeholder="Descripción..." class="field-input" style="resize: vertical;"></textarea>
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+              <input type="checkbox" [(ngModel)]="step.is_critical"> Paso Crítico
+            </label>
+          </div>
+          <button (click)="addEditStep()"
+                  style="padding: 0.75rem; border: 2px dashed var(--border-color); border-radius: 12px; background: none; cursor: pointer; color: var(--primary); font-weight: 700;">
+            + Añadir Paso
+          </button>
+        </div>
+
+        <!-- Botón Guardar -->
+        <div style="margin-top: auto; padding-top: 1.5rem;">
+          <button (click)="saveCurrentTab()" [disabled]="isSaving"
+                  style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem;">
+            {{ isSaving ? 'Guardando...' : '💾 Guardar Cambios' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ──────────────── MODAL CREAR PACIENTE (MULTI-PASO) ──────────────────── -->
+    <div class="side-panel-overlay" [class.active]="showCreateModal" (click)="closeCreateModal()"></div>
+    <div class="side-panel" [class.open]="showCreateModal" style="width: 540px; max-width: 95vw;">
+      <div style="padding: 2rem; height: 100%; overflow-y: auto; display: flex; flex-direction: column;">
+
+        <!-- Header del wizard -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 800;">Añadir Paciente</h2>
+            <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">Paso {{ createStep }} de {{ totalSteps }}</p>
+          </div>
+          <button (click)="closeCreateModal()" class="close-btn">&times;</button>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div style="height: 6px; background: #e2e8f0; border-radius: 99px; margin-bottom: 2rem;">
+          <div [style.width]="(createStep / totalSteps * 100) + '%'"
+               style="height: 100%; background: var(--primary); border-radius: 99px; transition: width 0.3s ease;"></div>
+        </div>
+
+        <!-- Paso 1: Cuenta -->
+        <div *ngIf="createStep === 1" style="display: grid; gap: 1.25rem; flex: 1;">
+          <h3 style="margin: 0 0 0.5rem; font-weight: 700;">👤 Datos de la Cuenta</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Nombre *</label>
+              <input type="text" [(ngModel)]="createForm.first_name" placeholder="Juan" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Apellido *</label>
+              <input type="text" [(ngModel)]="createForm.last_name" placeholder="Pérez" class="field-input">
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Correo Electrónico *</label>
+            <input type="email" [(ngModel)]="createForm.email" placeholder="paciente@ejemplo.com" class="field-input">
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+            📧 Se enviará un email de invitación para que el paciente cree su contraseña.
+          </p>
+        </div>
+
+        <!-- Paso 2: Datos personales -->
+        <div *ngIf="createStep === 2" style="display: grid; gap: 1.25rem; flex: 1; overflow-y: auto;">
+          <h3 style="margin: 0 0 0.5rem; font-weight: 700;">📋 Datos Personales</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Edad</label>
+              <input type="number" [(ngModel)]="createForm.age" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Género</label>
+              <select [(ngModel)]="createForm.gender" class="field-input">
+                <option value="">Sin definir</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Teléfono</label>
+            <input type="text" [(ngModel)]="createForm.phone_number" class="field-input">
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Calle / Avenida</label>
+            <input type="text" [(ngModel)]="createForm.address_street" placeholder="Ej: Av. Siempre Viva 123" class="field-input">
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Ciudad</label>
+              <input type="text" [(ngModel)]="createForm.address_city" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Estado</label>
+              <input type="text" [(ngModel)]="createForm.address_state" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">CP</label>
+              <input type="text" [(ngModel)]="createForm.address_zip" class="field-input">
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Número de Seguro / IMSS</label>
+            <input type="text" [(ngModel)]="createForm.health_insurance_number" placeholder="Ej: 12-34-56-7890" class="field-input">
+          </div>
+        </div>
+
+        <!-- Paso 3: Datos clínicos -->
+        <div *ngIf="createStep === 3" style="display: grid; gap: 1.25rem; flex: 1;">
+          <h3 style="margin: 0 0 0.5rem; font-weight: 700;">🩺 Datos Clínicos</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Tipo de Asma</label>
+              <select [(ngModel)]="createForm.asthma_type" class="field-input">
+                <option value="">Sin definir</option>
+                <option value="Intermitente">Intermitente</option>
+                <option value="Persistente Leve">Persistente Leve</option>
+                <option value="Persistente Moderada">Persistente Moderada</option>
+                <option value="Persistente Grave">Persistente Grave</option>
+              </select>
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Tipo de Sangre</label>
+              <select [(ngModel)]="createForm.blood_type" class="field-input">
+                <option value="">Sin definir</option>
+                <option *ngFor="let bt of ['A+','A-','B+','B-','O+','O-','AB+','AB-']" [value]="bt">{{ bt }}</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="edit-group">
+              <label class="field-label">Altura (cm)</label>
+              <input type="number" [(ngModel)]="createForm.height_cm" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Peso (kg)</label>
+              <input type="number" [(ngModel)]="createForm.weight_kg" class="field-input">
+            </div>
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Mejor PEF (L/min)</label>
+            <input type="number" [(ngModel)]="createForm.personal_best_pef" class="field-input">
+          </div>
+          <div class="edit-group">
+            <label class="field-label">Alergias Conocidas</label>
+            <input type="text" [(ngModel)]="createForm.known_allergies" placeholder="Ej: Polen, Ácaros..." class="field-input">
+          </div>
+        </div>
+
+        <!-- Paso 4: Plan de acción -->
+        <div *ngIf="createStep === 4" style="display: grid; gap: 1.25rem; flex: 1;">
+          <h3 style="margin: 0 0 0.5rem; font-weight: 700;">📋 Plan de Acción</h3>
+          <div class="edit-group">
+            <label class="field-label">Nombre del Plan</label>
+            <input type="text" [(ngModel)]="createForm.action_plan_name" placeholder="Ej: Plan de Emergencia" class="field-input">
+          </div>
+          <!-- Añadir paso -->
+          <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; display: grid; gap: 0.75rem;">
+            <div style="display: grid; grid-template-columns: 60px 1fr; gap: 0.75rem;">
+              <input type="number" [(ngModel)]="newStep.step_order" placeholder="#" class="field-input">
+              <input type="text" [(ngModel)]="newStep.step_title" placeholder="Título del paso" class="field-input">
+            </div>
+            <textarea [(ngModel)]="newStep.step_description" rows="2" placeholder="Descripción..." class="field-input" style="resize: vertical;"></textarea>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" [(ngModel)]="newStep.is_critical"> Paso Crítico
+              </label>
+              <button (click)="addWizardStep()" [disabled]="!newStep.step_title"
+                      style="padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.8rem;">
+                + Añadir Paso
+              </button>
+            </div>
+          </div>
+          <!-- Lista de pasos agregados -->
+          <div *ngFor="let step of createForm.action_steps; let i = index"
+               style="background: #eef2ff; border-radius: 8px; padding: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.85rem; font-weight: 600;">{{ step.step_order }}. {{ step.step_title }}</span>
+            <button (click)="removeWizardStep(i)"
+                    style="background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; padding: 2px 8px; cursor: pointer;">✕</button>
+          </div>
+          <p *ngIf="createForm.action_steps.length === 0" style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin: 0;">
+            (Opcional) Añade los pasos del plan de acción
+          </p>
+        </div>
+
+        <!-- Paso 5: Medicamentos -->
+        <div *ngIf="createStep === 5" style="display: grid; gap: 1.25rem; flex: 1;">
+          <h3 style="margin: 0 0 0.5rem; font-weight: 700;">💊 Medicamentos</h3>
+          <!-- Form de nuevo med -->
+          <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; display: grid; gap: 0.75rem;">
+            <input type="text" [(ngModel)]="newMed.name" placeholder="Nombre del medicamento" class="field-input">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <input type="text" [(ngModel)]="newMed.dosage" placeholder="Dosis (Ej: 2 puffs)" class="field-input">
+              <input type="number" [(ngModel)]="newMed.frequency_hours" placeholder="Cada X horas" class="field-input">
+            </div>
+            <div class="edit-group">
+              <label class="field-label">Hora primera toma</label>
+              <input type="datetime-local" [(ngModel)]="newMed.next_dose" class="field-input">
+            </div>
+            <button (click)="addWizardMed()" [disabled]="!newMed.name"
+                    style="padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.8rem; align-self: end;">
+              + Añadir Medicamento
+            </button>
+          </div>
+          <!-- Lista de meds agregados -->
+          <div *ngFor="let med of createForm.medications; let i = index"
+               style="background: #eef2ff; border-radius: 8px; padding: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="margin: 0; font-size: 0.85rem; font-weight: 700;">{{ med.name }}</p>
+              <p style="margin: 0; font-size: 0.75rem; color: var(--text-muted);">{{ med.dosage }} · Cada {{ med.frequency_hours }}h</p>
+            </div>
+            <button (click)="removeWizardMed(i)"
+                    style="background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; padding: 2px 8px; cursor: pointer;">✕</button>
+          </div>
+          <p *ngIf="createForm.medications.length === 0" style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin: 0;">
+            (Opcional) Añade los medicamentos del paciente
+          </p>
+        </div>
+
+        <!-- Navegación del wizard -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+          <button *ngIf="createStep > 1" (click)="prevStep()"
+                  style="padding: 0.75rem 1.5rem; border: 1px solid var(--border-color); border-radius: 10px; background: white; cursor: pointer; font-weight: 700;">
+            ← Atrás
+          </button>
+          <div *ngIf="createStep === 1"></div>
+          <button *ngIf="createStep < totalSteps" (click)="nextStep()"
+                  [disabled]="createStep === 1 && (!createForm.email || !createForm.first_name || !createForm.last_name)"
+                  style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;">
+            Siguiente →
+          </button>
+          <button *ngIf="createStep === totalSteps" (click)="submitCreate()" [disabled]="isCreating"
+                  style="padding: 0.75rem 1.5rem; background: #059669; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;">
+            {{ isCreating ? 'Creando...' : '✅ Crear Paciente' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

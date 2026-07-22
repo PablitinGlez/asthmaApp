@@ -1,0 +1,1209 @@
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+
+schema
+
+public
+
+
+Search for a table
+
+New table
+Name	
+	
+action_plans
+
+6 columns
+
+	
+action_steps
+
+7 columns
+
+	
+app_settings
+
+8 columns
+
+	
+clinical_profiles
+
+13 columns
+
+	
+devices
+
+10 columns
+
+	
+doctor_patients
+
+5 columns
+
+	
+doctors
+
+9 columns
+
+	
+emergency_contacts
+
+8 columns
+
+	
+manual_entries
+
+7 columns
+
+	
+notifications
+
+9 columns
+
+	
+predictions
+
+7 columns
+
+	
+spirometer_readings
+
+20 columns
+
+	
+user_profiles
+
+14 columns
+
+	
+users
+
+14 columns
+
+	
+vital_signs
+
+8 columns
+
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+tabla de actions plans
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+action_plans
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+plan_name
+
+character varying	varchar		
+is_active
+
+boolean	bool		
+created_at
+
+timestamp without time zone	timestamp		
+updated_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+tabla de actions steps
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+action_steps
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+action_plan_id
+
+integer	int4		
+step_order
+
+integer	int4		
+step_title
+
+character varying	varchar		
+step_description
+
+text	text		
+is_critical
+
+boolean	bool		
+created_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+
+tabla de
+app settings Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+app_settings
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+notifications_enabled
+
+boolean	bool		
+reminder_frequency
+
+character varying	varchar		
+theme
+
+character varying	varchar		
+language
+
+character varying	varchar		
+created_at
+
+timestamp without time zone	timestamp		
+updated_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+tabla de   devicesSupabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+devices
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+device_type
+
+character varying	varchar		
+device_brand
+
+character varying	varchar		
+device_model
+
+character varying	varchar		
+device_mac_address
+
+character varying	varchar		
+is_active
+
+boolean	bool		
+last_sync_at
+
+timestamp without time zone	timestamp		
+created_at
+
+timestamp without time zone	timestamp		
+updated_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+tabla de docotrn aptienes
+
+
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+doctor_patients
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+doctor_id
+
+integer	int4		
+patient_id
+
+integer	int4		
+assigned_at
+
+timestamp without time zone	timestamp		
+is_active
+
+boolean	bool		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+
+
+
+tabla de dcotro 
+
+
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+doctors
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+doctor_code
+
+character varying	varchar		
+specialty
+
+character varying	varchar		
+license_number
+
+character varying	varchar		
+hospital_name
+
+character varying	varchar		
+bio
+
+text	text		
+created_at
+
+timestamp without time zone	timestamp		
+is_verified
+
+boolean	bool		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+
+
+tabla de 
+
+emergy contacts
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+emergency_contacts
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+contact_name
+
+character varying	varchar		
+phone_number
+
+character varying	varchar		
+relationship
+
+character varying	varchar		
+is_primary
+
+boolean	bool		
+created_at
+
+timestamp without time zone	timestamp		
+updated_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+tabla
+entrdas amnuales 
+
+
+
+
+
+
+
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+manual_entries
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+symptoms
+
+text	text		
+manual_pef
+
+integer	int4		
+notes
+
+text	text		
+measured_at
+
+timestamp without time zone	timestamp		
+created_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+
+
+tabla de 
+notificaiotns
+
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+notifications
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+prediction_id
+
+integer	int4		
+notification_type
+
+character varying	varchar		
+title
+
+character varying	varchar		
+message
+
+text	text		
+is_read
+
+boolean	bool		
+sent_at
+
+timestamp without time zone	timestamp		
+read_at
+
+timestamp without time zone	timestamp		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+tala de lecutrs de espirometro
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+spirometer_readings
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+device_id
+
+integer	int4		
+pef
+
+integer	int4		
+fev1
+
+numeric	numeric		
+measured_at
+
+timestamp without time zone	timestamp		
+created_at
+
+timestamp without time zone	timestamp		
+symptoms
+
+text	text		
+notes
+
+text	text		
+aqi
+
+integer	int4		
+temperature
+
+numeric	numeric		
+humidity
+
+integer	int4		
+pollen_level
+
+text	text		
+location_name
+
+text	text		
+symptom_intensity
+
+character varying	varchar		
+spo2
+
+integer	int4		
+heart_rate
+
+integer	int4		
+steps
+
+integer	int4		
+sleep_hours
+
+double precision	float8		
+respiratory_rate
+
+integer	int4		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+tabla de 
+user profiles 
+
+
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+user_profiles
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+user_id
+
+integer	int4		
+gender
+
+character varying	varchar		
+age
+
+integer	int4		
+phone_number
+
+character varying	varchar		
+address_street
+
+character varying	varchar		
+address_city
+
+character varying	varchar		
+address_state
+
+character varying	varchar		
+address_zip
+
+character varying	varchar		
+health_insurance_number
+
+character varying	varchar		
+created_at
+
+timestamp without time zone	timestamp		
+updated_at
+
+timestamp without time zone	timestamp		
+first_name
+
+character varying	varchar		
+last_name
+
+character varying	varchar		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+
+tabla de 
+
+
+users
+
+
+
+
+
+Supabase
+PablitinGlez's Org
+Free
+
+asthma-predictor
+
+main
+Production
+
+
+Connect
+Feedback
+
+Search...
+
+K
+
+
+
+
+
+PablitinGlez
+
+Database
+Database Management
+Schema Visualizer
+Tables
+Functions
+Triggers
+Enumerated Types
+Extensions
+Indexes
+Publications
+Configuration
+Roles
+Policies
+Settings
+Platform
+Replication
+Backups
+Migrations
+Wrappers
+Database Webhooks
+Tools
+Security Advisor
+Performance Advisor
+Query Performance
+Database Tables
+users
+Filter columns
+
+New column
+Name	Data Type	Format	Nullable	
+id
+
+integer	int4		
+supabase_uid
+
+character varying	varchar		
+email
+
+character varying	varchar		
+full_name
+
+character varying	varchar		
+avatar_seed
+
+character varying	varchar		
+avatar_background
+
+character varying	varchar		
+avatar_background_type
+
+character varying	varchar		
+is_active
+
+boolean	bool		
+email_verified
+
+boolean	bool		
+created_at
+
+timestamp without time zone	timestamp		
+updated_at
+
+timestamp without time zone	timestamp		
+last_login_at
+
+timestamp without time zone	timestamp		
+role
+
+character varying	varchar		
+password
+
+character varying	varchar		
+Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
+
+

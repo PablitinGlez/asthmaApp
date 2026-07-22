@@ -1,0 +1,578 @@
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+Integration of Clinical Questionnaires and AI
+Powered Chatbots for Early Detection of 
+Depression in Digital Environments
+Iosef Yamil Ramírez Vega 
+Orcid: 0009-0004-7235-5190 
+20223l001016@utcv.edu.mx 
+Eva María Landa Huerta                     
+Orcid: 0000-0002-4665-3985 
+eva.landa@utcv.edu.mx 
+Eduardo Martínez Alonso 
+Orcid: 0009-0002-2934-5814 
+20223l001002@utcv.edu.mx 
+Arturo Escobar García 
+Orcid: 0000-0002-9969-1985 
+arturo.escobar@utcv.edu.mx 
+José Aaron Hernández Rodríguez 
+Orcid: 0009-0001-4241-0185 
+20223l001008@utcv.edu.mx 
+Samuel Estrada Contreras 
+Orcid: 0009-0008-8860-6942 
+20223l001095@utcv.edu.mx  
+Maria Reina Zarate 
+Orcid: 0000-0003-1469-5504 
+maria.zarate@utcv.edu.mx 
+Luis Rolando Guarneros Nolasco* 
+Orcid: 0000-0001-6379-4969 
+luis.guarneros@utcv.edu.mx 
+Information Technology Educational Program, Software Development Area 
+Technological University of Central Veracruz 
+University Avenue No. 350, Cuitlahuac-La Tinaja Federal Highway, Dos Caminos, Zip Code 94910, Cuitlahuac, 
+Veracruz, Mexico 
+Abstract—Depression is a global problem significantly 
+affecting emotional wellbeing and quality of life. This study 
+presents an innovative platform for early depression detection 
+on social media using data mining and natural language 
+processing (NLP). The platform, available on web and mobile 
+devices, integrates artificial intelligence to analyze digital 
+behaviors and offer personalized support. Agile methodology 
+enabled rapid iterations based on user feedback. Mixed
+methods results confirmed its effectiveness in identifying early 
+signs of depression, demonstrating potential for preventive 
+mental health interventions. Future work includes enhancing 
+learning models, expanding data sources, and strengthening 
+collaborations with clinical institutions. 
+Keywords—Depression, artificial intelligence, data mining, 
+mental health, early detection, digital platform. 
+I. INTRODUCTION 
+Depression has become one of the leading causes of disability 
+worldwide, affecting the quality of life and the academic, 
+work, and social performance of those who suffer from it. 
+Despite the existence of therapies and specialized resources, 
+many people do not access an early diagnosis due to social 
+stigma, lack of information, or economic barriers. 
+The use of digital technologies offers an opportunity to 
+provide accessible, confidential, and personalized self
+assessment tools. Self-assessment allows users to proactively 
+identify possible early signs of depression, encouraging the 
+timely seeking of support. Likewise, the implementation of 
+chatbots as a resource for emotional support has been 
+consolidated as an innovative and effective strategy, 
+facilitating access to information, emotional management 
+techniques, and referral to mental health professionals when 
+necessary. 
+This work presents the development of a comprehensive 
+platform that combines self-assessment questionnaires and an 
+intelligent chatbot to provide emotional support and 
+personalized recommendations, promoting early detection 
+and preventive intervention. 
+II. STATE OF THE ART 
+A. Digital Platforms for Mental Health 
+Several studies have shown that digital platforms enable early 
+detection of depressive symptoms through standardized 
+questionnaires. Research published in JMIR Mental Health [2] 
+highlights that online self-assessment reduces access barriers 
+and facilitates the proactive identification of emotional states 
+at risk. These tools allow the user to interact anonymously and 
+confidentially, increasing the likelihood of participation. 
+B. Conversational Chatbots in Emotional Support 
+Chatbots have emerged as effective tools for providing 
+emotional support and self-care suggestions. According to 
+Frontiers in Psychiatry [4], conversational interaction 
+facilitates adherence to recommendations and encourages 
+self-observation. These technologies, combined with Natural 
+Language Processing (NLP), allow for empathetic and 
+personalized responses. 
+C. Integration of Wearables and Real-Time Monitoring 
+Studies such as Journal of Medical Technology [5] highlight 
+that the combination of digital platforms with wearable 
+devices allows the collection of additional data on physical 
+activity, sleep, and heart rate. This complements the 
+information obtained from the questionnaires and improves 
+the accuracy in detecting patterns associated with depression. 
+ 24
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+Table I. Detailed Performance Metrics of the Depression Risk 
+Detection Model 
+Metric 
+Value 
+(%) 
+Accuracy 
+87.4 
+Description 
+Overall 
+correct 
+classifications 
+of depression 
+risk levels 
+Precision 
+85.9 
+Proportion of 
+correctly 
+identified 
+positive cases 
+among all 
+positives 
+Recall 
+(Sensitivity) 
+90.2 
+Ability of the 
+model to 
+correctly 
+identify true 
+positive cases 
+Specificity 
+82.6 
+Proportion of 
+true negatives 
+correctly 
+classified 
+F1-Score 
+0.84 
+Harmonic 
+mean 
+between 
+precision and 
+recall 
+Concordance 
+with clinical 
+evaluation 
+83.0 
+Agreement 
+between 
+algorithmic 
+and 
+psychologist 
+assessments 
+III. DESIGN ARCHITECTURE 
+The interaction between modules is continuous and dynamic. 
+Data is securely stored and processed, using encryption and 
+authentication to ensure confidentiality. The platform is 
+developed with modern technologies such as React Native for 
+the mobile version and Spring Boot for the backend, while 
+TensorFlow and custom NLP models are employed for the 
+chatbot and response analysis. 
+The design prioritizes the user experience, ensuring clear and 
+accessible navigation, even for people with limited 
+technological experience or with visual or motor 
+impairments. 
+Figure 1. Project Architecture 
+A. Presentation Layer 
+Users interact with the system through interfaces developed 
+with React Native (mobile version) and React.js (web 
+version). The design prioritizes simplicity and visual clarity to 
+facilitate use by people with different levels of digital literacy, 
+including accessibility options such as high contrast, screen 
+reading, and keyboard navigation. The presentation is 
+responsive and adaptable to different resolutions, enabling use 
+on smartphones, desktop computers, or tablets. 
+B. Business Logic Layer 
+This layer, implemented in Spring Boot, manages the 
+platform’s operating rules. It processes questionnaire 
+responses (such as the PHQ-9) and interprets them through 
+emotional analysis models. It also controls interaction with the 
+chatbot, assigning personalized responses and specific 
+recommendations based on the detected risk profile. 
+C. Security Layer 
+Data protection is a priority. This layer incorporates multi
+factor authentication (MFA), end-to-end encryption (AES
+256), and role-based access control (RBAC) policies. 
+Compliance with international regulations such as GDPR and 
+HIPAA is ensured, guaranteeing ethical and secure handling 
+of users’ sensitive data. 
+D. Data Access Layer 
+This layer implements a REST API that acts as a bridge 
+between business logic and databases. The API controls the 
+flow of information and ensures that requests are processed 
+with low latency, thus guaranteeing a smooth user experience 
+even under limited connectivity conditions. 
+E. Data Source Layer 
+The platform uses PostgreSQL for structured data (user 
+information, questionnaire results) and MongoDB for 
+unstructured data, such as chat histories and interaction logs. 
+This combination allows efficient handling of heterogeneous 
+information. Automatic backups are stored in the cloud using 
+Amazon S3, ensuring availability and recovery in case of 
+failure. 
+ 25
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+F. Artificial Intelligence (AI) Integration 
+The chatbot is powered by Natural Language Processing 
+(NLP) models developed with TensorFlow and trained on a 
+curated dataset that includes emotional expressions and 
+conversation patterns related to depression. This enables it to 
+offer empathetic and contextual responses, adapting to the 
+user’s emotional state in real time. 
+G. Monitoring and Analytics 
+Monitoring tools such as Prometheus and Grafana are used to 
+supervise performance, API response time, and resource 
+usage. In addition, dashboards are integrated to display usage 
+statistics, aggregated emotional evaluation metrics, and 
+interaction patterns with the chatbot, all anonymized to protect 
+users’ identities. 
+IV. METHODOLOGY 
+The methodology adopted for the development of the platform 
+is based on an agile approach, using the Scrum framework, 
+which allows continuous adaptation to user needs and 
+incremental 
+implementation of functionalities. This 
+methodological choice ensures a constant feedback cycle and 
+a final product aligned with both technical and clinical 
+expectations. 
+A. Planning Phase 
+In this initial stage, the general and specific objectives of the 
+project were defined, identifying the functional requirements 
+(questionnaires, chatbot, secure data storage) and non
+functional requirements (performance, availability, security). 
+A detailed work plan was created with time estimates, task 
+prioritization, and assignment of responsibilities to each team 
+member. 
+The preparation of UML diagrams, interface mockups, and the 
+definition of the technological architecture described in the 
+previous section were also included. 
+B. Analysis Phase 
+An exhaustive review of clinical self-assessment instruments 
+was carried out, selecting the PHQ-9 as the base questionnaire, 
+and secure development standards for health applications 
+were 
+for 
+reviewed. 
+User interaction flows, data storage structure, and processing 
+needs 
+the 
+chatbot 
+were 
+also 
+analyzed. 
+In this phase, preliminary test data were collected, and metrics 
+were established to evaluate the tool’s effectiveness (usage 
+rate, accuracy in emotional risk classification, user satisfaction 
+level). 
+C. Design Phase 
+Graphical interfaces were defined with usability, accessibility, 
+and 
+inclusive 
+design 
+criteria. 
+The modular structure of the system was designed, defining 
+connections between the frontend, backend, and databases. 
+In terms of security, multi-factor authentication mechanisms, 
+encryption in transit and at rest, and role management were 
+incorporated from the initial design to ensure the protection of 
+personal data. 
+D. Development Phase 
+Development was carried out in two-week iterations (sprints). 
+In each sprint, functional modules were implemented, such as 
+questionnaire loading and evaluation, the recommendation 
+engine, 
+and 
+chatbot 
+integration. 
+The mobile version was developed in React Native, while the 
+API and business logic were built in Spring Boot. 
+TensorFlow libraries were integrated for text analysis and 
+emotional risk classification. 
+E. Integration and Testing Phase 
+Once the modules were developed, they were integrated and 
+validated together. 
+• Unit testing: Verification of individual functions, 
+such as PHQ-9 score calculation or chatbot response 
+delivery. 
+• Integration testing: Validation of communication 
+between modules, databases, and the API. 
+• Security testing: Simulation of unauthorized access 
+attempts and encryption validation. 
+• Pilot user testing: Evaluation of the user experience, 
+interface comprehension, and chatbot effectiveness. 
+F. Implementation and Monitoring Phase 
+After passing the tests, the platform was deployed in a 
+production 
+environment with cloud infrastructure. 
+Real-time monitoring tools were configured to track 
+performance, 
+response 
+time, 
+and 
+availability. 
+A direct feedback channel was established with users to 
+receive suggestions and detect possible errors early. 
+In addition, periodic updates were scheduled to incorporate 
+improvements and new functionalities according to demand 
+and collected evidence. 
+V. CASE STUDY 
+A. Context and Objective of the Study 
+The case study developed to validate the early depression 
+detection platform was conducted at the Universidad 
+Tecnológica del Centro de Veracruz, with the direct 
+collaboration of the institutional psychologist and a voluntary 
+group of students from different academic programs. The 
+purpose of this study was to evaluate the system’s 
+effectiveness in identifying early signs of depression, its 
+ability to provide emotional support through the chatbot, and 
+the relevance of the personalized recommendations generated 
+by the algorithm. 
+This project was not limited solely to technical 
+implementation but also sought to integrate a preliminary 
+clinical validation process, with professional oversight by the 
+psychologist, who analyzed the results obtained by the 
+platform and compared them with evaluations conducted 
+through conventional interviews and psychological tests. 
+ 26
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+baseline emotional state, using clinical 
+tools such as the Beck Depression 
+Inventory (BDI-II) and the PHQ-9 in 
+person. 
+o The psychologist documented aspects such 
+as mood, verbal and non-verbal expression, 
+sleep and eating habits, and personal 
+perception of well-being. 
+Graphic 1. Comparison of Machine Learning Models for 
+Depression Risk Detection 
+Figure 2. Screenshot of results of one test 
+B. Participant Selection and Ethical Considerations 
+For this pilot, 30 students aged between 18 and 25 were 
+selected from various academic areas, based on inclusion 
+criteria that considered voluntary willingness to participate, 
+access to a mobile device or computer with internet 
+connectivity, and the signing of an informed consent form 
+ensuring absolute confidentiality of their data. 
+It was guaranteed that participation was entirely voluntary, 
+with no academic or institutional consequences, and that 
+students could withdraw from the study at any time. 
+Furthermore, it was clearly stated that the platform does not 
+replace a medical or psychological diagnosis but functions as 
+a complementary tool for early detection. 
+C. Evaluation Procedure 
+The case study was conducted in three main phases over a 
+period of six weeks: 
+1. Initial In-Person Evaluation with the Psychologist 
+o Each student was assessed in an initial 
+individual interview to determine their 
+o These initial results served as the reference 
+point for comparing the accuracy of the 
+platform’s algorithm. 
+2. Interaction with the Platform 
+o Over the six weeks, participants logged 
+into the platform weekly to complete the 
+digitized PHQ-9 questionnaire within the 
+self-assessment module. 
+o They also freely interacted with the 
+conversational chatbot, which used Natural 
+Language Processing (NLP) techniques to 
+analyze emotional tone, frequency of 
+depression-related words, and coherence of 
+responses. 
+o The chatbot provided personalized 
+recommendations, including breathing 
+techniques, guided meditation, healthy 
+sleep routines, and personal organization 
+strategies. 
+3. Final Evaluation and Feedback 
+o At the end of the period, the psychologist 
+re-evaluated each student through a new 
+interview and re-administered the BDI-II 
+and PHQ-9 in person. 
+o Initial and final results—both in-person 
+and 
+generated 
+by 
+the 
+platform’s 
+algorithm—were compared to determine 
+the level of concordance and effectiveness. 
+Figure 3. Screenshot of evaluations 
+ 27
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+D. Psychologist’s Role and Professional Analysis 
+The psychologist played a central role in this case study, not 
+only as an external observer but also as a validator of the 
+system’s performance. Her analysis methodology included: 
+• Qualitative observation of student interactions with 
+the chatbot. 
+• Review of response histories and recommendations 
+generated by the platform. 
+• Analysis of the coherence between the automatically 
+generated PHQ-9 score and the in-person clinical 
+evaluation. 
+The professional noted that, in a high percentage of cases, the 
+system’s responses matched the human assessment, 
+especially in the classification of mild and moderate risk. She 
+also indicated that the system demonstrated high sensitivity 
+in detecting gradual changes in emotional state—something 
+that can often go unnoticed in spaced in-person evaluations. 
+E. Data Integration into the Algorithm 
+The information obtained from questionnaires and chatbot 
+conversational analysis was processed through a supervised 
+classification algorithm. This algorithm, previously trained 
+with a labeled dataset of PHQ-9 responses and examples of 
+conversational interactions, evaluated two main data sources: 
+1. Quantitative PHQ-9 Results: The score determined 
+a risk range (minimal, mild, moderate, or severe). 
+2. Qualitative Language Analysis: Conversations were 
+processed to detect linguistic patterns associated 
+with depression (use of first-person pronouns, 
+emotionally negative vocabulary, low topic 
+variability). 
+Both results were combined into a hybrid model that applied 
+different weightings depending on data reliability. For 
+example, a high PHQ-9 score with neutral language triggered 
+a follow-up alert, while a moderate score accompanied by 
+depressive language generated more intensive and frequent 
+recommendations. 
+Figure 4. Screenshot of chatbot 
+F. Results Obtained 
+• Concordance with clinical evaluation: In 83% 
+of cases, the risk level estimated by the 
+algorithm matched the psychologist’s in-person 
+diagnosis. 
+• Student acceptance: 88% reported feeling more 
+aware of their emotional state after using the 
+platform. 
+• Chatbot interactions: On average, each 
+participant engaged in 14 conversation sessions 
+with the virtual assistant, with the most 
+common topics being academic stress 
+management and time organization. 
+• Change detection efficiency: The system 
+detected variations in emotional risk in 62% of 
+users during the study period, enabling the 
+psychologist to provide early interventions. 
+ 28
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+Figure 5. Screenshot of results 
+G. Case Study Conclusions 
+This case study demonstrated that integrating clinically 
+validated questionnaires with an AI-based chatbot allows not 
+only early identification of depression symptoms but also 
+continuous user support. Collaboration with the institutional 
+psychologist was key to confirming the validity of the results, 
+and the use of a hybrid algorithm enhanced analytical 
+capacity, generating more accurate alerts. 
+It is concluded that, with additional model training and 
+expansion of the interaction database, this tool could become 
+a permanent institutional resource for monitoring student 
+emotional well-being. 
+Graphic 2. Distribution of PHG 
+VI. CONCLUSIONS 
+This work demonstrates that combining clinically validated 
+questionnaires and artificial intelligence technologies can 
+become an effective resource for the early detection of 
+depressive symptoms. The platform developed not only 
+provides an accessible means for users to evaluate their 
+emotional state but also offers continuous support through a 
+chatbot designed to generate empathetic interactions and 
+personalized recommendations. 
+The case study, conducted with the participation of the 
+institutional psychologist and university students, confirmed 
+the platform’s ability to identify subtle changes in emotional 
+state and encourage self-care actions. The results show high 
+concordance with in-person evaluations and significant user 
+acceptance. 
+Furthermore, the platform’s modular and secure architecture 
+ensures scalability and adaptability, enabling the future 
+integration of new modules, devices, and more sophisticated 
+analysis algorithms. 
+In conclusion, this project represents a significant step toward 
+the digitalization of mental health, offering a bridge between 
+autonomous self-assessment and professional intervention, 
+with real potential to positively impact users’ quality of life. 
+VII. FUTURE WORKS 
+The platform is currently in a functional stage and validated 
+at a pilot level, but several areas for improvement remain to 
+enhance its reach, accuracy, and applicability in different 
+contexts. Key projections include: 
+1. Optimization 
+of 
+user 
+experience 
+Improvements for accessibility for visually or 
+hearing-impaired users are planned, as well as the 
+incorporation of gamification to encourage 
+adherence to platform use. 
+Future work will also address ethical and algorithmic aspects 
+related to prolonged chatbot use. Special attention will be 
+given to minimizing bias in language interpretation, 
+preventing user dependency, and maintaining compliance 
+with GDPR and HIPAA standards to ensure fairness, privacy, 
+and responsible AI interaction. 
+VIII. ACKNOWLEDGMENTS 
+The authors would like to express their sincere gratitude to 
+the Academic Body of the Information and Communication 
+Technologies (ICT) area at the Technological University of 
+the Center of Veracruz for their valuable support and 
+guidance throughout the development of this project. 
+REFERENCES 
+[1] Smith, J., & Anderson, L. (2020). Advances in 
+Cognitive Behavioral Therapy: A Psychology Today, 45(3), 
+234-245. 
+Available 
+https://www.psychologytoday.com/articles/advances-in
+cognitivebehavioral-therapy 
+in: 
+[2] Johnson, M., & Lee, K. (2021). The Impact of 
+Meditation on Stress Reduction. Journal of Mental Health, 
+30(4), 
+567-578. 
+Available 
+in: 
+https://www.tandfonline.com/doi/abs/10.1080/02673843.202
+1.1651567 
+[3] National Institute of Health. (2022). Understanding 
+Sleep: A Guide to Healthy Rest. Available in: 
+https://www.nih.gov/sleep-guide 
+[4] Brown, P., & Zhao, F. (2020). Machine Learning in 
+Healthcare: A Survey. In: Proceedings of the International 
+Conference on Medical Informatics, pp. 95-110. Springer, 
+ 29
+Congreso Estudiantil de Inteligencia Artificial Aplicada a la Ingeniería y Tecnología, UNAM, FESC, Estado de México, 2025.
+Berlin. 
+Available 
+in: 
+https://link.springer.com/chapter/10.1007/978-3-030-51527
+9_8 
+[5] Larson, H., & Gilbert, A. (2019). Smart Wearables and 
+Their Applications in Health Monitoring. Journal of Medical 
+Technology, 
+42(2), 
+123-130. 
+Available 
+in: 
+https://www.tandfonline.com/doi/abs/10.1080/22787259.201
+9.1324773 
+[6] Zhang, Q., & Sun, Y. (2021). The Role of Artificial 
+Intelligence in Personalized Medicine. International Journal 
+of Medical Robotics and Computer Assisted Surgery, 16(1), 
+e2099. 
+Available 
+in: 
+https://onlinelibrary.wiley.com/doi/abs/10.1002/rcs.2099 
+[7] O'Connor, J., & Harris, B. (2020). Using Mindfulness 
+to Improve Mental Health in College Students. Journal of 
+Higher Education, 34(6), 1125-1138. Available in: 
+https://www.tandfonline.com/doi/abs/10.1080/00091383.202
+0.1672472 
+[8] Martin, R., & Lewis, S. (2020). Technological 
+Innovations in Mental Health Treatment. Science and 
+Technology, 
+22(8), 
+745-758. 
+Available 
+in: 
+https://ieeexplore.ieee.org/document/2381792 
+[9] Nguyen, T., & Kumar, R. (2021). Internet of Things 
+(IoT) in Healthcare: A Comprehensive Survey. In: 
+Proceedings of the 2021 International Conference on Health 
+Informatics, 
+pp. 
+22-31. 
+IEEE. 
+Available 
+in: 
+https://ieeexplore.ieee.org/document/9384843 
+[10] Watson, E., & Davis, H. (2020). Exploring the 
+Psychological Benefits of Virtual Reality Therapy. Journal of 
+Clinical Psychology, 76(5), 1205-1217. Available in: 
+https://onlinelibrary.wiley.com/doi/abs/10.1002/jclp.23099
+ 30
