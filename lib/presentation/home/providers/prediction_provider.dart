@@ -87,65 +87,51 @@ class PredictionNotifier extends Notifier<PredictionState> {
 
     final int personalBest = profile?.personalBestPef ?? 500;
     
-    // 📊 PREPARAR PAYLOAD (Simulado o Real)
+    // 📊 PREPARAR PAYLOAD (Simulado o Real - Únicamente 5 variables clínicas)
     Map<String, dynamic> payload;
 
     if (state.isSimulationActive && state.simulationData != null) {
-      payload = Map<String, dynamic>.from(state.simulationData!);
-      // Convertimos el pef_percent del simulador a pef_porcentaje para el backend
-      if (payload.containsKey('pef_percent')) {
-        payload['pef_porcentaje'] = payload['pef_percent'];
-        payload.remove('pef_percent');
-      }
+      final sim = Map<String, dynamic>.from(state.simulationData!);
+      final double pefPorc = (sim['pef_porcentaje'] ?? sim['pef_percent'] ?? 100.0).toDouble();
+
+      payload = {
+        'spo2': (sim['spo2'] ?? 98.0).toDouble(),
+        'bpm': (sim['bpm'] ?? 75.0).toDouble(),
+        'pasos': (sim['pasos'] ?? 0.0).toDouble(),
+        'pef_porcentaje': pefPorc,
+        'horas_sueno': (sim['horas_sueno'] ?? 8.0).toDouble(),
+      };
     } else {
-      // Si no hay datos críticos reales y no estamos simulando, abortamos
-      if (watch.heartRate == null && env.aqi == null) return;
-      
+      // Tomamos la última lectura de PEF registrada en el historial (o personalBest si no hay)
       final latestMeasurement = historyState?.allItems.firstOrNull;
       final double pefValue = latestMeasurement?.pef?.toDouble() ?? personalBest.toDouble();
-      final double pefPorcentaje = (pefValue / personalBest) * 100;
+      final double pefPorcentaje = (personalBest > 0) ? (pefValue / personalBest) * 100 : 100.0;
 
+      // Valores de respaldo inteligentes si el smartwatch no está conectado
       payload = {
         'spo2': (watch.spO2 ?? 98).toDouble(),
         'bpm': (watch.heartRate ?? 75).toDouble(),
         'pasos': (watch.steps ?? 0).toDouble(),
-        'horas_sueno': (watch.sleepHours ?? 8.0).toDouble(),
         'pef_porcentaje': pefPorcentaje,
-        'aqi': (env.aqi ?? 50).toDouble(),
-        'humedad': (env.humidity ?? 50).toDouble(),
-        'temperatura': (env.temperature ?? 22.0).toDouble(),
+        'horas_sueno': (watch.sleepHours ?? 8.0).toDouble(),
       };
     }
 
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      print('--- 🧠 IA: INICIO DE PREDICCIÓN ---');
+      print('--- 🧠 IA: INICIO DE PREDICCIÓN (5 VARIABLES) ---');
       print('🚀 Modo Simulación: ${state.isSimulationActive}');
       
       if (!state.isSimulationActive) {
-        print('📊 Datos del Smartwatch:');
+        print('📊 Datos del Smartwatch y Pulmones (5 Variables):');
         print('   - SpO2: ${watch.spO2 != null ? "${watch.spO2}% (REAL)" : "98% (DEFAULT)"}');
         print('   - BPM: ${watch.heartRate != null ? "${watch.heartRate} (REAL)" : "75 (DEFAULT)"}');
         print('   - Pasos: ${watch.steps != null ? "${watch.steps} (REAL)" : "0 (DEFAULT)"}');
         print('   - Sueño: ${watch.sleepHours != null ? "${watch.sleepHours}h (REAL)" : "8.0h (DEFAULT)"}');
-        
-        print('🌍 Datos Ambientales:');
-        print('   - AQI: ${env.aqi != null ? "${env.aqi} (REAL)" : "50 (DEFAULT)"}');
-        print('   - Humedad: ${env.humidity != null ? "${env.humidity}% (REAL)" : "50% (DEFAULT)"}');
-        print('   - Temperatura: ${env.temperature != null ? "${env.temperature}°C (REAL)" : "22.0°C (DEFAULT)"}');
-        
-        print('📈 Pulmones (PEF):');
-        print('   - Personal Best: $personalBest');
-        final latestMeasurement = historyState?.allItems.firstOrNull;
-        if (latestMeasurement != null) {
-          print('   - Último PEF: ${latestMeasurement.pef} (REAL - ${latestMeasurement.measuredAt})');
-        } else {
-          print('   - Último PEF: $personalBest (DEFAULT - No hay historial)');
-        }
-        print('   - PEF % Calculado: ${payload['pef_porcentaje']?.toStringAsFixed(1)}%');
+        print('   - PEF %: ${payload['pef_porcentaje']?.toStringAsFixed(1)}%');
       } else {
-        print('🧪 Payload SIMULADO: $payload');
+        print('🧪 Payload SIMULADO (5 Variables): $payload');
       }
 
       final dio = ref.read(dioClientProvider);

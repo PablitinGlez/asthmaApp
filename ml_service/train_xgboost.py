@@ -27,14 +27,14 @@ import time
 start_time = time.time()
 
 # =============================================================================
-# CONFIGURACION FIJA (misma que Random Forest, Decision Tree y Gradient
-# Boosting, para que la comparacion entre modelos sea justa)
+# CONFIGURACION FINAL DE XGBOOST (ya decidida, no se vuelve a tocar)
 # =============================================================================
 # - Particion       : 80% entrenamiento / 20% prueba
-# - Validacion       : CV estratificada de 10 folds (chequeo de estabilidad)
-# - Variables        : 5 (spo2, bpm, pasos, pef_porcentaje, horas_sueno)
+# - Validacion       : CV estratificada de 3 folds (propia de XGBoost, gano
+#                       sobre 5 y 10 en la Fase 1)
+# - Variables        : 5 (resultado de la eliminacion secuencial, mismo
+#                       conjunto que gano con Random Forest)
 # - Umbral clinico   : 40%
-# - Modelo           : XGBoost
 
 DATASET_PATH = r"C:\Users\gonza\Downloads\dataset_hibrido_8020_v5.csv"
 MODELS_DIR   = "ml_service/models"
@@ -46,7 +46,7 @@ FEATURES = ["spo2", "bpm", "pasos", "pef_porcentaje", "horas_sueno"]
 TARGET = "crisis"
 
 TEST_SIZE = 0.20
-N_FOLDS   = 10
+N_FOLDS   = 3
 THRESHOLD = 0.40
 PARTICION_LABEL = f"{int(round((1 - TEST_SIZE) * 100))}-{int(round(TEST_SIZE * 100))}"
 NOMBRE_MODELO = "XGBoost"
@@ -58,7 +58,7 @@ X = df[FEATURES]
 y = df[TARGET]
 
 # =============================================================================
-# PASO 1: SPLIT TRAIN-TEST (80/20) - misma semilla que el resto de los modelos
+# PASO 1: SPLIT TRAIN-TEST (80/20)
 # =============================================================================
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -69,13 +69,6 @@ print(f"\nModelo: {NOMBRE_MODELO}")
 print(f"Particion {PARTICION_LABEL} | Train: {len(X_train):,} | Test: {len(X_test):,}")
 print(f"Variables usadas ({len(FEATURES)}): {FEATURES}")
 
-# =============================================================================
-# FUNCION AUXILIAR: balancear (oversampling de la clase minoritaria)
-# =============================================================================
-# Misma logica que en Random Forest / Decision Tree / Gradient Boosting: puro
-# oversampling con reemplazo, sin ruido gaussiano. Se mantiene igual en todos
-# los modelos para que la comparacion sea metodologicamente justa.
-
 def balancear(df_in):
     sanos  = df_in[df_in[TARGET] == 0]
     crisis = df_in[df_in[TARGET] == 1]
@@ -83,7 +76,7 @@ def balancear(df_in):
     return pd.concat([sanos, crisis_over], axis=0).sample(frac=1, random_state=42)
 
 # =============================================================================
-# PASO 2: VALIDACION CRUZADA (CV=10) - chequeo de estabilidad del modelo
+# PASO 2: VALIDACION CRUZADA (CV=3) - chequeo de estabilidad del modelo
 # =============================================================================
 
 print(f"\nEjecutando validacion cruzada estratificada ({N_FOLDS} folds) sobre el entrenamiento...")
@@ -100,14 +93,8 @@ for fold, (train_idx, val_idx) in enumerate(cv.split(X_train, y_train), 1):
     y_tr_fold_final = fold_train_over[TARGET]
 
     fold_model = XGBClassifier(
-        n_estimators=200,
-        max_depth=4,
-        subsample=0.8,
-        colsample_bytree=0.8,
-        min_child_weight=5,
-        learning_rate=0.1,
-        random_state=42,
-        n_jobs=-1,
+        n_estimators=200, max_depth=4, subsample=0.8, colsample_bytree=0.8,
+        min_child_weight=5, learning_rate=0.1, random_state=42, n_jobs=-1,
         eval_metric="logloss",
     )
     fold_model.fit(X_tr_fold_final, y_tr_fold_final)
@@ -146,17 +133,11 @@ print(f"Set de prueba (dist. original)  : {len(X_test):,} registros")
 # PASO 4: ENTRENAMIENTO DEL MODELO FINAL (XGBoost)
 # =============================================================================
 
-print(f"\nEntrenando modelo {NOMBRE_MODELO} final...")
+print(f"\nEntrenando modelo {NOMBRE_MODELO} final (modelo oficial)...")
 
 model = XGBClassifier(
-    n_estimators=200,
-    max_depth=4,
-    subsample=0.8,
-    colsample_bytree=0.8,
-    min_child_weight=5,
-    learning_rate=0.1,
-    random_state=42,
-    n_jobs=-1,
+    n_estimators=200, max_depth=4, subsample=0.8, colsample_bytree=0.8,
+    min_child_weight=5, learning_rate=0.1, random_state=42, n_jobs=-1,
     eval_metric="logloss",
 )
 model.fit(X_train_final, y_train_final)
@@ -190,6 +171,10 @@ print("=" * 55)
 print("\nReporte de clasificacion (set de prueba):")
 print(classification_report(y_test, y_pred, target_names=["Sano (0)", "Crisis (1)"]))
 
+# =============================================================================
+# PASO 6: MATRIZ DE CONFUSION (unica, del modelo final) - consola + imagen
+# =============================================================================
+
 cm = confusion_matrix(y_test, y_pred)
 print("Matriz de confusion:")
 print(f"                    Predicho Sano   Predicho Crisis")
@@ -198,10 +183,6 @@ print(f"  Real Crisis       {cm[1][0]:<15}  {cm[1][1]}")
 print(f"\n  Crisis detectadas : {cm[1][1]} de {cm[1][0] + cm[1][1]}")
 print(f"  Crisis perdidas   : {cm[1][0]}")
 print(f"  Falsas alarmas    : {cm[0][1]}")
-
-# =============================================================================
-# PASO 6: GUARDAR LA MATRIZ DE CONFUSION COMO IMAGEN
-# =============================================================================
 
 plt.figure(figsize=(6, 5))
 sns.heatmap(cm, annot=True, fmt="d", cmap="YlOrRd", cbar=False,
@@ -242,7 +223,7 @@ print(f"  Umbral optimo por F1 (matematico) : {mejor_umbral:.4f}")
 print(f"  Umbral clinico elegido             : {THRESHOLD:.4f}")
 
 # =============================================================================
-# PASO 9: EXPORTAR EL MODELO
+# PASO 9: EXPORTAR EL MODELO OFICIAL
 # =============================================================================
 
 MODEL_PATH = os.path.join(MODELS_DIR, "xgboost_asma.pkl")

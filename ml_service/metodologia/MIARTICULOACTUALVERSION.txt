@@ -1,0 +1,311 @@
+AsmaSync: Sistema Inteligente de Monitoreo y Predicción de Crisis Asmáticas con Soporte de Enfermería 
+
+
+Eliezer Isai Cerecedo Florencia
+20223l001001@utcv.edu.mx
+ORCID: 0009-0000-0000-0001
+Juan Pablo Gonzalez Cuevas
+20223l001002@utcv.edu.mx
+ORCID: 0009-0000-0000-0002
+Emmanuel Pena Ruiz
+20223l001003@utcv.edu.mx
+ORCID: 0009-0000-0000-0003
+Jocelyn Serrano Montano
+20223l001004@utcv.edu.mx
+ORCID: 0009-0000-0000-0004
+Eva Maria Landa Huerta (Asesora)
+eva.landa@utcv.edu.mx
+ORCID: 0002-4665-3985
+Ingenieria en Desarrollo y Gestion de Software
+Universidad Tecnologica del Centro de Veracruz
+Cuitlahuac, Veracruz, Mexico
+
+
+
+
+
+
+Resumen— El asma es una enfermedad respiratoria crónica que afecta a 8.5 millones de mexicanos, representando el 7.8% de la población nacional según datos del INEGI y la Secretaría de Salud. Las crisis asmáticas no controladas generan hospitalizaciones recurrentes, ausentismo laboral y escolar, además de un impacto económico significativo en el sistema de salud. El presente proyecto propone el desarrollo de AsmaSync, un sistema inteligente multiplataforma que integra sensores portátiles, algoritmos de machine learning y un módulo de gestión de enfermería para el monitoreo en tiempo real de variables clínicas y ambientales, con capacidad de detectar y alertar sobre crisis asmáticas en tiempo real. El sistema busca reducir hospitalizaciones, mejorar la adherencia al tratamiento y empoderar tanto a pacientes como al personal de enfermería en el manejo preventivo del asma mediante tecnología digital, inteligencia artificial y telemedicina
+Keywords— asma bronquial, machine learning, monitoreo en tiempo real, predicción de crisis, sensores portátiles.
+Abstract— Asthma is a chronic respiratory disease affecting 8.5 million Mexicans, representing 7.8% of the national population according to INEGI and the Ministry of Health. Uncontrolled asthmatic crises generate recurrent hospitalizations, workplace and school absenteeism, and a significant economic burden on the healthcare system. This project proposes the development of AsmaSync, an intelligent multiplatform system that integrates wearable sensors, machine learning algorithms, and a nursing management module for real-time monitoring of clinical and environmental variables, capable of detecting and alerting about asthmatic crises in real time. The system aims to reduce hospitalizations, improve treatment adherence, and empower both patients and nursing staff in the preventive management of asthma through digital technology, artificial intelligence, and telemedicine.
+Keywords— bronchial asthma, machine learning, real-time monitoring, crisis prediction, wearable sensors.
+INTRODUCCIÓN
+El asma bronquial constituye uno de los principales problemas de salud pública a nivel mundial y nacional. En México, aproximadamente 8.5 millones de personas viven con esta enfermedad respiratoria crónica, lo que representa entre el 5% y 12% de la población según diferentes estimaciones oficiales [1]. Esta condición afecta la calidad de vida de quienes la padecen y representa un desafío significativo para el sistema de salud debido a las hospitalizaciones de emergencia, ausentismo laboral y los costos del tratamiento de crisis agudas.
+A pesar de que el asma es controlable con tratamiento adecuado, factores como la baja adherencia terapéutica, el insuficiente monitoreo continuo y la falta de educación para el autocuidado contribuyen a crisis recurrentes evitables. En México persisten problemas estructurales como el diagnostico tardío y la limitada educación para el autocuidado, donde el 70% del costo del manejo del asma se deriva de las exacerbaciones agudas [2].
+El desarrollo tecnológico actual ofrece oportunidades para transformar el manejo del asma. La integración de sensores portátiles, aplicaciones móviles, algoritmos de inteligencia artificial y plataformas de telemedicina permite sistemas inteligentes capaces de monitorear en tiempo real, predecir crisis con antelación y facilitar la intervención oportuna del personal de salud [3].
+AsmaSync surge de la necesidad de una solución integral que anticipe crisis asmáticas mediante análisis predictivo, involucre activamente al personal de enfermería como gestor del cuidado y empodere al paciente en el manejo de su enfermedad, representando una convergencia entre tecnología digital, ciencia de datos y cuidado humano profesional de enfermería.
+
+
+
+
+
+
+
+
+Defunciones por enfermedades pulmonares obstructivas crónicas
+TRABAJOS RELACIONADOS
+
+Ampliar los works
+La integración de tecnologías digitales para el monitoreo y predicción del asma ha sido objeto de numerosas investigaciones recientes. A continuación se presentan los trabajos más relevantes que fundamentan el desarrollo de AsmaSync.
+A.  Aplicaciones de Monitoreo Respiratorio
+mBreath [4] propone un sistema de monitoreo del asma con aplicación Android, medidor PEF Bluetooth, portal web para médicos y alertas meteorológicas. AirBuddy [5] presenta una app móvil para niños asmáticos con sensores IoT de calidad del aire interior, demostrando que las herramientas mHealth pueden ser efectivas sin gamificación excesiva. El ecosistema eHME [6] ofreció monitoreo continuo de asma y calidad del aire integrando sensores fisiológicos e IoT con backend en nube, demostrando factibilidad de monitoreo combinado para alertas clínicas en tiempo real.
+En la misma línea, PEAK-mAAP [13] ofrece una aplicación mHealth co-diseñada con adolescentes que incorpora gamificación, semáforo de riesgo simplificado y métricas de FEM mediante oxímetro Bluetooth, alcanzando una puntuación de usabilidad (SUS) de 83/100. Una revisión sistemática de 22 estudios de autogestión digital del asma [14] confirmó mejoras en el control del asma y la adherencia, especialmente en aplicaciones con retroalimentación personalizada y comunicación con profesionales de salud, señalando como área de oportunidad el desarrollo de sistemas con capacidad predictiva e integración de enfermería. Complementariamente, un marco conceptual para la integración de tecnologías digitales en el manejo del asma [15] propone una arquitectura en capas que conecta sensores, aplicación móvil y panel clínico, reportando reducciones de hospitalización de entre 20% y 40% en estudios piloto.
+B. Modelos Predictivos con Machine Learning
+Budiarto et al. [7] desarrollaron modelos de predicción de ataques asmáticos con registros electrónicos de salud, confirmando la viabilidad de anticipar exacerbaciones con ventanas de tiempo clínicamente útiles. Molfino et al. [8] identificaron que Random Forest y XGBoost, al combinar bioseñales y datos ambientales, ofrecen mejor desempeño que modelos con únicamente variables clínicas, con AUC superiores al 0.87 [9].
+Xiong et al. [10] confirman en su revisión sistemática que los modelos de ML para predicción de exacerbaciones alcanzan precisiones prometedoras cuando integran datos heterogéneos de fuentes clínicas y ambientales. La interpretabilidad mediante valores SHAP permite además identificar las variables de mayor impacto en cada paciente.
+Una revisión sistemática y meta-análisis de algoritmos de aprendizaje automático aplicados a mHealth para asma [16] reportó valores AUC-ROC de 0.80 a 0.96, con XGBoost y LSTM como los modelos de mejor desempeño, aunque solo el 18% de los estudios incluidos realizó validación externa. En esta misma dirección, un modelo predictivo basado en XGBoost con interpretabilidad mediante valores SHAP [17] alcanzó un AUC-ROC de 0.964, sensibilidad del 88% y especificidad del 91% al predecir crisis asmáticas en ventanas de 24 a 72 horas, identificando el historial de crisis previas, la frecuencia de uso de SABA y el PEF ratio como las variables más predictivas; un enfoque técnico directamente alineado con el modelo predictivo propuesto para AsmaSync.
+C. Sensores Portátiles e IoT
+Un smartwatch con sensores de partículas, espirómetro Bluetooth y acelerómetro [11] logro precisión del 80% en tiempo real con 5 segundos de latencia para autogestión pediátrica. El sensor IoT portátil de aldehídos para asma pediátrica [12] mide exposición continua a formaldehido ambiental transmitiendo vía Bluetooth Low Energy con autonomía superior a 7 días.
+La integración de sensores de calidad del aire interior con medidores digitales de flujo espiratorio máximo [18] mejoró en 61% la precisión de un modelo predictivo de deterioro respiratorio frente al uso exclusivo de datos de calidad del aire exterior, alcanzando un R² de 0.87 al combinar mediciones interiores, exteriores y síntomas clínicos; un hallazgo que refuerza la relevancia de incorporar sensores ambientales interiores en la arquitectura de AsmaSync.
+D. Adherencia Terapéutica y Retroalimentación al Paciente
+El sistema de inhalador digital CONNECT1 [19], que integra un sensor electrónico adherido al dispositivo, una aplicación móvil para pacientes y un portal web para proveedores de salud, incrementó la adherencia absoluta al tratamiento controlador en 12% frente al grupo control mediante recordatorios y retroalimentación en tiempo real. De forma complementaria, una aplicación móvil con sensor Bluetooth adherido al inhalador de rescate [20] permitió reducir en 50% el uso semanal de agonistas beta-2 de acción corta (SABA) a los seis meses, con una precisión de seguimiento superior al autorregistro tradicional (concordancia κ=0.72 frente a κ=0.41). Ambos trabajos coinciden en señalar como área de oportunidad la integración con algoritmos predictivos y paneles de enfermería para intervención proactiva, brecha que AsmaSync busca cerrar de manera integral.
+Con base en los trabajos revisados, AsmaSync busca cubrir las siguientes brechas: la mayoría de soluciones carecen de predicción temprana integrando variables clínicas y ambientales; pocas incluyen participación activa de enfermería; ninguna combina de forma simultánea monitoreo de adherencia, predicción proactiva y panel de enfermería [13]-[20]; y no existen propuestas adaptadas al contexto mexicano que combinen telemedicina, IA y dispositivos IoT de bajo costo.
+TABLA I . Matriz comparativa de las soluciones tecnológicas basadas en sensores portátiles e IoT
+Propuesta / Estudio	Tecnología y Dispositivos	Métricas y Rendimiento	Enfoque y Población	Brechas Cubiertas por AsmaSync
+Smartwatch + Espirómetro [11]	Smartwatch con sensores de partículas, espirómetro Bluetooth y acelerómetro.	Precisión del 80% en tiempo real.
+
+Latencia de 5 segundos.	Autogestión en pacientes pediátricos.	Carece de una predicción temprana que integre de manera robusta variables clínicas y ambientales complejas.
+Sensor de Aldehídos IoT [12]	Sensor portátil de aldehídos con conectividad Bluetooth Low Energy (BLE).	Medición continua de formaldehído ambiental.
+
+Autonomía de batería > 7 días.	Monitoreo ambiental para asma pediátrica.	No integra el seguimiento activo del personal de enfermería ni el contexto clínico integral del paciente.
+Sensor de PM Interior [18]	Sensor SDS011 (PM2.5/PM10) + peak flow meter digital	R² = 0.87 combinando PM interior/exterior; RMSE mejoró de 2.42 a 1.36 L/min	Modelo predictivo de deterioro respiratorio	No integra predicción de crisis clínicas ni participación de enfermería; solo modela deterioro de PEF
+AsmaSync
+(Tu Propuesta)	Dispositivos IoT de bajo costo, telemedicina e Inteligencia Artificial.	Alta capacidad predictiva mediante la fusión inteligente de datos clínicos y ambientales históricos y en tiempo real.	Adaptado al contexto mexicano (clínico y socioeconómico); involucra activamente al personal de enfermería.	Solución Integral: Une la IA predictiva, el bajo costo de implementación, la participación activa de enfermería y la pertinencia cultural y geográfica local.
+
+DESCRIPCIÓN DE LA ARQUITECTURA
+Para el desarrollo de AsmaSync se diseñó una arquitectura de software multicapa, modular y escalable, que garantiza el flujo seguro de información desde la captura de señales fisiológicas del paciente hasta su procesamiento analítico y almacenamiento. La arquitectura se organiza en cuatro capas principales, ilustradas en la Figura 1.
+A. Capa de Presentación
+Constituye el punto de interacción directa con los usuarios del sistema. La aplicación móvil para pacientes fue desarrollada con Flutter y Dart, mientras que el panel clínico para el personal médico fue implementado utilizando Angular. Esta capa gestiona la visualización del nivel de riesgo en tiempo real, el registro de mediciones y las notificaciones de alerta generadas por el modelo predictivo. Los datos provienen del monitoreo pasivo de variables del smartwatch (frecuencia cardíaca, pasos y sueño) y del registro manual de mediciones del espirómetro y del oxímetro digital reportados por el usuario en la aplicación.
+B. Capa de Aplicación
+Actúa como punto de entrada y control de la infraestructura backend. Implementa un API Gateway que centraliza las solicitudes provenientes de los clientes móviles, gestiona los mecanismos de autorización y aplica control de tasa de peticiones para garantizar la disponibilidad del servicio ante sincronizaciones recurrentes de datos biométricos.
+C. Capa de Negocio
+Representa el núcleo operativo del sistema, implementado mediante microservicios contenerizados en Docker con Python y FastAPI. Se estructura en cuatro componentes: el módulo de ingreso y validación de datos, el servicio de mensajería interna, el módulo ML Predictivo que ejecuta la inferencia en tiempo real mediante el modelo Random Forest (Scikit-Learn), y el servicio de notificaciones que despacha alertas y planes de acción personalizados hacia dispositivos móviles a través de Firebase Cloud Messaging.
+D. Capa de Persistencia
+Constituye el repositorio de datos del sistema, implementado mediante una base de datos relacional PostgreSQL. En este nivel se almacena de forma estructurada el historial clínico, perfiles de usuario, bitácoras de mediciones biométricas, predicciones de riesgo calculadas y registros de planes de acción específicos de cada paciente, garantizando la integridad referencial y facilitando consultas ágiles para la generación de reportes médicos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Arquitectura del Sistema
+Metodologia
+El desarrollo de AsmaSync  se estructuró bajo la metodología ágil Scrum, que organiza el ciclo de vida del proyecto mediante iteraciones incrementales denominadas sprints. Este enfoque permitió coordinar de forma paralela los componentes de ingeniería de datos, modelado predictivo y desarrollo de software, adaptando los entregables a los requerimientos clínicos del sistema conforme avanzaba el proyecto.
+
+A. Fase de Análisis y Planeación
+
+Se identificaron los requerimientos clínicos del sistema a partir de las directrices GINA 2023 y la British Thoracic Society. Se definieron los biomarcadores fisiológicos y ambientales necesarios para la detección de crisis asmáticas, se seleccionó el estudio AAMOS-00 como fuente de datos real, y se estableció la arquitectura general del sistema con sus componentes tecnológicos.
+
+B. Fase de Diseño
+
+Se diseñó la arquitectura multicapa del sistema, los diagramas de flujo de datos entre componentes, el esquema relacional de la base de datos y los modelos de interfaz de usuario para la aplicación móvil y el panel clínico. Se definieron además los criterios de evaluación clínica para la selección del modelo predictivo, priorizando la sensibilidad diagnóstica sobre otras métricas de clasificación.
+
+C. Fase de Desarrollo
+
+Se implementó el pipeline de machine learning en Python, incluyendo el preprocesamiento del dataset híbrido, el entrenamiento comparativo de los algoritmos candidatos y la serialización del modelo seleccionado. De forma paralela se desarrolló el backend con FastAPI contenerizado en Docker, la aplicación móvil en Flutter/Dart y el panel clínico en Angular, integrando la comunicación entre componentes mediante el API Gateway y PostgreSQL como capa de persistencia.
+
+D. Fase de Integración y Validación
+
+Se realizaron pruebas de integración del flujo completo cliente-servidor, verificando la comunicación en tiempo real entre la aplicación móvil, el modelo predictivo y el sistema de notificaciones. Se validó el desempeño del modelo bajo distintas configuraciones de partición de datos y se ajustó el umbral de decisión clínico para garantizar la máxima sensibilidad en la detección de eventos de riesgo.
+
+Caso de estudio
+Conjunto de Datos y Preprocesamiento
+
+Para el desarrollo y validación experimental del sistema de detección de crisis asmáticas se estructuró un conjunto de datos híbrido que combina registros clínicos reales con modelado sintético condicionado. La base de partida se obtuvo del estudio longitudinal AAMOS-00, desarrollado por la Universidad de Edimburgo y publicado en Nature Scientific Data en 2023, uno de los pocos repositorios públicos que recopila de forma continua y ambulatoria datos fisiológicos mediante wearables en pacientes con asma activa. Dado que el protocolo de AAMOS-00 no contempla lecturas de saturación de oxígeno (SpO2) biomarcador crítico en la identificación de broncoespasmos, se diseñó una metodología de generación sintética condicional basada en las directrices clínicas GINA 2023 y British Thoracic Society (BTS).
+ 
+El conjunto final consta de 10,000 registros con 8 variables independientes (5 fisiológicas y 3 ambientales) y una variable objetivo-binaria (crisis), definida bajo el criterio de que el flujo espiratorio máximo (pef_porcentaje) decrece por debajo del 60% de la capacidad óptima del paciente, o la saturación de oxígeno cae de forma concomitante con un incremento compensatorio de la frecuencia cardíaca. La distribución final refleja la prevalencia epidemiológica real, con 80% de registros estables y 20% en crisis. El conjunto fue dividido en proporción 75/25, preservando la distribución original en el set de prueba, mientras que sobre el conjunto de entrenamiento se aplicó la técnica SMOTE para balancear las clases (11,866 registros, 50/50). La Tabla II resume las variables del modelo.
+TABLA II . VARIABLES INDEPENDIENTES DEL MODELO PREDICTIVO
+Variable	Descripcion Clínica	Rango	Fuente
+spo2	Saturación de oxígeno en sangre	85% – 100%	Oxímetro de smartwatch
+bpm	Frecuencia cardíaca	50 – 160 bpm	Sensor óptico de smartwatch
+pasos	Actividad física acumulada	0 – 20,000	Acelerómetro de smartwatch
+horas_sueno	Duración del descanso nocturno	0 – 12 h	Monitor de sueño de smartwatch
+pef_porcentaje	Flujo espiratorio respecto a marca personal	20% – 100%	Espirómetro digital portátil
+humedad	Humedad relativa del aire	10% – 100%	API climática
+temperatura	Temperatura ambiental	-10°C – 45°C	API climática
+aqi	Índice de calidad del aire (PM_2.5, PM_10)	0 – 300	API de monitoreo ambiental
+
+Configuración Experimental y Modelos Evaluados
+La fase experimental se desarrolló en Python 3.10, utilizando Scikit-Learn y XGBoost. Se implementó una validación cruzada estratificada de 5 pliegues sobre el conjunto de entrenamiento, junto con búsqueda de hiperparámetros mediante GridSearchCV, optimizando el F1-Score de la clase minoritaria. Dado que la prioridad clínica es minimizar los falsos negativos —evitar que una crisis pase sin alerta— se descartó el umbral estándar de 0.50 y se configuró un umbral de decisión clínico de 0.40. Bajo este esquema se evaluaron tres algoritmos: Regresión Logística con penalización L2, XGBoost Classifier, y Random Forest Classifier con 200 estimadores.
+
+Comparativa de Algoritmos
+La evaluación se realizó sobre el conjunto de prueba independiente (2,500 registros: 1,978 sanos y 522 en crisis), preservando la distribución original de la población. Los resultados se presentan en la Tabla III.
+TABLA III . COMPARATIVA DE MODELOS 
+Métrica	Random Forest	XGBoost	Regresión Logística
+Accuracy	0.9748	0.9772	0.9484
+Recall (Sensibilidad)	0.9425	0.9138	0.9502
+Precisión	0.9371	0.9755	0.8280
+F1-Score	0.9398	0.9436	0.8849
+ROC-AUC	0.9936	0.9929	0.9862
+Crisis detectadas	492 / 522	477 / 522	496 / 522
+Falsas alarmas	33	12	103
+
+XGBoost obtuvo la mayor precisión (97.55%) con solo 12 falsas alarmas, pero a costa de la sensibilidad clínica, dejando pasar 45 crisis reales. La Regresión Logística logró el mayor Recall (95.02%) pero con 103 falsas alarmas, lo que podría generar fatiga de alertas en el usuario. Random Forest fue seleccionado como modelo de producción por ofrecer el mejor equilibrio clínico: 94.25% de sensibilidad con solo 33 falsas alarmas y el mayor ROC-AUC (0.9936).
+
+Para verificar que este resultado no dependiera de la partición aleatoria de los datos, se evaluó el desempeño de los tres modelos bajo splits adicionales de 70/30 y 80/20, observándose fluctuaciones inferiores al 0.4% en Accuracy y F1-Score en todos los casos, lo que descarta sobreajuste por partición y confirma la estabilidad del Random Forest como modelo final.
+
+Matrices de Confusión
+La Tabla IV resume las matrices de confusión de los tres modelos sobre el conjunto de prueba (1,978 sanos, 522 en crisis).
+
+
+TABLA IV. MATRICES DE CONFUSIÓN POR MODELO (SPLIT 75/25)
+
+Modelo	Verdaderos Sanos	Falsas Alarmas (FP)	Crisis Perdidas (FN)
+Random Forest	1,945	33	30
+XGBoost	1,966	12	45
+Regresión Logística	1,875	103	26
+
+El Random Forest distribuye sus errores de forma equilibrada entre ambas clases (1.67% de falsas alarmas sobre sanos), mientras que XGBoost minimiza las falsas alarmas a costa de un mayor número de crisis no detectadas, y la Regresión Logística favorece la detección de crisis generando una alta tasa de notificaciones erróneas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Matriz de confusión visual para el clasificador Random Forest seleccionado (Split 75/25).
+Importancia de Variables
+
+La interpretabilidad del Random Forest permite estimar el aporte relativo de cada variable en la predicción del riesgo. La Tabla V presenta esta distribución.
+
+TABLA V. TOP 5 VARIABLES MÁS IMPORTANTES
+
+
+Ranking	Peso (Gini Importance)	Interpretación Clínica	Variable
+1	0.4778	Indicador directo de insuficiencia ventilatoria y broncoespasmo	spo2
+2	0.1765	Respuesta simpática compensatoria a la hipoxia tisular	bpm
+3	0.1528	Medida indirecta de fatiga física y restricción de actividad	pasos
+4	0.0942	Marcador fisiológico directo de obstrucción de vías aéreas altas	pef_porcentaje
+5	0.0642	Factor fisiológico desencadenante asociado a fatiga acumulada	horas_sueno
+
+
+Los indicadores cardiovasculares y la capacidad pulmonar concentran la mayor relevancia en el comportamiento del modelo, coincidiendo de forma coherente con la fisiopatología de las crisis de asma aguda.
+
+F. Resultados de la Aplicación Móvil 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Conclusiones
+El desarrollo de AsmaSync demuestra la viabilidad técnica y clínica de integrar wearables, monitorización pulmonar digital y aprendizaje automático para la detección preventiva de crisis asmáticas en tiempo real. El modelo Random Forest seleccionado alcanzó una sensibilidad de 94.25% con una tasa de falsas alarmas de apenas 1.67%, confirmando que el sistema prioriza la seguridad del paciente sin inducir fatiga por alertas innecesarias. La arquitectura distribuida del sistema, que conecta los datos biométricos con una API web y notificaciones a la red de cuidadores, consolida a AsmaSync como una alternativa accesible para el autocuidado del paciente asmático y el apoyo a la toma de decisiones clínicas.
+
+Trabajo a futuro
+Las líneas de trabajo futuro se centran en las siguientes mejoras:
+
+	Integración de Tecnologías de Conectividad Médica: Desarrollar soporte nativo para Apple HealthKit y Android Health Connect, permitiendo una sincronización pasiva y transparente de datos de sueño, actividad física e historial cardíaco del usuario.
+	Ampliación de Variables Predictivas: Evaluar el impacto de incorporar biomarcadores adicionales al modelo, tales como la variabilidad de la frecuencia cardíaca (HRV) y la medición de niveles locales de contaminantes mediante sensores IoT domésticos.
+	Personalización del Modelo: Explorar técnicas de aprendizaje adaptativo o ajuste local de umbrales probabilísticos para ajustar con mayor precision la sensibilidad del clasificador a la fisiopatología individual de cada paciente.
+Agradecimientos
+Los autores agradecen al cuerpo académico de la Universidad Tecnológica del Centro de Veracruz por el apoyo durante el desarrollo del proyecto. Se agradece especialmente a la asesora técnica Eva Maria Landa Huerta por su orientación en el diseño metodológico y al personal de salud consultado por sus aportaciones sobre las necesidades reales de monitoreo del asma en el contexto de Veracruz, México.
+
+Referencias
+[1] Instituto Nacional de Estadistica y Geografia (INEGI). (2024). Estadisticas de salud en Mexico. Mexico: INEGI.
+[2] Global Initiative for Asthma (GINA). (2024). Global Strategy for Asthma Management and Prevention. https://ginasthma.org
+[3] Organizacion Mundial de la Salud (OMS). (2023). Asma: Datos y cifras. https://www.who.int
+[4] R. Al-Hassany et al., "mBreath: Asthma Monitoring System on the Go," IEEE Int. Conf. eHealth Networking, 2020.
+[5] T. Park et al., "AirBuddy: Mobile App for Children With Asthma to Monitor Indoor Air Quality," JMIR mHealth uHealth, vol. 10, 2022.
+[6] A. Gonzalez et al., "Continuous eHealth Monitoring Ecosystem for Bronchial Asthma and Air Quality," Sensors, vol. 23, 2023.
+[7] A. Budiarto et al., "ML-Based Asthma Attack Prediction From Routinely Collected EHR," Front. Med., 2021.
+[8] E. Molfino et al., "Machine Learning Approaches to Predict Asthma Exacerbations," J. Asthma Allergy, vol. 14, 2021.
+[9] C. Tsang et al., "Application of ML to Support Self-Management of Asthma with mHealth," JMIR mHealth uHealth, vol. 8, 2020.
+[10] B. Xiong et al., "ML for Prediction of Asthma Exacerbations: A Systematic Review," Ann. Med., 2022.
+[11] J. Schneider et al., "Feasibility of a Wireless Sensing Smartwatch App for Pediatric Asthma," Sensors, vol. 20, 2020.
+[12] A. Thomas et al., "A Wearable IoT Aldehyde Sensor for Pediatric Asthma," IEEE Sensors J., vol. 23, 2023.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

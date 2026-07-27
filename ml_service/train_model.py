@@ -1,5 +1,4 @@
 import os
-import pickle
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -10,59 +9,40 @@ from sklearn.metrics import (
     precision_score,
     f1_score,
     roc_auc_score,
-    classification_report,
-    confusion_matrix,
-    precision_recall_curve,
 )
-import matplotlib.pyplot as plt
-import seaborn as sns
 import time
 
 start_time = time.time()
 
 # =============================================================================
-# CONFIGURACION FINAL (ya decidida en fases anteriores, no se vuelve a tocar)
+# FASE 1 - RANDOM FOREST: comparar particiones y folds (8 variables originales)
 # =============================================================================
-# - Particion       : 80% entrenamiento / 20% prueba
-# - Validacion       : CV estratificada de 10 folds (chequeo de estabilidad)
-# - Variables        : 5 (resultado de la eliminacion secuencial, le gano al
-#                       baseline de 8 en 4 de 5 metricas)
-# - Umbral clinico   : 40%
+# Se prueban 3 particiones x 3 configuraciones de folds, con las 8 variables
+# originales, para elegir la combinacion ganadora de Random Forest antes de
+# pasar a seleccion de variables.
 
-DATASET_PATH = r"C:\Users\gonza\Downloads\dataset_hibrido_8020_v5.csv"
-MODELS_DIR   = "ml_service/models"
-GRAPHS_DIR   = "ml_service/graphs"
+DATASET_PATH = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\DATASETNOW\dataset_hibrido_8020_v5.csv"
+MODELS_DIR   = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\modelo"
 os.makedirs(MODELS_DIR, exist_ok=True)
-os.makedirs(GRAPHS_DIR, exist_ok=True)
-
-FEATURES = ["spo2", "bpm", "pasos", "pef_porcentaje", "horas_sueno"]
-TARGET = "crisis"
-
-TEST_SIZE = 0.20
-N_FOLDS   = 10
-THRESHOLD = 0.40
-PARTICION_LABEL = f"{int(round((1 - TEST_SIZE) * 100))}-{int(round(TEST_SIZE * 100))}"
 
 print("Cargando dataset...")
 df = pd.read_csv(DATASET_PATH)
+
+# Las 8 variables clinicas originales
+FEATURES = ["spo2", "bpm", "pasos", "pef_porcentaje", "horas_sueno"]
+TARGET = "crisis"
 
 X = df[FEATURES]
 y = df[TARGET]
 
 # =============================================================================
-# PASO 1: SPLIT TRAIN-TEST (80/20)
+# CONFIGURACION DE LOS EXPERIMENTOS: 3 SPLITS x 3 CANTIDADES DE FOLDS
 # =============================================================================
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=TEST_SIZE, random_state=42, stratify=y
-)
+SPLIT_OPTIONS = [0.30, 0.25, 0.20]   # test_size -> genera 70-30, 75-25, 80-20
+FOLD_OPTIONS  = [3, 5, 10]
 
-print(f"\nParticion {PARTICION_LABEL} | Train: {len(X_train):,} | Test: {len(X_test):,}")
-print(f"Variables usadas ({len(FEATURES)}): {FEATURES}")
-
-# =============================================================================
-# FUNCION AUXILIAR: balancear (oversampling de la clase minoritaria)
-# =============================================================================
+resultados_cv = []
 
 def balancear(df_in):
     sanos  = df_in[df_in[TARGET] == 0]
@@ -71,163 +51,86 @@ def balancear(df_in):
     return pd.concat([sanos, crisis_over], axis=0).sample(frac=1, random_state=42)
 
 # =============================================================================
-# PASO 2: VALIDACION CRUZADA (CV=10) - chequeo de estabilidad del modelo
+# BUCLE PRINCIPAL: por cada split, por cada cantidad de folds
 # =============================================================================
 
-print(f"\nEjecutando validacion cruzada estratificada ({N_FOLDS} folds) sobre el entrenamiento...")
-cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
+for test_size in SPLIT_OPTIONS:
+    particion_label = f"{int(round((1 - test_size) * 100))}-{int(round(test_size * 100))}"
 
-cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
-
-for fold, (train_idx, val_idx) in enumerate(cv.split(X_train, y_train), 1):
-    X_tr_fold, y_tr_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]
-    X_val_fold, y_val_fold = X_train.iloc[val_idx], y_train.iloc[val_idx]
-
-    fold_train_over = balancear(pd.concat([X_tr_fold, y_tr_fold], axis=1))
-    X_tr_fold_final = fold_train_over[FEATURES]
-    y_tr_fold_final = fold_train_over[TARGET]
-
-    fold_model = RandomForestClassifier(
-        n_estimators=200, max_depth=12, min_samples_leaf=5,
-        random_state=42, n_jobs=-1, class_weight="balanced",
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=42, stratify=y
     )
-    fold_model.fit(X_tr_fold_final, y_tr_fold_final)
 
-    probs_val = fold_model.predict_proba(X_val_fold)[:, 1]
-    preds_val = (probs_val >= 0.50).astype(int)
+    print("\n" + "=" * 80)
+    print(f"SPLIT {particion_label}  (train={len(X_train):,} / test={len(X_test):,})")
+    print("=" * 80)
 
-    cv_accs.append(accuracy_score(y_val_fold, preds_val))
-    cv_recs.append(recall_score(y_val_fold, preds_val))
-    cv_precs.append(precision_score(y_val_fold, preds_val))
-    cv_f1s.append(f1_score(y_val_fold, preds_val))
-    cv_aucs.append(roc_auc_score(y_val_fold, probs_val))
+    for n_folds in FOLD_OPTIONS:
+        print(f"\n  --- Particion {particion_label} | CV con {n_folds} folds ---")
+        cv = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
 
-print("\n" + "-" * 55)
-print(f"METRICAS PROMEDIO DE CV ({N_FOLDS} folds) - chequeo de estabilidad")
-print("-" * 55)
-print(f"  Accuracy  : {np.mean(cv_accs):.4f}")
-print(f"  Recall    : {np.mean(cv_recs):.4f}")
-print(f"  Precision : {np.mean(cv_precs):.4f}")
-print(f"  F1-Score  : {np.mean(cv_f1s):.4f}")
-print(f"  ROC-AUC   : {np.mean(cv_aucs):.4f}")
-print("-" * 55)
+        cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
 
-# =============================================================================
-# PASO 3: BALANCEO DEL SET DE ENTRENAMIENTO COMPLETO
-# =============================================================================
+        for fold, (train_idx, val_idx) in enumerate(cv.split(X_train, y_train), 1):
+            X_tr_fold, y_tr_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]
+            X_val_fold, y_val_fold = X_train.iloc[val_idx], y_train.iloc[val_idx]
 
-train_over = balancear(pd.concat([X_train, y_train], axis=1))
-X_train_final = train_over[FEATURES]
-y_train_final = train_over[TARGET]
+            fold_train_over = balancear(pd.concat([X_tr_fold, y_tr_fold], axis=1))
+            X_tr_fold_final = fold_train_over[FEATURES]
+            y_tr_fold_final = fold_train_over[TARGET]
 
-print(f"\nSet de entrenamiento balanceado : {len(X_train_final):,} registros (50% sano / 50% crisis)")
-print(f"Set de prueba (dist. original)  : {len(X_test):,} registros")
+            fold_model = RandomForestClassifier(
+                n_estimators=200,
+                max_depth=12,
+                min_samples_leaf=5,
+                random_state=42,
+                n_jobs=-1,
+                class_weight="balanced",
+            )
+            fold_model.fit(X_tr_fold_final, y_tr_fold_final)
 
-# =============================================================================
-# PASO 4: ENTRENAMIENTO DEL MODELO FINAL (Random Forest, 5 variables)
-# =============================================================================
+            probs_val = fold_model.predict_proba(X_val_fold)[:, 1]
+            preds_val = (probs_val >= 0.50).astype(int)
 
-print("\nEntrenando modelo Random Forest final (modelo oficial)...")
+            cv_accs.append(accuracy_score(y_val_fold, preds_val))
+            cv_recs.append(recall_score(y_val_fold, preds_val))
+            cv_precs.append(precision_score(y_val_fold, preds_val))
+            cv_f1s.append(f1_score(y_val_fold, preds_val))
+            cv_aucs.append(roc_auc_score(y_val_fold, probs_val))
 
-model = RandomForestClassifier(
-    n_estimators=200,
-    max_depth=12,
-    min_samples_leaf=5,
-    random_state=42,
-    n_jobs=-1,
-    class_weight="balanced",
-)
-model.fit(X_train_final, y_train_final)
-print("  Entrenamiento completado.")
+            print(f"      Fold {fold}/{n_folds} -> Acc: {cv_accs[-1]:.4f} | Rec: {cv_recs[-1]:.4f} "
+                  f"| Prec: {cv_precs[-1]:.4f} | F1: {cv_f1s[-1]:.4f} | AUC: {cv_aucs[-1]:.4f}")
 
-# =============================================================================
-# PASO 5: METRICAS OFICIALES (sobre el test real, nunca visto)
-# =============================================================================
-
-y_prob = model.predict_proba(X_test)[:, 1]
-y_pred = (y_prob >= THRESHOLD).astype(int)
-
-acc  = accuracy_score(y_test, y_pred)
-rec  = recall_score(y_test, y_pred)
-prec = precision_score(y_test, y_pred)
-f1   = f1_score(y_test, y_pred)
-auc  = roc_auc_score(y_test, y_prob)
-
-print("\n" + "=" * 55)
-print(f"METRICAS OFICIALES (Set de prueba real | Umbral {int(THRESHOLD*100)}% | Particion {PARTICION_LABEL})")
-print("=" * 55)
-print(f"{'Metrica':<30} | {'Valor':<15}")
-print("-" * 55)
-print(f"{'Exactitud (Accuracy)':<30} | {acc:<15.4f}")
-print(f"{'Sensibilidad (Recall)':<30} | {rec:<15.4f}")
-print(f"{'Precision':<30} | {prec:<15.4f}")
-print(f"{'F1-Score':<30} | {f1:<15.4f}")
-print(f"{'ROC-AUC':<30} | {auc:<15.4f}")
-print("=" * 55)
-
-print("\nReporte de clasificacion (set de prueba):")
-print(classification_report(y_test, y_pred, target_names=["Sano (0)", "Crisis (1)"]))
-
-cm = confusion_matrix(y_test, y_pred)
-print("Matriz de confusion:")
-print(f"                    Predicho Sano   Predicho Crisis")
-print(f"  Real Sano         {cm[0][0]:<15}  {cm[0][1]}")
-print(f"  Real Crisis       {cm[1][0]:<15}  {cm[1][1]}")
-print(f"\n  Crisis detectadas : {cm[1][1]} de {cm[1][0] + cm[1][1]}")
-print(f"  Crisis perdidas   : {cm[1][0]}")
-print(f"  Falsas alarmas    : {cm[0][1]}")
+        resultados_cv.append({
+            "Particion": particion_label,
+            "CV Folds": n_folds,
+            "Accuracy": np.mean(cv_accs),
+            "Recall": np.mean(cv_recs),
+            "Precision": np.mean(cv_precs),
+            "F1": np.mean(cv_f1s),
+            "AUC": np.mean(cv_aucs),
+        })
 
 # =============================================================================
-# PASO 6: GUARDAR LA MATRIZ DE CONFUSION COMO IMAGEN
+# TABLA COMPARATIVA FINAL: LOS 3 SPLITS x LOS 3 FOLDS (9 FILAS)
 # =============================================================================
 
-plt.figure(figsize=(6, 5))
-sns.heatmap(cm, annot=True, fmt="d", cmap="YlOrRd", cbar=False,
-            xticklabels=["Predicho Sano", "Predicho Crisis"],
-            yticklabels=["Real Sano", "Real Crisis"])
-plt.title(f"Matriz de Confusion - Random Forest ({len(FEATURES)} vars, Umbral {int(THRESHOLD*100)}%)")
-plt.tight_layout()
-GRAPH_PATH = os.path.join(GRAPHS_DIR, "confusion_matrix_rf.png")
-plt.savefig(GRAPH_PATH, dpi=150)
-plt.close()
-print(f"\nGrafica de la matriz de confusion guardada en -> {GRAPH_PATH}")
+tabla_cv = pd.DataFrame(resultados_cv)
 
-# =============================================================================
-# PASO 7: IMPORTANCIA DE VARIABLES (del modelo final, 5 variables)
-# =============================================================================
+print("\n" + "=" * 90)
+print("TABLA COMPARATIVA - RANDOM FOREST - VALIDACION CRUZADA (70-30 / 75-25 / 80-20)")
+print("=" * 90)
+print(f"{'Particion':<10}{'CV Folds':<10}{'Accuracy':<12}{'Recall':<12}{'Precision':<12}{'F1':<12}{'AUC':<12}")
+print("-" * 90)
+for row in resultados_cv:
+    print(f"{row['Particion']:<10}{row['CV Folds']:<10}"
+          f"{row['Accuracy']:<12.4f}{row['Recall']:<12.4f}"
+          f"{row['Precision']:<12.4f}{row['F1']:<12.4f}{row['AUC']:<12.4f}")
+print("=" * 90)
 
-print("\nImportancia de variables del modelo final:")
-importances = pd.Series(
-    model.feature_importances_, index=FEATURES
-).sort_values(ascending=False)
-
-for feature, importance in importances.items():
-    barra = "#" * int(importance * 40)
-    print(f"  {feature:<18} {importance:.4f}  {barra}")
-
-# =============================================================================
-# PASO 8: VALIDACION MATEMATICA DEL UMBRAL
-# =============================================================================
-
-precisiones, recalls, umbrales_f1 = precision_recall_curve(y_test, y_prob)
-f1s = 2 * (precisiones * recalls) / (precisiones + recalls + 1e-9)
-mejor_umbral = umbrales_f1[f1s.argmax()]
-
-print("\n" + "-" * 55)
-print("VALIDACION MATEMATICA DEL UMBRAL (Curva Precision-Recall)")
-print("-" * 55)
-print(f"  Umbral optimo por F1 (matematico) : {mejor_umbral:.4f}")
-print(f"  Umbral clinico elegido             : {THRESHOLD:.4f}")
-
-# =============================================================================
-# PASO 9: EXPORTAR EL MODELO OFICIAL
-# =============================================================================
-
-MODEL_PATH = os.path.join(MODELS_DIR, "random_forest_asma.pkl")
-with open(MODEL_PATH, "wb") as f:
-    pickle.dump(model, f)
-
-print(f"\nModelo exportado correctamente -> {MODEL_PATH}")
+TABLA_CV_PATH = os.path.join(MODELS_DIR, "random_forest_comparativa_cv_folds.csv")
+tabla_cv.to_csv(TABLA_CV_PATH, index=False)
+print(f"\nTabla comparativa guardada en -> {TABLA_CV_PATH}")
 
 exec_time = time.time() - start_time
 print(f"\n[METRICS] Tiempo total de ejecucion: {exec_time:.2f} segundos")

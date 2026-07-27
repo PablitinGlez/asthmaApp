@@ -1,9 +1,12 @@
 import os
-import pickle
+import warnings
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.inspection import permutation_importance
 from sklearn.metrics import (
     accuracy_score,
     recall_score,
@@ -12,23 +15,21 @@ from sklearn.metrics import (
     roc_auc_score,
     confusion_matrix,
 )
-import matplotlib.pyplot as plt
-import seaborn as sns
 import time
+
+warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn.svm._base")
 
 start_time = time.time()
 
 # =============================================================================
-# CONFIGURACION FIJA PARA GRADIENT BOOSTING (resultado de la Fase 1)
+# CONFIGURACION FIJA PARA SVM (resultado de la Fase 1)
 # =============================================================================
-# - Particion       : 80% entrenamiento / 20% prueba
-# - Validacion      : CV estratificada de 5 folds (gano sobre 3 y 10 para
-#                      Gradient Boosting: F1 = 0.9590, mejor Recall = 0.9593)
-# - Umbral clinico  : 40%
-# Nota: esta combinacion es propia de Gradient Boosting, distinta a la de
-# Random Forest (80-20 / 10 folds), XGBoost (80-20 / 3 folds) y Regresion
-# Logistica (80-20 / 5 folds). Cada modelo se evalua con su propia mejor
-# configuracion.
+# - Particion       : 75% entrenamiento / 25% prueba
+# - Validacion       : CV estratificada de 5 folds
+# - Umbral clinico   : 40%
+# Nota: en el CV interno se usa probability=False (decision_function, mas
+# rapido); el modelo final de cada paso SI usa probability=True para poder
+# aplicar el umbral clinico del 40% con predict_proba.
 
 DATASET_PATH = r"C:\Users\gonza\Downloads\dataset_hibrido_8020_v5.csv"
 MODELS_DIR   = "ml_service/models"
@@ -42,7 +43,7 @@ FEATURES_ALL = [
 ]
 TARGET = "crisis"
 
-TEST_SIZE = 0.20
+TEST_SIZE = 0.25
 N_FOLDS   = 5
 THRESHOLD = 0.40
 PARTICION_LABEL = f"{int(round((1 - TEST_SIZE) * 100))}-{int(round(TEST_SIZE * 100))}"
@@ -59,14 +60,14 @@ def balancear(df_in):
 
 def evaluar_features(features):
     """
-    Con la particion y folds fijos para Gradient Boosting (80-20, CV=5):
-    1. Split 80-20 usando SOLO las columnas de 'features'.
-    2. CV=5 sobre el train (chequeo de estabilidad).
-    3. Modelo final con el 100% del train balanceado, evaluado contra el
-       20% de test real (metrica oficial).
-    4. Regresa tambien las importancias nativas del modelo (feature_importances_),
-       para decidir que quitar despues (a diferencia de Regresion Logistica,
-       aqui no se necesita valor absoluto porque ya son magnitudes puras).
+    Con la particion y folds fijos para SVM (75-25, CV=5):
+    1. Split 75-25 usando SOLO las columnas de 'features'.
+    2. CV=5 sobre el train (chequeo de estabilidad, probability=False -> rapido).
+    3. Modelo final con el 100% del train balanceado (probability=True para
+       poder aplicar el umbral clinico), evaluado contra el 25% de test real.
+    4. Regresa tambien la importancia (permutation importance, ya que SVM-RBF
+       no tiene coeficientes lineales interpretables), para decidir que
+       variable quitar despues.
     """
     X = df[features]
     y = df[TARGET]
@@ -75,7 +76,7 @@ def evaluar_features(features):
         X, y, test_size=TEST_SIZE, random_state=42, stratify=y
     )
 
-    # ---- CV=5 (chequeo de estabilidad) ----
+    # ---- CV=5 (chequeo de estabilidad, rapido con decision_function) ----
     cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
 
@@ -87,22 +88,20 @@ def evaluar_features(features):
         X_tr_fold_final = fold_train_over[features]
         y_tr_fold_final = fold_train_over[TARGET]
 
-        fold_model = GradientBoostingClassifier(
-            n_estimators=200,
-            learning_rate=0.1,
-            max_depth=3,
-            random_state=42,
+        fold_model = make_pipeline(
+            StandardScaler(),
+            SVC(kernel="rbf", C=1.0, gamma="scale", probability=False, random_state=42)
         )
         fold_model.fit(X_tr_fold_final, y_tr_fold_final)
 
-        probs_val = fold_model.predict_proba(X_val_fold)[:, 1]
-        preds_val = (probs_val >= 0.50).astype(int)
+        scores_val = fold_model.decision_function(X_val_fold)
+        preds_val = fold_model.predict(X_val_fold)
 
         cv_accs.append(accuracy_score(y_val_fold, preds_val))
         cv_recs.append(recall_score(y_val_fold, preds_val))
         cv_precs.append(precision_score(y_val_fold, preds_val))
         cv_f1s.append(f1_score(y_val_fold, preds_val))
-        cv_aucs.append(roc_auc_score(y_val_fold, probs_val))
+        cv_aucs.append(roc_auc_score(y_val_fold, scores_val))
 
     cv_metrics = {
         "Accuracy": np.mean(cv_accs), "Recall": np.mean(cv_recs),
@@ -114,11 +113,9 @@ def evaluar_features(features):
     X_train_final = train_over[features]
     y_train_final = train_over[TARGET]
 
-    modelo = GradientBoostingClassifier(
-        n_estimators=200,
-        learning_rate=0.1,
-        max_depth=3,
-        random_state=42,
+    modelo = make_pipeline(
+        StandardScaler(),
+        SVC(kernel="rbf", C=1.0, gamma="scale", probability=True, random_state=42)
     )
     modelo.fit(X_train_final, y_train_final)
 
@@ -133,21 +130,25 @@ def evaluar_features(features):
         "AUC": roc_auc_score(y_test, probs_test),
     }
 
-    # "importancia" nativa de Gradient Boosting (ya son magnitudes positivas,
-    # a diferencia de los coeficientes con signo de Regresion Logistica)
-    importancias = pd.Series(modelo.feature_importances_, index=features).sort_values(ascending=False)
+    # SVM-RBF no tiene importancia nativa -> permutation importance sobre el test
+    perm = permutation_importance(
+        modelo, X_test, y_test, n_repeats=20, random_state=42, scoring="f1"
+    )
+    imp_valores = np.clip(perm.importances_mean, 0, None)
+    if imp_valores.sum() > 0:
+        imp_valores = imp_valores / imp_valores.sum()
+    importancias = pd.Series(imp_valores, index=features).sort_values(ascending=False)
 
     cm = confusion_matrix(y_test, preds_test)
 
     return {
         "modelo": modelo, "cv_metrics": cv_metrics, "test_metrics": test_metrics,
-        "importancias": importancias,
-        "X_test": X_test, "y_test": y_test, "cm": cm,
+        "importancias": importancias, "X_test": X_test, "y_test": y_test, "cm": cm,
     }
 
 
-def mostrar_matriz_confusion(res, n_vars):
-    """Imprime la matriz de confusion en consola (solo se guarda imagen del paso final)."""
+def mostrar_matriz_confusion(res):
+    """Imprime la matriz de confusion en consola (no se guarda imagen en esta fase)."""
     cm = res["cm"]
     print("  Matriz de confusion:")
     print(f"                      Predicho Sano   Predicho Crisis")
@@ -161,26 +162,24 @@ def mostrar_matriz_confusion(res, n_vars):
 # =============================================================================
 # ELIMINACION SECUENCIAL DE VARIABLES (backward elimination)
 # =============================================================================
-# Nota: aqui la "importancia" para decidir que variable sacar es la
-# importancia nativa de Gradient Boosting (feature_importances_), sin
-# necesidad de valor absoluto porque ya son magnitudes positivas.
+# Nota: la importancia se recalcula con permutation_importance en cada paso,
+# usando siempre el subconjunto de variables vigente en ese paso.
 
 resultados_features = []
 resultados_por_paso = {}
 
 print("\n" + "=" * 90)
-print(f"GRADIENT BOOSTING - SELECCION DE VARIABLES (particion {PARTICION_LABEL} fija, CV={N_FOLDS} fija)")
+print(f"SVM - SELECCION DE VARIABLES (particion {PARTICION_LABEL} fija, CV={N_FOLDS} fija)")
 print("=" * 90)
 
 # --- Paso 1: 8 variables (todas) ---
 print(f"\n--- Paso 1: 8 variables (todas) ---")
 res_8 = evaluar_features(FEATURES_ALL)
 resultados_por_paso["8"] = res_8
-print("  Importancias (ordenadas de mayor a menor):")
-for feat in res_8["importancias"].index:
-    imp = res_8["importancias"][feat]
+print("  Importancias (permutation importance):")
+for feat, imp in res_8["importancias"].items():
     print(f"    {feat:<18} {imp:.4f}")
-mostrar_matriz_confusion(res_8, 8)
+mostrar_matriz_confusion(res_8)
 resultados_features.append({"# Variables": "8 (todas)", **res_8["test_metrics"]})
 
 # --- Paso 2: 5 variables (top 5 por importancia del modelo de 8) ---
@@ -189,10 +188,9 @@ print(f"\n--- Paso 2: 5 variables -> {top5} ---")
 res_5 = evaluar_features(top5)
 resultados_por_paso["5"] = res_5
 print("  Importancias recalculadas (con solo estas 5):")
-for feat in res_5["importancias"].index:
-    imp = res_5["importancias"][feat]
+for feat, imp in res_5["importancias"].items():
     print(f"    {feat:<18} {imp:.4f}")
-mostrar_matriz_confusion(res_5, 5)
+mostrar_matriz_confusion(res_5)
 resultados_features.append({"# Variables": "5", **res_5["test_metrics"]})
 
 # --- Paso 3: 4 variables ---
@@ -202,10 +200,9 @@ print(f"\n--- Paso 3: 4 variables (se quito '{peor_de_5}') -> {top4} ---")
 res_4 = evaluar_features(top4)
 resultados_por_paso["4"] = res_4
 print("  Importancias recalculadas (con solo estas 4):")
-for feat in res_4["importancias"].index:
-    imp = res_4["importancias"][feat]
+for feat, imp in res_4["importancias"].items():
     print(f"    {feat:<18} {imp:.4f}")
-mostrar_matriz_confusion(res_4, 4)
+mostrar_matriz_confusion(res_4)
 resultados_features.append({"# Variables": "4", **res_4["test_metrics"]})
 
 # --- Paso 4: 3 variables ---
@@ -215,10 +212,9 @@ print(f"\n--- Paso 4: 3 variables (se quito '{peor_de_4}') -> {top3} ---")
 res_3 = evaluar_features(top3)
 resultados_por_paso["3"] = res_3
 print("  Importancias recalculadas (con solo estas 3):")
-for feat in res_3["importancias"].index:
-    imp = res_3["importancias"][feat]
+for feat, imp in res_3["importancias"].items():
     print(f"    {feat:<18} {imp:.4f}")
-mostrar_matriz_confusion(res_3, 3)
+mostrar_matriz_confusion(res_3)
 resultados_features.append({"# Variables": "3", **res_3["test_metrics"]})
 
 # =============================================================================
@@ -228,7 +224,7 @@ resultados_features.append({"# Variables": "3", **res_3["test_metrics"]})
 tabla_features = pd.DataFrame(resultados_features)
 
 print("\n" + "=" * 90)
-print(f"GRADIENT BOOSTING - TABLA COMPARATIVA SELECCION DE VARIABLES (test real, particion {PARTICION_LABEL}, umbral {int(THRESHOLD*100)}%)")
+print(f"SVM - TABLA COMPARATIVA SELECCION DE VARIABLES (test real, particion {PARTICION_LABEL}, umbral {int(THRESHOLD*100)}%)")
 print("=" * 90)
 print(f"{'# Variables':<14}{'Accuracy':<12}{'Recall':<12}{'Precision':<12}{'F1':<12}{'AUC':<12}")
 print("-" * 90)
@@ -238,7 +234,7 @@ for row in resultados_features:
           f"{row['Precision']:<12.4f}{row['F1']:<12.4f}{row['AUC']:<12.4f}")
 print("=" * 90)
 
-TABLA_FEATURES_PATH = os.path.join(MODELS_DIR, "gradient_boosting_comparativa_feature_selection.csv")
+TABLA_FEATURES_PATH = os.path.join(MODELS_DIR, "svm_comparativa_feature_selection.csv")
 tabla_features.to_csv(TABLA_FEATURES_PATH, index=False)
 print(f"\nTabla comparativa guardada en -> {TABLA_FEATURES_PATH}")
 

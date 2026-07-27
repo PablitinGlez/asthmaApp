@@ -1,16 +1,212 @@
-okey vamos aser una analsiis muy profudno conrescpetoa como se va a llaevar acabao el proceos de mm de gestion con los docotores mira vaos a ampzar con lo que ya tnemoss acutlamentne tnemos la autenticacion els eut inical donde el suario pdora ingresar su vlaroes pef etc 
+necesito que me agas un excel  de las estaditiscads decada seccion de el modelode train logisitoc regresion debe tenrla tablas de las dieinintes particosny folds de ahi la tala de la elvacuion dcon datos relas con cada cierta cantida de vaibrles la improtnaica de vairbles  una tbal por cada reducion lamatriz de ocnfusion et porfas
+=================
 
-okey en la app mobile digmoa que vamos a tener sel smasrt el siprootemtor ela mabiente y sintomas y loq eue son mediones asta aca lo temeso claorokey??
+TABLA COMPARATIVA - REGRESION LOGISTICA - VALIDACION CRUZADA (70-30 / 75-25 / 80-20)
+
+==========================================================================================
+
+Particion CV Folds  Accuracy    Recall      Precision   F1          AUC
+
+------------------------------------------------------------------------------------------
+
+70-30     3         0.9616      0.9535      0.8742      0.9121      0.9915
+
+70-30     5         0.9621      0.9562      0.8746      0.9134      0.9914
+
+70-30     10        0.9630      0.9583      0.8766      0.9154      0.9915
+
+75-25     3         0.9616      0.9579      0.8712      0.9125      0.9912
+
+75-25     5         0.9623      0.9579      0.8738      0.9139      0.9912
+
+75-25     10        0.9624      0.9585      0.8740      0.9142      0.9912
+
+80-20     3         0.9630      0.9587      0.8760      0.9155      0.9912
+
+80-20     5         0.9634      0.9617      0.8758      0.9166      0.9913
+
+80-20     10        0.9630      0.9599      0.8756      0.9156      0.9912
+
+==========================================================================================
+
+==========================================================================================
+
+REGRESION LOGISTICA - SELECCION DE VARIABLES (particion 80-20 fija, CV=5 fija)
+
+==========================================================================================
 
 
-basicamente nuestra aplcaiocn es apra los usairos okey  peor bueno mira neesio tu ayuda par aentneder Estado
-el n el dhasnaord para los docotores abiasoquedado que la vincualcion se hacia con respceto aun codigo de doctor pero buenoa ntes de ver Esto
-partamos desde comose va agestioanr este panle pq mira pq mir yo so otr tu tiene suna ide al profa otra mis comcpeñro otra peor mira mis compañeors y maestras bueno entnid algo asi idgmoas este sistema se  vendraabajo licencia tu vas instlas salas estoes
-miraa sepa que decia tu vas aa isntlara estocreas la lcicncia la clcina o el amditrador crara sus doctores y los docotres cons u codifoo aran su ivnucalcion con sus pacientes pero aca ba algo imprtante yo notenia ocntmeplado que lso pacientes pues tiene mas daots tipode sagre ay no se mas datos que confroam su epxeodneite lclinioc okey cosas que o campso qque acutlemten mi app no losppide osea si sabia que se ib a tner mas campso pero iaginta tener tipo un veergerode formalruos con mcuhos campso par asolo resgitrase no comoque no
-es que mira te explico pq des una anlssi deocmo ese va allevar acabco mira 
+
+--- Paso 1: 8 variables (todas) ---
+
+  Coeficientes (ordenados por magnitud de impacto):
+
+    spo2               -4.6557
+
+    bpm                +1.4655
+
+    pef_porcentaje     +0.8265
+
+    horas_sueno        -0.4873
+
+    pasos              -0.4275
+
+    humedad            +0.1859
+
+    aqi                -0.1676
+
+    temperatura        +0.0327
+
+  Matriz de confusion:
+
+                      Predicho Sano   Predicho Crisis
+
+    Real Sano         1496             86
+
+    Real Crisis       24               394
 
 
 
+    Crisis detectadas : 394 de 418
 
-tenemos el dahsbaord aca eln el dasahabod el codotro podra ver sus pacientes etc cons su datos etc etc alertas etc etc okey?asta ca todo tbiien el docotr vera sus 
-paceintes ahora mi duda un docoto podra crear unpaciente desde el dasbaord yleuoque incie sesion??? es que mira beste sistem de que unel docotr creee sus paceines normalemnte te danun usario y conrtasñea mis compñeo los deican asi pero mir alaneta notros ya teneoms todo el sisteamde autenticicoan ya armado okey
+    Crisis perdidas   : 24
+
+    Falsas alarmas    : 86
+
+
+
+--- Paso 2: 5 variables -> ['spo2', 'bpm', 'pef_porcentaje', 'horas_sueno', 'pasos'] ---
+
+  Coeficientes recalculados (con solo estas 5):
+
+    spo2               -4.7147
+
+    bpm                +1.4361
+
+    pef_porcentaje     +0.8505
+
+    horas_sueno        -0.4954
+
+    pasos              -0.4351
+
+  Matriz de confusion:
+
+                      Predicho Sano   Predicho Crisis
+
+    Real Sano         1498             84
+
+    Real Crisis       24               394
+
+
+
+    Crisis detectadas : 394 de 418
+
+    Crisis perdidas   : 24
+
+    Falsas alarmas    : 84
+
+
+
+--- Paso 3: 4 variables (se quito 'pasos') -> ['spo2', 'bpm', 'pef_porcentaje', 'horas_sueno'] ---
+
+  Coeficientes recalculados (con solo estas 4):
+
+    spo2               -5.0446
+
+    bpm                +1.3880
+
+    pef_porcentaje     +1.0848
+
+    horas_sueno        -0.5642
+
+  Matriz de confusion:
+
+                      Predicho Sano   Predicho Crisis
+
+    Real Sano         1489             93
+
+    Real Crisis       24               394
+
+
+
+    Crisis detectadas : 394 de 418
+
+    Crisis perdidas   : 24
+
+    Falsas alarmas    : 93
+
+
+
+--- Paso 4: 3 variables (se quito 'horas_sueno') -> ['spo2', 'bpm', 'pef_porcentaje'] ---
+
+  Coeficientes recalculados (con solo estas 3):
+
+    spo2               -5.2202
+
+    bpm                +1.5905
+
+    pef_porcentaje     +1.1180
+
+  Matriz de confusion:
+
+                      Predicho Sano   Predicho Crisis
+
+    Real Sano         1489             93
+
+    Real Crisis       24               394
+
+
+
+    Crisis detectadas : 394 de 418
+
+    Crisis perdidas   : 24
+
+    Falsas alarmas    : 93
+
+
+
+==========================================================================================
+
+REGRESION LOGISTICA - TABLA COMPARATIVA SELECCION DE VARIABLES (test real, particion 80-20, umbral 40%)       
+
+==========================================================================================
+
+# Variables   Accuracy    Recall      Precision   F1          AUC
+
+------------------------------------------------------------------------------------------
+
+8 (todas)     0.9450      0.9426      0.8208      0.8775      0.9847
+
+5             0.9460      0.9426      0.8243      0.8795      0.9850
+
+4             0.9415      0.9426      0.8090      0.8707      0.9854
+
+3             0.9415      0.9426      0.8090      0.8707      0.9848
+
+==========================================================================================
+
+
+
+Tabla comparativa guardada en -> ml_service/models\logistic_regression_comparativa_feature_selection.csv      
+
+
+
+-------------------------------------------------------
+
+RESUMEN DE VARIABLES USADAS EN CADA PASO
+
+-------------------------------------------------------
+
+  8 variables : ['spo2', 'bpm', 'pasos', 'horas_sueno', 'pef_porcentaje', 'aqi', 'humedad', 'temperatura']    
+
+  5 variables : ['spo2', 'bpm', 'pef_porcentaje', 'horas_sueno', 'pasos']
+
+  4 variables : ['spo2', 'bpm', 'pef_porcentaje', 'horas_sueno']  (se quito 'pasos')
+
+  3 variables : ['spo2', 'bpm', 'pef_porcentaje']  (se quito 'horas_sueno')
+
+
+
+[METRICS] Tiempo total de ejecucion: 0.84 segundos
+
+PS C:\Users\gonza\Documents\FlutterX\asthmaapp> 
