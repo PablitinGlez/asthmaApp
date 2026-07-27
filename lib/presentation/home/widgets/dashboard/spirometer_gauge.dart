@@ -100,7 +100,10 @@ class _RiskGauge extends StatelessWidget {
       if (statusText.isEmpty) statusText = "Riesgo de Crisis";
     }
 
-    final bool isEmpty = score == 0 && !isLoading;
+    // isEmpty solo es true si NUNCA se ha recibido una predicción del servidor
+    // (estado inicial antes del primer fetch). Si la predicción devuelve 0%,
+    // eso es un resultado válido → mostrar "0% Estable", no "--"
+    final bool isEmpty = score == 0 && !isLoading && statusText.isEmpty;
     
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: score),
@@ -123,7 +126,7 @@ class _RiskGauge extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  isEmpty ? "--%" : "${animatedScore.toInt()}%",
+                  isEmpty ? "Calculando..." : "${animatedScore.toInt()}%",
                   style: TextStyle(
                     fontFamily: 'Satoshi',
                     fontSize: 48,
