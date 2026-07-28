@@ -10,6 +10,9 @@ class UserEntity {
   final bool isActive;
   final bool isSetupCompleted;
   final String? linkingCode;
+  final double? latitude;
+  final double? longitude;
+  final DateTime? lastLocationUpdate;
 
   UserEntity({
     required this.dbId,
@@ -23,6 +26,9 @@ class UserEntity {
     this.isActive = true,
     this.isSetupCompleted = false,
     this.linkingCode,
+    this.latitude,
+    this.longitude,
+    this.lastLocationUpdate,
   });
 
   bool get isDoctor => role == 'doctor';

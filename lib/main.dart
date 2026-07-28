@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:toastification/toastification.dart';
 import 'presentation/home/providers/push_notifications_provider.dart';
 import 'infrastructure/notifications/services/local_notification_service.dart';
+import 'infrastructure/services/background_sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,9 @@ void main() async {
 
   // Inicialización de Notificaciones Locales
   await LocalNotificationService.init();
+
+  // Inicialización de Sincronización en Segundo Plano (WorkManager)
+  await BackgroundSyncService.initialize();
 
   // Pre-carga de SharedPreferences para evitar loading asíncrono en Router
   final prefs = await SharedPreferences.getInstance();
