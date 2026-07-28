@@ -26,15 +26,15 @@ start_time = time.time()
 # - Validacion       : CV estratificada de 10 folds
 # - Umbral clinico   : 40%
 
-DATASET_PATH = r"C:\Users\gonza\Downloads\dataset_hibrido_8020_v5.csv"
-MODELS_DIR   = "ml_service/models"
-GRAPHS_DIR   = "ml_service/graphs"
+DATASET_PATH = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\DATASETNOW\dataset_hibrido_8020_v5.csv"
+MODELS_DIR   = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\modelo"
+GRAPHS_DIR   = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\graphs"
 os.makedirs(MODELS_DIR, exist_ok=True)
 os.makedirs(GRAPHS_DIR, exist_ok=True)
 
 FEATURES_ALL = [
-    "spo2", "bpm", "pasos", "horas_sueno",
-    "pef_porcentaje", "aqi", "humedad", "temperatura"
+    "spo2", "bpm", "pasos", "pef_porcentaje",
+    "horas_sueno", "aqi", "humedad", "temperatura"
 ]
 TARGET = "crisis"
 

@@ -30,6 +30,7 @@ start_time = time.time()
 # Logistica (80-20 / 5 folds). Cada modelo se evalua con su propia mejor
 # configuracion.
 
+
 DATASET_PATH = r"C:\Users\gonza\Downloads\dataset_hibrido_8020_v5.csv"
 MODELS_DIR   = "ml_service/models"
 GRAPHS_DIR   = "ml_service/graphs"
@@ -40,10 +41,11 @@ FEATURES_ALL = [
     "spo2", "bpm", "pasos", "horas_sueno",
     "pef_porcentaje", "aqi", "humedad", "temperatura"
 ]
+
 TARGET = "crisis"
 
-TEST_SIZE = 0.20
-N_FOLDS   = 5
+TEST_SIZE = 0.30
+N_FOLDS   = 10
 THRESHOLD = 0.40
 PARTICION_LABEL = f"{int(round((1 - TEST_SIZE) * 100))}-{int(round(TEST_SIZE * 100))}"
 
