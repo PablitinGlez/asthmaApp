@@ -13,6 +13,9 @@ import '../providers/measurements_provider.dart';
 import '../providers/prediction_provider.dart';
 import '../../../core/services/pdf_service.dart';
 
+import '../widgets/dashboard/risk_alert_sheet.dart';
+import '../providers/patient_location_provider.dart';
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -37,8 +40,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authState = ref.read(authStateProvider);
-      final user = authState.value;
+      final user = ref.read(authStateProvider).value;
+      if (user != null && user.role != 'guardian') {
+        ref.read(patientLocationProvider.notifier).fetchAndSyncLocation();
+      }
 
       if (user != null && mounted) {
         final firstName = user.fullName.split(' ').first;
@@ -75,6 +80,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'Mi Perfil',
     ];
 
+    // 📍 SOLICITAR Y CAPTURAR UBICACIÓN GPS EN ROL PACIENTE
+    ref.listen(authStateProvider, (previous, next) {
+      final u = next.value;
+      if (u != null && u.role != 'guardian') {
+        ref.read(patientLocationProvider.notifier).fetchAndSyncLocation();
+      }
+    });
+
+    // 🔴 ESCUCHAR ALERTAS DE PEF BAJO (ZONA DE RIESGO)
+    ref.listen<int?>(riskAlertProvider, (previous, next) {
+      if (next != null && previous != next) {
+        showRiskAlertSheet(context, ref, next);
+        ref.read(riskAlertProvider.notifier).clear();
+      }
+    });
 
     // 🔴 ESCUCHAR ALERTAS CRÍTICAS DE IA PARA SOS
     ref.listen<PredictionState>(predictionProvider, (previous, next) {

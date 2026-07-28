@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/smartwatch_provider.dart';
+import '../../providers/background_sync_provider.dart';
 import 'smartwatch_linking_banner.dart';
 
 class WatchCoreVitals extends ConsumerWidget {
@@ -24,6 +25,11 @@ class WatchCoreVitals extends ConsumerWidget {
     });
 
     final watchState = ref.watch(smartwatchProvider);
+    final syncState = ref.watch(backgroundSyncProvider);
+    final String lastSyncTimeFormatted = syncState.lastSyncTime != null
+        ? '${syncState.lastSyncTime!.hour.toString().padLeft(2, '0')}:${syncState.lastSyncTime!.minute.toString().padLeft(2, '0')}'
+        : 'Activo';
+
     final String spO2Text = watchState.spO2 != null
         ? '${watchState.spO2}%'
         : '--%';
@@ -50,33 +56,37 @@ class WatchCoreVitals extends ConsumerWidget {
                 color: Colors.black87,
               ),
             ),
-            if (watchState.isLinked)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.watch_rounded,
-                      size: 14,
-                      color: Color(0xFF4CAF50),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Sincronizado',
-                      style: TextStyle(
-                        fontFamily: 'Satoshi',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF4CAF50).withOpacity(0.9),
-                      ),
-                    ),
-                  ],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF023E8A).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF023E8A).withOpacity(0.2),
                 ),
               ),
+              child: Row(
+                children: [
+                  Icon(
+                    syncState.isSyncing
+                        ? Icons.sync_rounded
+                        : Icons.autorenew_rounded,
+                    size: 14,
+                    color: const Color(0xFF023E8A),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Auto: $lastSyncTimeFormatted',
+                    style: const TextStyle(
+                      fontFamily: 'Satoshi',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF023E8A),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),

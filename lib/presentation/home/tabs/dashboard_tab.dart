@@ -19,7 +19,8 @@ import '../widgets/dashboard/performance_vitals_cards.dart';
 import '../widgets/dashboard/emergency_sos_button.dart';
 import '../widgets/dashboard/ai_simulator_panel.dart';
 import '../widgets/guardian/guardian_view.dart';
-import '../providers/monitored_patients_provider.dart';
+
+import '../providers/patient_location_provider.dart';
 
 class DashboardTab extends ConsumerStatefulWidget {
   const DashboardTab({super.key});
@@ -41,6 +42,12 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(authStateProvider).value;
+      if (user != null && user.role != 'guardian') {
+        ref.read(patientLocationProvider.notifier).fetchAndSyncLocation();
+      }
+    });
   }
 
   Future<void> _checkShowTutorial({bool alwaysShow = false}) async {

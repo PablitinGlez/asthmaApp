@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../providers/monitored_patients_provider.dart';
 import '../dashboard/dashboard_greeting.dart';
+import 'patient_location_map_sheet.dart';
 
 class GuardianView extends ConsumerWidget {
   const GuardianView({super.key});
@@ -135,50 +136,116 @@ class _PatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasGps = patient.latitude != null && patient.longitude != null;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
         border: Border.all(color: Colors.grey.shade100),
       ),
-      child: Row(
+      child: Column(
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: Color(int.parse('FF${patient.avatarBackground}', radix: 16)),
-            child: SvgPicture.network(
-              'https://api.dicebear.com/9.x/initials/svg?seed=${patient.avatarSeed}&backgroundColor=${patient.avatarBackground}',
-              width: 56, height: 56,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  patient.fullName,
-                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: Color(
+                  int.parse('FF${patient.avatarBackground}', radix: 16),
                 ),
-                const SizedBox(height: 4),
-                Row(
+                child: ClipOval(
+                  child: SvgPicture.network(
+                    'https://api.dicebear.com/9.x/initials/svg?seed=${patient.avatarSeed}&backgroundColor=${patient.avatarBackground}',
+                    width: 56,
+                    height: 56,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 8, height: 8,
-                      decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                    Text(
+                      patient.fullName,
+                      style: const TextStyle(
+                        fontFamily: 'Satoshi',
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const SizedBox(width: 6),
-                    const Text('Estado: Estable', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'Estado: Monitoreo Activo',
+                          style: TextStyle(
+                            fontFamily: 'GeneralSans',
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+          const SizedBox(height: 12),
+          const Divider(height: 1, thickness: 1),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => showPatientLocationMapSheet(context, patient),
+                  icon: Icon(
+                    hasGps ? Icons.location_on_rounded : Icons.map_outlined,
+                    size: 18,
+                    color: hasGps ? const Color(0xFFD90429) : const Color(0xFF023E8A),
+                  ),
+                  label: Text(
+                    hasGps ? 'Ver Ubicación GPS' : 'Ver Mapa de Ubicación',
+                    style: TextStyle(
+                      fontFamily: 'Satoshi',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: hasGps ? const Color(0xFFD90429) : const Color(0xFF023E8A),
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: hasGps
+                          ? const Color(0xFFD90429).withValues(alpha: 0.5)
+                          : const Color(0xFF023E8A).withValues(alpha: 0.3),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

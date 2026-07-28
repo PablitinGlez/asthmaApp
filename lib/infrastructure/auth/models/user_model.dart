@@ -12,6 +12,9 @@ class UserModel {
   final bool isActive;
   final bool isSetupCompleted;
   final String? linkingCode;
+  final double? latitude;
+  final double? longitude;
+  final DateTime? lastLocationUpdate;
 
   UserModel({
     required this.dbId,
@@ -25,10 +28,17 @@ class UserModel {
     required this.isActive,
     required this.isSetupCompleted,
     this.linkingCode,
+    this.latitude,
+    this.longitude,
+    this.lastLocationUpdate,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     final id = json['supabase_uid'] ?? '';
+    final rawLat = json['last_latitude'] ?? json['latitude'] ?? json['lat'];
+    final rawLng = json['last_longitude'] ?? json['longitude'] ?? json['lng'];
+    final rawTime = json['last_location_update'] ?? json['location_updated_at'];
+
     return UserModel(
       dbId: json['id'] ?? 0,
       id: id,
@@ -41,6 +51,9 @@ class UserModel {
       isActive: json['is_active'] ?? true,
       isSetupCompleted: json['is_setup_completed'] ?? false,
       linkingCode: json['linking_code'],
+      latitude: rawLat != null ? (rawLat as num).toDouble() : null,
+      longitude: rawLng != null ? (rawLng as num).toDouble() : null,
+      lastLocationUpdate: rawTime != null ? DateTime.tryParse(rawTime.toString()) : null,
     );
   }
 
@@ -56,6 +69,9 @@ class UserModel {
     'is_active': isActive,
     'is_setup_completed': isSetupCompleted,
     'linking_code': linkingCode,
+    'latitude': latitude,
+    'longitude': longitude,
+    'last_location_update': lastLocationUpdate?.toIso8601String(),
   };
 
   UserEntity toEntity() => UserEntity(
@@ -70,5 +86,8 @@ class UserModel {
     isActive: isActive,
     isSetupCompleted: isSetupCompleted,
     linkingCode: linkingCode,
+    latitude: latitude,
+    longitude: longitude,
+    lastLocationUpdate: lastLocationUpdate,
   );
 }
