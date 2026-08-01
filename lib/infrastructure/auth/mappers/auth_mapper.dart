@@ -5,14 +5,14 @@ class AuthMapper {
   static UserEntity supabaseUserToEntity(supabase.User supabaseUser) {
     final fullName = supabaseUser.userMetadata?['full_name'] ?? 'Usuario';
     return UserEntity(
-      dbId: 0, // Placeholder temporal, se reescribirá al llamar a la API
+      dbId: 0,
       id: supabaseUser.id,
       email: supabaseUser.email ?? '',
       fullName: fullName,
       role: supabaseUser.userMetadata?['role'] ?? 'pending',
       isSetupCompleted: supabaseUser.userMetadata?['is_setup_completed'] ?? false,
-      avatarSeed: fullName, // Usar el nombre como seed para iniciales
-      avatarBackground: '023e8a', // Color institucional
+      avatarSeed: fullName,
+      avatarBackground: '023e8a',
       isActive: true,
     );
   }

@@ -1,7 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-// Asumimos que AuthException sigue existiendo en el proyecto
 class AuthException implements Exception {
   final String message;
   AuthException(this.message);
@@ -14,14 +13,11 @@ class SupabaseAuthDataSource {
 
   SupabaseAuthDataSource(this._supabaseClient);
 
-  // Escucha cambios de estado
   Stream<AuthState> get authStateChanges =>
       _supabaseClient.auth.onAuthStateChange;
 
-  // Obtener el usuario actual
   User? get currentUser => _supabaseClient.auth.currentUser;
 
-  // Registro con Email y Password (y se dispara envío automático de OTP)
   Future<AuthResponse> signUp({
     required String email,
     required String password,
@@ -40,7 +36,6 @@ class SupabaseAuthDataSource {
     }
   }
 
-  // Verificar OTP
   Future<AuthResponse> verifyOtp({
     required String email,
     required String token,
@@ -56,7 +51,6 @@ class SupabaseAuthDataSource {
     }
   }
 
-  // Login con Email y Password
   Future<AuthResponse> signIn({
     required String email,
     required String password,
@@ -71,100 +65,75 @@ class SupabaseAuthDataSource {
     }
   }
 
-  // Login con Google usando Supabase de forma nativa
   Future<AuthResponse> signInWithGoogle() async {
     try {
-      print('=== INICIANDO GOOGLE SIGN IN ===');
-      // Usando el flujo nativo de Google Sign-In de Flutter para obtener tokens de Google
       final webClientId =
-          '40445796906-mspu2r92pn60f22i2upgru8igctbebnv.apps.googleusercontent.com'; // Servidor Web
+          '40445796906-mspu2r92pn60f22i2upgru8igctbebnv.apps.googleusercontent.com';
       final iosClientId =
-          '40445796906-5lfiq2p91qfl99nvq4radfpeafol5m7b.apps.googleusercontent.com'; // iOS Nativo
+          '40445796906-5lfiq2p91qfl99nvq4radfpeafol5m7b.apps.googleusercontent.com';
 
       final GoogleSignIn googleSignIn = GoogleSignIn(
         serverClientId: webClientId,
         clientId: iosClientId,
       );
 
-      print('Llamando a googleSignIn.signIn()...');
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
-        print('Excepción: googleUser es null. El usuario canceló o falló.');
         throw AuthException('Inicio de sesión cancelado');
       }
 
-      print('googleUser obtenido correctamente: \${googleUser.email}');
-      print('Obteniendo authentication tokens...');
       final googleAuth = await googleUser.authentication;
       final accessToken = googleAuth.accessToken;
       final idToken = googleAuth.idToken;
 
       if (accessToken == null) {
-        print('Excepción: accessToken es null.');
         throw AuthException('No Access Token found.');
       }
       if (idToken == null) {
-        print('Excepción: idToken es null.');
         throw AuthException('No ID Token found.');
       }
 
-      print(
-        'Tokens de Google obtenidos. Enviando a Supabase signInWithIdToken...',
-      );
       final response = await _supabaseClient.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
         accessToken: accessToken,
       );
-      print('=== GOOGLE SIGN IN EXITOSO ===');
       return response;
     } catch (e) {
-      print('ERR_GOOGLE_SIGNIN: $e');
       throw AuthException('Error al iniciar sesión con Google: $e');
     }
   }
 
-  // Logout
   Future<void> signOut() async {
     try {
       await GoogleSignIn().signOut();
-    } catch (e) {
-      print('Aviso: Falla al limpiar caché de Google Sign-In: $e');
-    }
+    } catch (e) {}
     await _supabaseClient.auth.signOut();
   }
 
-  // Obtener el Token JWT actual (el que usaremos para FastAPI)
   Future<String?> getIdToken() async {
     final session = _supabaseClient.auth.currentSession;
     return session?.accessToken;
   }
 
-  // Enviar correo de recuperación de contraseña
   Future<void> sendPasswordResetEmail(String email) async {
-    print(' SupabaseAuthDataSource: Requesting reset for $email');
     try {
       await _supabaseClient.auth.resetPasswordForEmail(
         email,
         redirectTo: 'io.supabase.asthmaapp://reset-callback/',
       );
-      print(' SupabaseAuthDataSource: resetPasswordForEmail call completed');
     } catch (e) {
-      print(' SupabaseAuthDataSource ERROR: $e');
       throw AuthException('Error al enviar correo de recuperación.');
     }
   }
 
-  // Actualizar la contraseña del usuario logueado
   Future<void> updatePassword(String newPassword, {String? oldPassword}) async {
     try {
-      // Si se proporciona la contraseña antigua, la verificamos primero
       if (oldPassword != null) {
         final email = _supabaseClient.auth.currentUser?.email;
         if (email == null) throw AuthException('Sesión no encontrada.');
 
         try {
-          // Intentamos un re-login silencioso para validar la clave actual
           await _supabaseClient.auth.signInWithPassword(
             email: email,
             password: oldPassword,
@@ -174,7 +143,6 @@ class SupabaseAuthDataSource {
         }
       }
 
-      // Procedemos con la actualización
       await _supabaseClient.auth.updateUser(
         UserAttributes(password: newPassword),
       );
@@ -184,7 +152,6 @@ class SupabaseAuthDataSource {
     }
   }
 
-  // Reenviar OTP
   Future<void> resendOtp({required String email}) async {
     try {
       await _supabaseClient.auth.resend(type: OtpType.signup, email: email);
@@ -192,8 +159,6 @@ class SupabaseAuthDataSource {
       throw AuthException('Error al reenviar el código: $e');
     }
   }
-
-  // Métodos de mfa (google authenticator)
 
   Future<AuthMFAEnrollResponse> enrollMfa() async {
     try {
@@ -250,7 +215,6 @@ class SupabaseAuthDataSource {
     }
   }
 
-  // Actualizar metadatos del usuario
   Future<UserResponse> updateUserMetadata(Map<String, dynamic> data) async {
     try {
       return await _supabaseClient.auth.updateUser(UserAttributes(data: data));

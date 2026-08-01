@@ -46,7 +46,6 @@ class SnackBarHelper {
     required ToastificationType type,
     Widget? leading,
   }) {
-    // Evitar que los Toasts se pongan en cola/encimados:
     toastification.dismissAll();
 
     toastification.show(

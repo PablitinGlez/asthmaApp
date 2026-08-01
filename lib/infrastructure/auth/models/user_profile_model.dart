@@ -3,7 +3,6 @@ import '../../../domain/auth/entities/user_profile_entity.dart';
 class UserProfileModel {
   final int userId;
 
-  // Civic fields (Tab 1)
   final String? firstName;
   final String? lastName;
   final int? age;
@@ -15,7 +14,6 @@ class UserProfileModel {
   final String? addressZip;
   final String? healthInsuranceNumber;
 
-  // Clinical fields (Tab 2)
   final double? heightCm;
   final double? weightKg;
   final String? bloodType;
@@ -25,7 +23,6 @@ class UserProfileModel {
   final String? knownAllergies;
   final String? currentMedications;
 
-  // Doctor vinculado (NUEVO)
   final String? linkedDoctorName;
   final String? linkedDoctorCode;
   final String? linkedDoctorSpecialty;

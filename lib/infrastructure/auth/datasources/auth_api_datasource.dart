@@ -62,7 +62,7 @@ class AuthApiDataSource {
       return null;
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        return null; // Usuario no existe en backend
+        return null;
       }
       throw Exception('Error al verificar token: ${e.message}');
     }
@@ -122,7 +122,6 @@ class AuthApiDataSource {
       );
 
       if (response.statusCode == 200) {
-        print(' DEBUG: Profile Response: ${response.data}');
         return UserProfileModel.fromJson(response.data);
       } else {
         throw Exception('Error al obtener perfil del backend');
@@ -196,8 +195,6 @@ class AuthApiDataSource {
       throw Exception('Error de red al actualizar rol: ${e.message}');
     }
   }
-
-  // Métodos para guardianes y vinculación (paciente)
 
   Future<String> getLinkingCode({required String token}) async {
     try {

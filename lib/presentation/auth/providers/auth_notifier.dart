@@ -16,7 +16,7 @@ enum AuthStatus {
   initial,
   loading,
   otpSent,
-  mfaRequired, // <--- MFA intermedio
+  mfaRequired,
   authenticated,
   passwordRecovery,
   resetEmailSent,
@@ -25,7 +25,6 @@ enum AuthStatus {
   error,
 }
 
-// Estado de la autenticación
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
@@ -58,31 +57,27 @@ class AuthState {
   }) {
     return AuthState(
       status: status ?? this.status,
-      errorMessage: errorMessage, // Puede ser null
+      errorMessage: errorMessage,
       pendingEmail: pendingEmail ?? this.pendingEmail,
       pendingFullName: pendingFullName ?? this.pendingFullName,
     );
   }
 }
 
-// Notifier que gestiona la lógica de negocio de Autenticación
 class AuthNotifier extends Notifier<AuthState> {
   static const String _pendingEmailKey = 'pending_reg_email';
   static const String _pendingNameKey = 'pending_reg_name';
 
   @override
   AuthState build() {
-    // Escuchar eventos de Supabase para detectar recovery flows (Deep Links)
     final supabase = ref.watch(supabaseClientProvider);
     supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event;
       if (event == AuthChangeEvent.passwordRecovery) {
-        print(' AuthNotifier: Supabase event -> Password Recovery detected!');
         state = state.copyWith(status: AuthStatus.passwordRecovery);
       }
     });
 
-    // Cargar estado persistente en background
     _loadPersistentState();
 
     return AuthState();
@@ -97,8 +92,6 @@ class AuthNotifier extends Notifier<AuthState> {
       state = state.copyWith(
         pendingEmail: email,
         pendingFullName: name,
-        // No cambiamos el status a otpSent forzosamente aquí para evitar redirecciones ruidosas,
-        // pero el Router verá el pendingEmail y actuará.
       );
     }
   }
@@ -118,7 +111,6 @@ class AuthNotifier extends Notifier<AuthState> {
         fullName: fullName,
         role: role,
       );
-      // El OTP fue enviado. Mantendremos las variables pendientes para el Router
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_pendingEmailKey, email);
       await prefs.setString(_pendingNameKey, fullName);
@@ -162,14 +154,13 @@ class AuthNotifier extends Notifier<AuthState> {
         role: role,
       );
 
-      // Limpiamos los pending al ser exitoso para que el Router nos deje pasar
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_pendingEmailKey);
       await prefs.remove(_pendingNameKey);
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
-        pendingEmail: null, // CLEAR HACK PARA ABRIR EL CANDADO DEL ROUTER
+        pendingEmail: null,
         pendingFullName: null,
       );
     } catch (e) {
@@ -187,7 +178,6 @@ class AuthNotifier extends Notifier<AuthState> {
       final repository = ref.read(authRepositoryProvider);
       await repository.login(email: email, password: password);
 
-      // Chequeo de mfa (google authenticator)
       final aal = await repository.getAuthenticatorAssuranceLevel();
       final currentLvl = aal.currentLevel.toString();
       final nextLvl = aal.nextLevel.toString();
@@ -220,7 +210,6 @@ class AuthNotifier extends Notifier<AuthState> {
       final repository = ref.read(authRepositoryProvider);
       await repository.signInWithGoogle();
 
-      // Chequeo de mfa
       final aal = await repository.getAuthenticatorAssuranceLevel();
       final currentLvl = aal.currentLevel.toString();
       final nextLvl = aal.nextLevel.toString();
@@ -233,7 +222,6 @@ class AuthNotifier extends Notifier<AuthState> {
       state = state.copyWith(status: AuthStatus.authenticated);
     } catch (e) {
       final errorStr = e.toString().toLowerCase();
-      // Silenciar si el usuario canceló el proceso (atrás/cerrar modal)
       if (errorStr.contains('cancel') || errorStr.contains('user-cancelled')) {
         state = state.copyWith(status: AuthStatus.initial, errorMessage: null);
         return;
@@ -247,9 +235,8 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
-    // IMPORTANTE: Limpiar estado local ANTES del logout de Supabase
     state = AuthState();
-    ref.read(authStateProvider.notifier).updateUser(null); // Sincronización atómica
+    ref.read(authStateProvider.notifier).updateUser(null);
     ref.read(setupCompletedProvider.notifier).reset();
 
     final repository = ref.read(authRepositoryProvider);
@@ -264,7 +251,6 @@ class AuthNotifier extends Notifier<AuthState> {
     ref.invalidate(notificationSettingsProvider);
     ref.invalidate(measurementsProvider);
     ref.invalidate(predictionProvider);
-    print('[AUTH] Todos los providers limpiados al cerrar sesión.');
   }
 
   void clearRecoveryState() {
@@ -300,7 +286,6 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final repository = ref.read(authRepositoryProvider);
       await repository.updatePassword(newPassword, oldPassword: oldPassword);
-      // Tras cambiar contraseña, podemos marcar como éxito para que la UI reaccione
       state = state.copyWith(status: AuthStatus.passwordUpdateSuccess);
     } catch (e) {
       state = state.copyWith(
@@ -317,17 +302,11 @@ class AuthNotifier extends Notifier<AuthState> {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       final repository = ref.read(authRepositoryProvider);
-
-      print(' AuthNotifier: Starting updateAvatar request...');
       final updatedUser = await repository.updateAvatar(
         avatarSeed: avatarSeed,
         avatarBackground: avatarBackground,
       );
-      print(
-        ' AuthNotifier: User updated successfully from Backend (${updatedUser.email})',
-      );
 
-      // Mutamos el estado localmente para un cambio fluido sin parpadeos
       ref.read(authStateProvider.notifier).updateUser(updatedUser);
 
       state = state.copyWith(status: AuthStatus.authenticated);
@@ -363,7 +342,6 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  // Verificar código 2FA
   Future<void> verifyMfaCode({required String code}) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
@@ -371,7 +349,6 @@ class AuthNotifier extends Notifier<AuthState> {
       final supabase = ref.read(supabaseClientProvider);
 
       final factors = await supabase.auth.mfa.listFactors();
-      // Buscamos el factor TOTP que esté verificado
       final totpFactor = factors.totp.firstWhere(
         (f) => f.status == FactorStatus.verified,
         orElse: () => throw AuthException(
@@ -387,7 +364,7 @@ class AuthNotifier extends Notifier<AuthState> {
       state = state.copyWith(status: AuthStatus.authenticated);
     } catch (e) {
       state = state.copyWith(
-        status: AuthStatus.mfaRequired, // Lo dejamos en esta pantalla
+        status: AuthStatus.mfaRequired,
         errorMessage: 'Código de 6 dígitos incorrecto.',
       );
     }
@@ -398,7 +375,6 @@ class AuthNotifier extends Notifier<AuthState> {
       final repository = ref.read(authRepositoryProvider);
       final message = await repository.assignDoctor(doctorCode: doctorCode);
       
-      // Refrescar el perfil para mostrar el nuevo doctor vinculado
       ref.invalidate(personalInfoProvider);
       
       return message;

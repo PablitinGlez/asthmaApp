@@ -13,10 +13,8 @@ class PdfService {
   }) async {
     final pdf = pw.Document();
 
-    // Referencia de mejor PEF personal (Mock 450 L/min)
     const double pb = 450.0;
 
-    // Estadísticas rápidas
     final total = history.length;
     final bestAllTime = history.isNotEmpty
         ? history.map((e) => e.pef ?? 0).reduce((a, b) => a > b ? a : b)
@@ -36,7 +34,6 @@ class PdfService {
         margin: const pw.EdgeInsets.all(32),
         build: (pw.Context context) {
           return [
-            // Header
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -61,7 +58,6 @@ class PdfService {
                     ),
                   ],
                 ),
-                // Logo placeholder o Texto App
                 pw.Text(
                   'AsthmaApp',
                   style: pw.TextStyle(
@@ -76,7 +72,6 @@ class PdfService {
             pw.Divider(thickness: 1, color: PdfColors.grey300),
             pw.SizedBox(height: 16),
 
-            // Patient Info Section
             pw.Row(
               children: [
                 pw.Expanded(child: _buildInfoBox('Paciente', userName)),
@@ -95,7 +90,6 @@ class PdfService {
             ),
             pw.SizedBox(height: 24),
 
-            // Summary Stats Cards (Mini semáforo)
             pw.Text(
               'Resumen de Estado General',
               style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
@@ -125,14 +119,12 @@ class PdfService {
             ),
             pw.SizedBox(height: 32),
 
-            // Table Header
             pw.Text(
               'Historial Detallado de Mediciones',
               style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
             ),
             pw.SizedBox(height: 12),
 
-            // History Table
             pw.Table.fromTextArray(
               border: null,
               headerStyle: pw.TextStyle(
@@ -201,7 +193,6 @@ class PdfService {
       ),
     );
 
-    // Guardar o compartir
     await Printing.sharePdf(
       bytes: await pdf.save(),
       filename: 'Reporte_Asma_${userName.replaceAll(" ", "_")}.pdf',

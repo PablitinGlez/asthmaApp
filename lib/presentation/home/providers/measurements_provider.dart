@@ -4,9 +4,6 @@ import 'package:dio/dio.dart';
 import '../../../domain/measurements/entities/measurement_history_item.dart';
 import '../../auth/providers/auth_provider.dart';
 
-// Cuando llega un PEF en zona de riesgo vía WebSocket, guardamos el valor aquí.
-// La UI lo observa y muestra el alert sheet automáticamente.
-// null = sin alerta pendiente.
 class RiskAlertNotifier extends Notifier<int?> {
   @override
   int? build() => null;
@@ -57,9 +54,8 @@ class MeasurementsState {
   int get totalPages => (allItems.length / pageSize).ceil();
   bool get hasNext => currentPage < totalPages;
   bool get hasPrevious => currentPage > 1;
-  bool get hasMore => hasNext; // Compatibilidad UI
+  bool get hasMore => hasNext;
 
-  // Métodos de compatibilidad para evitar romper código existente
   bool get isEmpty => allItems.isEmpty;
   bool get isNotEmpty => allItems.isNotEmpty;
   int get length => allItems.length;
@@ -117,7 +113,6 @@ class MeasurementsNotifier extends AsyncNotifier<MeasurementsState> {
 
     state = AsyncData(current.copyWith(isLoadingMore: true, currentPage: page));
 
-    // Simular un pequeño lag para que la UI se vea natural
     await Future.delayed(const Duration(milliseconds: 300));
 
     state = AsyncData(
@@ -125,7 +120,7 @@ class MeasurementsNotifier extends AsyncNotifier<MeasurementsState> {
     );
   }
 
-  Future<void> loadMore() => nextPage(); // Compatibilidad
+  Future<void> loadMore() => nextPage();
 
   Future<void> nextPage() async {
     final current = state.value;
@@ -139,7 +134,6 @@ class MeasurementsNotifier extends AsyncNotifier<MeasurementsState> {
     await goToPage(current.currentPage - 1);
   }
 
-  // Refresca en silencio sin mostrar el loader.
   Future<void> silentRefresh({bool checkRisk = false}) async {
     final previous = state.value;
     try {
@@ -152,9 +146,8 @@ class MeasurementsNotifier extends AsyncNotifier<MeasurementsState> {
         ),
       );
 
-      // Evaluar riesgo si viene desde el WebSocket (checkRisk=true)
       if (checkRisk && freshItems.isNotEmpty) {
-        final latestPef = freshItems.first.pef; // Ya vienen ordenados desc
+        final latestPef = freshItems.first.pef;
         if (latestPef != null && latestPef < 350) {
           final previousPef = previous?.allItems.firstOrNull?.pef;
           if (latestPef != previousPef) {

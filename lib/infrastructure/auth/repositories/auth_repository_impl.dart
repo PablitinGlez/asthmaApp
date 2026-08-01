@@ -16,24 +16,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }) : _supabaseDataSource = supabaseDataSource,
        _apiDataSource = apiDataSource;
 
-  // Cache para evitar llamadas repetidas al backend en ráfagas (startup/burst)
   UserModel? _cachedUser;
   DateTime? _lastVerificationTime;
   final _cacheDuration = const Duration(seconds: 10);
 
-  // Helper para verificar token con caché
   Future<UserModel?> _verifyWithCache(String token) async {
     final now = DateTime.now();
     if (_cachedUser != null &&
         _lastVerificationTime != null &&
         now.difference(_lastVerificationTime!) < _cacheDuration) {
-      print(' AuthRepository: Using cached user data');
       return _cachedUser;
     }
 
-    print(' AuthRepository: Calling API (No cache or expired)...');
     final user = await _apiDataSource.verifyTokenInBackend(token);
-
     _cachedUser = user;
     _lastVerificationTime = now;
     return user;
@@ -43,21 +38,14 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<UserEntity?> authStateChanges() {
     return _supabaseDataSource.authStateChanges.asyncMap((authState) async {
       final supabaseUser = authState.session?.user;
-      print(
-        ' authStateChanges: supabaseUser = ${supabaseUser?.id} | Event: ${authState.event.name}',
-      );
 
       if (supabaseUser == null) {
-        print(' authStateChanges: No user, returning null');
         return null;
       }
 
-      // Obtener el token y consultar la API para datos completos
       final token = authState.session?.accessToken;
-      print(' authStateChanges: Got token');
 
       if (token == null) {
-        print(' authStateChanges: No token, using Supabase mapper');
         return AuthMapper.supabaseUserToEntity(supabaseUser);
       }
 
@@ -65,30 +53,19 @@ class AuthRepositoryImpl implements AuthRepository {
         final userModel = await _verifyWithCache(token);
 
         if (userModel != null) {
-          print(' authStateChanges: API success - ${userModel.email}');
-          
-          // Sincronizar metadatos SOLO si han cambiado para evitar bucles infinitos (429 Rate Limit)
           final currentMetadata = supabaseUser.userMetadata ?? {};
-          final needsUpdate = currentMetadata['role'] != userModel.role || 
+          final needsUpdate = currentMetadata['role'] != userModel.role ||
                              currentMetadata['is_setup_completed'] != userModel.isSetupCompleted;
 
           if (needsUpdate) {
-            print(' authStateChanges: Syncing metadata to Supabase...');
             await _supabaseDataSource.updateUserMetadata({
               'role': userModel.role,
               'is_setup_completed': userModel.isSetupCompleted,
             });
-          } else {
-            print(' authStateChanges: Metadata already in sync, skipping update');
           }
 
           return userModel.toEntity();
         } else {
-          // El usuario existe en Supabase pero NO en FastAPI (ej. primer login con Google).
-          // Lo registramos automáticamente en el backend para que el flujo no se rompa.
-          print(
-            ' authStateChanges: Usuario no encontrado en backend. Auto-registrando...',
-          );
           try {
             final newUser = await _apiDataSource.registerInBackend(
               token: token,
@@ -99,27 +76,19 @@ class AuthRepositoryImpl implements AuthRepository {
                   'Usuario',
               role: 'pending',
             );
-            // Actualizar metadatos en Supabase para persistencia rápida
             await _supabaseDataSource.updateUserMetadata({
               'role': 'pending',
               'is_setup_completed': false,
             });
 
-            // Actualizar caché con el usuario recién creado
             _cachedUser = newUser;
             _lastVerificationTime = DateTime.now();
-            print(
-              ' authStateChanges: Auto-registro exitoso - ${newUser.email}',
-            );
             return newUser.toEntity();
           } catch (registerError) {
-            print(' authStateChanges: Auto-registro falló - $registerError');
-            // Fallback seguro: devolver datos de Supabase (isSetupCompleted=false por defecto)
             return AuthMapper.supabaseUserToEntity(supabaseUser);
           }
         }
       } catch (e) {
-        print(' authStateChanges: API failed - $e');
         return AuthMapper.supabaseUserToEntity(supabaseUser);
       }
     });
@@ -132,30 +101,23 @@ class AuthRepositoryImpl implements AuthRepository {
     required String fullName,
     required String role,
   }) async {
-    // Normalizar el email a minúsculas para evitar problemas con Supabase
     final normalizedEmail = email.trim().toLowerCase();
 
-    // Guardián: Validar primero contra nuestro backend si el correo ya existe.
     final emailExists = await _apiDataSource.checkEmailExists(
       email: normalizedEmail,
     );
     if (emailExists) {
-      // Mensaje genérico para evitar account enumeration
       throw Exception(
         'Error al procesar el registro. Por favor verifica tus datos o intenta con otro método.',
       );
     }
 
-    // Registro inicial en Supabase
     final response = await _supabaseDataSource.signUp(
       email: normalizedEmail,
       password: password,
       data: {'full_name': fullName},
     );
 
-    // SEGURIDAD: Supabase devuelve un usuario exitoso pero sin identidades si el email
-    // ya está en uso por otro proveedor (ej. Google) y no se pudo vincular/crear.
-    // Esto evita que el usuario se quede atrapado en la pantalla de OTP esperando un PIN.
     if (response.user == null ||
         (response.user!.identities != null &&
             response.user!.identities!.isEmpty)) {
@@ -164,18 +126,15 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     }
 
-    // Devolvemos el usuario preliminar (El backend se sincronizará cuando termine el OTP flow)
     return AuthMapper.supabaseUserToEntity(response.user!);
   }
 
-  // Nuevo método necesario para manejar validación del código (El dominio debería integrarlo próximamente o manearse en Presentation)
   Future<UserEntity> verifyOtpAndSync({
     required String email,
     required String tokenPin,
     required String fullName,
     required String role,
   }) async {
-    // Normalizar el email para que coincida exactamente con lo que Supabase guarda
     final normalizedEmail = email.trim().toLowerCase();
 
     final response = await _supabaseDataSource.verifyOtp(
@@ -188,20 +147,17 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception('Fallo la validación OTP o no se obtuvo sesión.');
     }
 
-    // Registrar/Sincronizar en tu Backend (FastAPI + Supabase)
     final userModel = await _apiDataSource.registerInBackend(
       token: sessionToken,
       fullName: fullName,
       role: role,
     );
 
-    // Sincronizar rol en Supabase para persistencia rápida (Flicker fix)
     await _supabaseDataSource.updateUserMetadata({
       'role': role,
       'is_setup_completed': userModel.isSetupCompleted,
     });
 
-    // Actualizar caché
     _cachedUser = userModel;
     _lastVerificationTime = DateTime.now();
 
@@ -213,24 +169,20 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    // Login en Supabase
     final response = await _supabaseDataSource.signIn(
       email: email,
       password: password,
     );
 
-    // Obtener el Token
     final token = response.session?.accessToken;
     if (token == null)
       throw Exception(
         'No se pudo obtener el token (Posible cuenta sin verificar)',
       );
 
-    // Limpiar caché vieja antes de pedir datos frescos del login
     _cachedUser = null;
     _lastVerificationTime = null;
 
-    // Traer los datos frescos de tu Backend (usando caché limpia)
     final userModel = await _verifyWithCache(token);
     if (userModel == null)
       throw Exception('Usuario no encontrado en el servidor');
@@ -240,23 +192,17 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<UserEntity> signInWithGoogle() async {
-    // Sign in con Google (Supabase nativo)
     final response = await _supabaseDataSource.signInWithGoogle();
 
-    // Obtener el Token
     final token = response.session?.accessToken;
     if (token == null) throw Exception('No se pudo obtener el token Auth');
 
-    // Verificar si ya existe el usuario antes de registrar (usando caché)
     final existingUser = await _verifyWithCache(token);
 
     if (existingUser != null) {
-      print(' signInWithGoogle: User already exists, skipping registration');
       return existingUser.toEntity();
     }
 
-    // Si no existe, registrar en Backend (siempre como 'patient')
-    print(' signInWithGoogle: User not found, registering...');
     try {
       final newUser = await _apiDataSource.registerInBackend(
         token: token,
@@ -264,20 +210,16 @@ class AuthRepositoryImpl implements AuthRepository {
         role: 'pending',
       );
 
-      // Sincronizar rol en Supabase (siempre pending inicial)
       await _supabaseDataSource.updateUserMetadata({
         'role': 'pending',
         'is_setup_completed': false,
       });
 
-      // Actualizar caché con el nuevo usuario
       _cachedUser = newUser;
       _lastVerificationTime = DateTime.now();
 
       return newUser.toEntity();
     } catch (e) {
-      print(' Error registrando en backend: $e');
-      // Si el registro falla pero Supabase funcionó, devolvemos datos básicos
       return AuthMapper.supabaseUserToEntity(response.user!);
     }
   }
@@ -299,22 +241,17 @@ class AuthRepositoryImpl implements AuthRepository {
     required String avatarSeed,
     required String avatarBackground,
   }) async {
-    // Obtener Token
     final token = await _supabaseDataSource.getIdToken();
     if (token == null) throw Exception('No se pudo obtener el token');
 
-    // Actualizar en Backend
     final updatedUserModel = await _apiDataSource.updateAvatarInBackend(
       token: token,
       avatarSeed: avatarSeed,
       avatarBackground: avatarBackground,
     );
 
-    // Actualizar Caché local inmediatamente
     _cachedUser = updatedUserModel;
     _lastVerificationTime = DateTime.now();
-
-    print(' AuthRepository: Avatar updated and cache refreshed');
 
     return updatedUserModel.toEntity();
   }
@@ -331,20 +268,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> createProfile({
     required Map<String, dynamic> profileData,
   }) async {
-    // Obtener Token
     final token = await _supabaseDataSource.getIdToken();
     if (token == null) throw Exception('No se pudo obtener el token');
 
-    // Crear el perfil de usuario en el servidor enviando los JSON (Datos del form)
     await _apiDataSource.createProfile(token: token, profileData: profileData);
 
-    // INVALIDAR CACHÉ MIENTRAS SE NOTIFICA LA APP
     _cachedUser = null;
     _lastVerificationTime = null;
-
-    print(
-      ' AuthRepository: Profile created in backend and Local Cache cleared.',
-    );
   }
 
   @override
@@ -385,8 +315,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> resendOtp({required String email}) async {
     await _supabaseDataSource.resendOtp(email: email);
   }
-
-  // Mfa (google authenticator)
 
   @override
   Future<dynamic> enrollMfa() async {
@@ -429,13 +357,11 @@ class AuthRepositoryImpl implements AuthRepository {
       role: role,
     );
 
-    // Sincronizar rol en Supabase para evitar flickers en el próximo inicio
     await _supabaseDataSource.updateUserMetadata({
       'role': role,
       'is_setup_completed': updatedUserModel.isSetupCompleted,
     });
 
-    // Actualizar Caché local
     _cachedUser = updatedUserModel;
     _lastVerificationTime = DateTime.now();
 

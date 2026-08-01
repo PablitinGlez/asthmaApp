@@ -6,7 +6,6 @@ import 'firebase_options.dart';
 import 'config/router/app_router.dart';
 import 'presentation/auth/providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:intl/date_symbol_data_local.dart'; // Removido por Jank
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:toastification/toastification.dart';
 import 'presentation/home/providers/push_notifications_provider.dart';
@@ -16,22 +15,16 @@ import 'infrastructure/services/background_sync_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializar Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Inicializar Supabase
   await Supabase.initialize(
     url: 'https://gspjcaqonnvrzuviqrjq.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzcGpjYXFvbm52cnp1dmlxcmpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4Njk5NjMsImV4cCI6MjA4MjQ0NTk2M30.H-V78osW0tkcTfFQbIKKtEAdoEbhyQnVznwQCTiyOWw',
   );
 
-  // Inicializar notificaciones locales
   await LocalNotificationService.init();
-
-  // Inicializar trabajo en segundo plano
   await BackgroundSyncService.initialize();
 
-  // Precargar preferencias del sistema
   final prefs = await SharedPreferences.getInstance();
   final onboardingCompleted = prefs.getBool('onboarding_completed') ?? false;
   final setupCompleted = prefs.getBool('is_setup_completed') ?? false;
@@ -76,7 +69,6 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Configurar notificaciones push
     ref.listen(pushNotificationsProvider, (_, __) {});
     
     final router = ref.watch(appRouterProvider);
@@ -91,18 +83,18 @@ class MainApp extends ConsumerWidget {
           fontFamily: 'Satoshi',
         ),
         routerConfig: router,
-        // Idioma de la aplicación
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [
-          Locale('es', 'ES'), // Español
-          Locale('en', 'US'), // Inglés
+          Locale('es', 'ES'),
+          Locale('en', 'US'),
         ],
-        locale: const Locale('es', 'ES'), // Idioma por defecto
+        locale: const Locale('es', 'ES'),
       ),
     );
   }
 }
+

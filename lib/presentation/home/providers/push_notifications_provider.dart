@@ -8,20 +8,16 @@ class PushNotificationsNotifier extends Notifier<void> {
 
   @override
   void build() {
-    // Escuchar cambios de autenticación para sincronizar el token en cuanto el usuario entre
     ref.listen(authStateProvider, (previous, next) {
       if (next.value != null && previous?.value == null) {
-        print('[PUSH] Sesión detectada. Iniciando obtención/sincronización de token...');
         _getToken();
       }
     });
 
-    // Al inicializar, configuramos los listeners de Firebase
     _initNotifications();
   }
 
   Future<void> _initNotifications() async {
-    // Pedir permisos
     NotificationSettings settings = await _fcm.requestPermission(
       alert: true,
       badge: true,
@@ -29,37 +25,23 @@ class PushNotificationsNotifier extends Notifier<void> {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('[PUSH] Permisos concedidos');
       _getToken();
-    } else {
-      print('[PUSH] Permisos denegados');
     }
 
-    // Escuchar mensajes en primer plano
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('[PUSH] Mensaje recibido en primer plano: ${message.notification?.title}');
-      // Aquí podrías mostrar un snackbar o actualizar la UI
-    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {});
 
-    // Manejar clics (si la app estaba abierta)
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('[PUSH] Usuario hizo clic en la notificación');
-    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
   }
 
   Future<void> _getToken() async {
     try {
       String? token = await _fcm.getToken();
       if (token != null) {
-        print('[PUSH] Token obtenido: $token');
         _syncTokenWithBackend(token);
       }
       
-      // Escuchar si el token cambia por Google
       _fcm.onTokenRefresh.listen(_syncTokenWithBackend);
-    } catch (e) {
-      print('[PUSH] Error al obtener token: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> _syncTokenWithBackend(String fcmToken) async {
@@ -67,13 +49,9 @@ class PushNotificationsNotifier extends Notifier<void> {
     final user = authState.value;
     
     if (user != null) {
-      print('[PUSH] Sincronizando token con backend...');
       try {
         await ref.read(authRepositoryProvider).updateFcmToken(fcmToken: fcmToken);
-        print('[PUSH] Token sincronizado correctamente');
-      } catch (e) {
-        print('[PUSH] Error al sincronizar token: $e');
-      }
+      } catch (e) {}
     }
   }
 }

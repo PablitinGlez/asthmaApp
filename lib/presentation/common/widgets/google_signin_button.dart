@@ -4,7 +4,6 @@ import '../../auth/providers/auth_notifier.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-// Botón de Google Sign-In compartido para Login y Register
 class GoogleSignInButton extends ConsumerWidget {
   const GoogleSignInButton({super.key});
 

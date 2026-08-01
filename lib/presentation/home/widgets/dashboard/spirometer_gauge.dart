@@ -10,7 +10,6 @@ class MainGaugeSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final prediction = ref.watch(predictionProvider);
     
-    // Usamos directamente la probabilidad de la IA (0.0 a 1.0) para el riesgo
     final double riskScore = prediction.probability * 100;
 
     return Stack(
@@ -25,7 +24,6 @@ class MainGaugeSection extends ConsumerWidget {
           simulationData: prediction.simulationData,
           isSimulationActive: prediction.isSimulationActive,
         ),
-        // Badge de IA
         Positioned(
           top: 0,
           right: 20,
@@ -90,19 +88,16 @@ class _RiskGauge extends StatelessWidget {
     String statusText = statusTextOverride ?? "";
 
     if (score <= 30) {
-      statusColor = const Color(0xFF4CAF50); // Verde (Riesgo Bajo)
+      statusColor = const Color(0xFF4CAF50);
       if (statusText.isEmpty) statusText = "Estable";
     } else if (score <= 70) {
-      statusColor = const Color(0xFFFFC107); // Amarillo (Precaución)
+      statusColor = const Color(0xFFFFC107);
       if (statusText.isEmpty) statusText = "Precaución";
     } else {
-      statusColor = const Color(0xFFF44336); // Rojo (Riesgo Alto)
+      statusColor = const Color(0xFFF44336);
       if (statusText.isEmpty) statusText = "Riesgo de Crisis";
     }
 
-    // isEmpty solo es true si NUNCA se ha recibido una predicción del servidor
-    // (estado inicial antes del primer fetch). Si la predicción devuelve 0%,
-    // eso es un resultado válido → mostrar "0% Estable", no "--"
     final bool isEmpty = score == 0 && !isLoading && statusText.isEmpty;
     
     return TweenAnimationBuilder<double>(
@@ -265,7 +260,6 @@ class _GaugePainter extends CustomPainter {
     );
 
     if (!showNeedle) {
-      // Si no hay datos (showNeedle es falso), pintamos todo el arco de gris
       paint.color = Colors.grey.shade200;
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),
@@ -276,8 +270,7 @@ class _GaugePainter extends CustomPainter {
       );
       paint.shader = null;
 
-      // Aguja Placeholder (Apuntando a cero a la izquierda)
-      final needleAngle = math.pi; // Ángulo 0%
+      final needleAngle = math.pi;
       final needleLength = radius - 10;
       final needlePaint = Paint()
         ..color = Colors.grey.shade300

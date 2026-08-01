@@ -46,21 +46,15 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
 
   @override
   ActionPlanState build() {
-    // Observar el estado de autenticación de forma inteligente
-    // Usamos select para reaccionar SOLO si el ID del usuario cambia o si pasa de null a algo
     final userId = ref.watch(authStateProvider.select((v) => v.value?.id));
 
     if (userId == null) {
-      // Si no hay usuario, limpiamos caché y estado
       _saveToCache(false);
       return ActionPlanState(isLoading: false, hasPlan: false);
     }
 
-    // Cargar estado inicial desde el caché para que sea instantáneo (Warm Cache)
     _loadFromCache();
 
-    // Disparar sincronización silenciosa solo al entrar o cambiar de usuario
-    // Esto evita que actualizaciones de avatar disparen peticiones innecesarias
     Future.microtask(() => loadActionPlan(isSilent: true));
 
     return ActionPlanState(isLoading: false);
@@ -155,7 +149,6 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
       final token = await supabaseAuthDS.getIdToken();
       if (token == null) throw Exception('No hay token válido');
 
-      // Armamos el request usando el modelo mapeado al Pydantic de Python
       final requestModel = ActionPlanRequestModel(
         planName: "Plan de Acción Médico",
         steps: [
@@ -187,7 +180,6 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // En lugar de solo decir éxito, forzamos recarga para que baje los IDs reales
         state = state.copyWith(
           isLoading: false,
           isSuccess: true,
@@ -200,7 +192,6 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 &&
           e.response?.data['detail'] == 'Usuario ya tiene un plan activo') {
-        // En un futuro aqui harian un PUT en vez de POST.
         state = state.copyWith(
           isLoading: false,
           errorMessage:

@@ -1,4 +1,6 @@
+
 import os
+import pickle
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -9,120 +11,117 @@ from sklearn.metrics import (
     precision_score,
     f1_score,
     roc_auc_score,
+    classification_report,
+    confusion_matrix,
 )
-import time
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-start_time = time.time()
-
-# FASE 1 - RANDOM FOREST: comparar particiones y folds (8 variables originales)
-# Se prueban 3 particiones x 3 configuraciones de folds, con las 8 variables
-# originales, para elegir la combinacion ganadora de Random Forest antes de
-# pasar a seleccion de variables.
-
-DATASET_PATH = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\DATASETNOW\dataset_hibrido_8020_v5.csv"
-MODELS_DIR   = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\modelo"
+DATASET_PATH = r"C:\Users\gonza\dataset.csv"
+MODELS_DIR = "ml_service/modelo"
+GRAPHS_DIR = "ml_service/graphs"
 os.makedirs(MODELS_DIR, exist_ok=True)
+os.makedirs(GRAPHS_DIR, exist_ok=True)
 
-print("Cargando dataset...")
-df = pd.read_csv(DATASET_PATH)
-
-# Las 8 variables clinicas originales
-FEATURES = ["spo2", "bpm", "pasos", "pef_porcentaje", "horas_sueno"]
+FEATURES = ["spo2", "pef_porcentaje", "pasos", "bpm", "horas_sueno"]
 TARGET = "crisis"
+TEST_SIZE = 0.30
+N_FOLDS = 10
+THRESHOLD = 0.40
 
+df = pd.read_csv(DATASET_PATH)
 X = df[FEATURES]
 y = df[TARGET]
 
-# CONFIGURACION DE LOS EXPERIMENTOS: 3 SPLITS x 3 CANTIDADES DE FOLDS
-
-SPLIT_OPTIONS = [0.30, 0.25, 0.20]   # test_size -> genera 70-30, 75-25, 80-20
-FOLD_OPTIONS  = [3, 5, 10]
-
-resultados_cv = []
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=TEST_SIZE, random_state=42, stratify=y
+)
 
 def balancear(df_in):
-    sanos  = df_in[df_in[TARGET] == 0]
+    sanos = df_in[df_in[TARGET] == 0]
     crisis = df_in[df_in[TARGET] == 1]
     crisis_over = crisis.sample(len(sanos), replace=True, random_state=42)
     return pd.concat([sanos, crisis_over], axis=0).sample(frac=1, random_state=42)
 
-# BUCLE PRINCIPAL: por cada split, por cada cantidad de folds
+cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
+cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
 
-for test_size in SPLIT_OPTIONS:
-    particion_label = f"{int(round((1 - test_size) * 100))}-{int(round(test_size * 100))}"
+for train_idx, val_idx in cv.split(X_train, y_train):
+    X_tr_fold, y_tr_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]
+    X_val_fold, y_val_fold = X_train.iloc[val_idx], y_train.iloc[val_idx]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=42, stratify=y
+    fold_train = balancear(pd.concat([X_tr_fold, y_tr_fold], axis=1))
+    X_tr_fold_final = fold_train[FEATURES]
+    y_tr_fold_final = fold_train[TARGET]
+
+    fold_model = RandomForestClassifier(
+        n_estimators=200, max_depth=12, min_samples_leaf=5,
+        random_state=42, n_jobs=-1, class_weight="balanced",
     )
+    fold_model.fit(X_tr_fold_final, y_tr_fold_final)
 
-    print("\n" + "=" * 80)
-    print(f"SPLIT {particion_label}  (train={len(X_train):,} / test={len(X_test):,})")
-    print("=" * 80)
+    probs_val = fold_model.predict_proba(X_val_fold)[:, 1]
+    preds_val = (probs_val >= 0.50).astype(int)
 
-    for n_folds in FOLD_OPTIONS:
-        print(f"\n  --- Particion {particion_label} | CV con {n_folds} folds ---")
-        cv = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
+    cv_accs.append(accuracy_score(y_val_fold, preds_val))
+    cv_recs.append(recall_score(y_val_fold, preds_val))
+    cv_precs.append(precision_score(y_val_fold, preds_val))
+    cv_f1s.append(f1_score(y_val_fold, preds_val))
+    cv_aucs.append(roc_auc_score(y_val_fold, probs_val))
 
-        cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
+print(f"Accuracy CV: {np.mean(cv_accs):.4f}")
+print(f"Recall CV: {np.mean(cv_recs):.4f}")
+print(f"Precision CV: {np.mean(cv_precs):.4f}")
+print(f"F1 CV: {np.mean(cv_f1s):.4f}")
+print(f"AUC CV: {np.mean(cv_aucs):.4f}")
 
-        for fold, (train_idx, val_idx) in enumerate(cv.split(X_train, y_train), 1):
-            X_tr_fold, y_tr_fold = X_train.iloc[train_idx], y_train.iloc[train_idx]
-            X_val_fold, y_val_fold = X_train.iloc[val_idx], y_train.iloc[val_idx]
+train_final = balancear(pd.concat([X_train, y_train], axis=1))
+X_train_final = train_final[FEATURES]
+y_train_final = train_final[TARGET]
 
-            fold_train_over = balancear(pd.concat([X_tr_fold, y_tr_fold], axis=1))
-            X_tr_fold_final = fold_train_over[FEATURES]
-            y_tr_fold_final = fold_train_over[TARGET]
+model = RandomForestClassifier(
+    n_estimators=200,
+    max_depth=12,
+    min_samples_leaf=5,
+    random_state=42,
+    n_jobs=-1,
+    class_weight="balanced",
+)
+model.fit(X_train_final, y_train_final)
 
-            fold_model = RandomForestClassifier(
-                n_estimators=200,
-                max_depth=12,
-                min_samples_leaf=5,
-                random_state=42,
-                n_jobs=-1,
-                class_weight="balanced",
-            )
-            fold_model.fit(X_tr_fold_final, y_tr_fold_final)
+y_prob = model.predict_proba(X_test)[:, 1]
+y_pred = (y_prob >= THRESHOLD).astype(int)
 
-            probs_val = fold_model.predict_proba(X_val_fold)[:, 1]
-            preds_val = (probs_val >= 0.50).astype(int)
+acc = accuracy_score(y_test, y_pred)
+rec = recall_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+auc = roc_auc_score(y_test, y_prob)
 
-            cv_accs.append(accuracy_score(y_val_fold, preds_val))
-            cv_recs.append(recall_score(y_val_fold, preds_val))
-            cv_precs.append(precision_score(y_val_fold, preds_val))
-            cv_f1s.append(f1_score(y_val_fold, preds_val))
-            cv_aucs.append(roc_auc_score(y_val_fold, probs_val))
+print(f"Accuracy: {acc:.4f}")
+print(f"Recall: {rec:.4f}")
+print(f"Precision: {prec:.4f}")
+print(f"F1: {f1:.4f}")
+print(f"AUC: {auc:.4f}")
 
-            print(f"      Fold {fold}/{n_folds} -> Acc: {cv_accs[-1]:.4f} | Rec: {cv_recs[-1]:.4f} "
-                  f"| Prec: {cv_precs[-1]:.4f} | F1: {cv_f1s[-1]:.4f} | AUC: {cv_aucs[-1]:.4f}")
+print(classification_report(y_test, y_pred, target_names=["Sano", "Crisis"]))
 
-        resultados_cv.append({
-            "Particion": particion_label,
-            "CV Folds": n_folds,
-            "Accuracy": np.mean(cv_accs),
-            "Recall": np.mean(cv_recs),
-            "Precision": np.mean(cv_precs),
-            "F1": np.mean(cv_f1s),
-            "AUC": np.mean(cv_aucs),
-        })
+cm = confusion_matrix(y_test, y_pred)
+print(f"Real Sano - Predicho Sano: {cm[0][0]}, Predicho Crisis: {cm[0][1]}")
+print(f"Real Crisis - Predicho Sano: {cm[1][0]}, Predicho Crisis: {cm[1][1]}")
 
-# TABLA COMPARATIVA FINAL: LOS 3 SPLITS x LOS 3 FOLDS (9 FILAS)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt="d", cmap="YlOrRd", cbar=False,
+            xticklabels=["Predicho Sano", "Predicho Crisis"],
+            yticklabels=["Real Sano", "Real Crisis"])
+plt.title("Matriz de Confusion - Random Forest")
+plt.tight_layout()
+plt.savefig(os.path.join(GRAPHS_DIR, "confusion_matrix_rf.png"), dpi=150)
+plt.close()
 
-tabla_cv = pd.DataFrame(resultados_cv)
+importances = pd.Series(model.feature_importances_, index=FEATURES).sort_values(ascending=False)
+for feature, importance in importances.items():
+    print(f"{feature}: {importance:.4f}")
 
-print("\n" + "=" * 90)
-print("TABLA COMPARATIVA - RANDOM FOREST - VALIDACION CRUZADA (70-30 / 75-25 / 80-20)")
-print("=" * 90)
-print(f"{'Particion':<10}{'CV Folds':<10}{'Accuracy':<12}{'Recall':<12}{'Precision':<12}{'F1':<12}{'AUC':<12}")
-print("-" * 90)
-for row in resultados_cv:
-    print(f"{row['Particion']:<10}{row['CV Folds']:<10}"
-          f"{row['Accuracy']:<12.4f}{row['Recall']:<12.4f}"
-          f"{row['Precision']:<12.4f}{row['F1']:<12.4f}{row['AUC']:<12.4f}")
-print("=" * 90)
-
-TABLA_CV_PATH = os.path.join(MODELS_DIR, "random_forest_comparativa_cv_folds.csv")
-tabla_cv.to_csv(TABLA_CV_PATH, index=False)
-print(f"\nTabla comparativa guardada en -> {TABLA_CV_PATH}")
-
-exec_time = time.time() - start_time
-print(f"\n[METRICS] Tiempo total de ejecucion: {exec_time:.2f} segundos")
+with open(os.path.join(MODELS_DIR, "random_forest_asma.pkl"), "wb") as f:
+    pickle.dump(model, f)

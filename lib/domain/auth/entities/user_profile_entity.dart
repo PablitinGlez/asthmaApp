@@ -1,7 +1,6 @@
 class UserProfileEntity {
   final int userId;
 
-  // Civic fields (Tab 1)
   final String? firstName;
   final String? lastName;
   final int? age;
@@ -13,7 +12,6 @@ class UserProfileEntity {
   final String? addressZip;
   final String? healthInsuranceNumber;
 
-  // Clinical fields (Tab 2)
   final double? heightCm;
   final double? weightKg;
   final String? bloodType;
@@ -23,7 +21,6 @@ class UserProfileEntity {
   final String? knownAllergies;
   final String? currentMedications;
 
-  // Doctor vinculado (NUEVO)
   final String? linkedDoctorName;
   final String? linkedDoctorCode;
   final String? linkedDoctorSpecialty;

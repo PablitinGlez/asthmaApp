@@ -37,12 +37,10 @@ import '../../presentation/auth/screens/mfa_verification_screen.dart';
 import '../../presentation/medications/screens/medications_screen.dart';
 import '../../presentation/home/screens/sos_screen.dart';
 
-// Notifier para manejar el redireccionamiento basado en el estado
 class AuthRouterNotifier extends ChangeNotifier {
   final Ref _ref;
 
   AuthRouterNotifier(this._ref) {
-    // Escuchar cambios en authStateProvider de forma inteligente
     _ref.listen(authStateProvider, (previous, next) {
       final prevUser = previous?.value;
       final nextUser = next.value;
@@ -50,56 +48,34 @@ class AuthRouterNotifier extends ChangeNotifier {
       final wasLoading = previous?.isLoading ?? true;
       final isNowLoading = next.isLoading;
 
-      // Notificamos si:
-      // Terminó de cargar (Crucial para salir del Splash)
-      // El estado de logueo cambió (entró o salió)
-      // El estado de setup cambió
       final loadingFinished = wasLoading && !isNowLoading;
       final loginStatusChanged = (prevUser == null) != (nextUser == null);
       final setupStatusChanged =
           prevUser?.isSetupCompleted != nextUser?.isSetupCompleted;
 
       if (loadingFinished || loginStatusChanged || setupStatusChanged) {
-        debugPrint(
-          ' RouterNotifier: CRITICAL Change (Auth/Setup/Load) -> NotifyListeners',
-        );
         notifyListeners();
-      } else {
-        debugPrint(
-          ' RouterNotifier: Minor update detected. Skipping Router Refresh.',
-        );
       }
     });
 
-    // Escuchar cambios en onboardingCompletedProvider
     _ref.listen(onboardingCompletedProvider, (previous, next) {
-      print(' RouterNotifier: Onboarding changed -> NotifyListeners');
       notifyListeners();
     });
 
-    // Escuchar cambios en setupCompletedProvider (Simulación local)
     _ref.listen(setupCompletedProvider, (previous, next) {
-      print(' RouterNotifier: Setup Local changed -> NotifyListeners');
       notifyListeners();
     });
 
-    // Escuchar el estado de AuthNotifier (Para detectar pendingEmail y passwordRecovery)
     _ref.listen(authNotifierProvider, (previous, next) {
       final statusChanged = previous?.status != next.status;
       final pendingChanged = previous?.pendingEmail != next.pendingEmail;
 
       if (pendingChanged || statusChanged) {
-        // Si ya estábamos autenticados y solo estamos pasando por 'loading'
-        // para una actualización interna (como el avatar), NO refrescamos el router.
-        // Esto evita parpadeos, interrupciones de animaciones (pops) y flickers.
         final wasAuth = previous?.status == AuthStatus.authenticated;
         final isLoad = next.status == AuthStatus.loading;
 
-        // Caso 1: Pasando de Auth a Loading (empieza el guardado)
         if (wasAuth && isLoad) return;
 
-        // Caso 2: Volviendo de Loading a Auth (terminó el guardado exitoso)
-        // Verificamos si seguimos teniendo datos de usuario en el Stream
         final hasUser = _ref.read(authStateProvider).value != null;
         if (hasUser &&
             previous?.status == AuthStatus.loading &&
@@ -107,23 +83,15 @@ class AuthRouterNotifier extends ChangeNotifier {
           return;
         }
 
-        print(
-          ' RouterNotifier: AuthNotifier status changed (${next.status}) -> NotifyListeners',
-        );
         notifyListeners();
       }
     });
 
-    // Leerlos para desencadenar las llamadas y no tener esqueletos
     _ref.read(smartwatchProvider);
     _ref.read(spirometerProvider);
 
-    // Escuchar cambios en la persistencia del Setup
     _ref.listen(setupCompletedProvider, (previous, next) {
       if (previous != next) {
-        print(
-          ' RouterNotifier: setupCompleted status changed ($next) -> NotifyListeners',
-        );
         notifyListeners();
       }
     });
@@ -134,11 +102,8 @@ final authRouterNotifierProvider = Provider<AuthRouterNotifier>((ref) {
   return AuthRouterNotifier(ref);
 });
 
-// Provider del GoRouter
 final appRouterProvider = Provider<GoRouter>((ref) {
   final routerNotifier = ref.watch(authRouterNotifierProvider);
-
-  print(' appRouterProvider: Creating GoRouter Instance (Only once!)');
 
   return GoRouter(
     initialLocation: '/',
@@ -147,9 +112,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authStateProvider);
       final onboardingCompleted = ref.read(onboardingCompletedProvider);
-      final localSetupDone = ref.read(
-        setupCompletedProvider,
-      ); // Persistencia local
+      final localSetupDone = ref.read(setupCompletedProvider);
 
       final isLoadingAuth = authState.isLoading;
       final user = authState.value;
@@ -157,10 +120,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final hasCompletedOnboarding = onboardingCompleted;
 
       final currentLocation = state.matchedLocation;
-      print(
-        ' ROUTER REDIRECT: location=$currentLocation, user=${user?.email}, loading=$isLoadingAuth',
-      );
-      // Validación de rutas
 
       final isOnSplash = currentLocation == '/';
       final isOnLogin = currentLocation == '/login';
@@ -173,30 +132,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isOnMfaVerify = currentLocation == '/mfa-verify';
       final isOnRoleSelection = currentLocation == '/role-selection';
 
-      // Si Supabase ya tiene la sesión en disco PERO nuestro 'user' de FastAPI
-      // todavía es null (cargando), congelamos la pantalla en el Splash.
       final hasSession = Supabase.instance.client.auth.currentSession != null;
       final authStatus = ref.read(authNotifierProvider).status;
       final isFetchingProfile =
           hasSession && user == null && authStatus != AuthStatus.initial;
 
-      if (isOnSplash || isOnLogin || isOnRegister || isOnSetup) {
-        print('================  ESTADO DEL ROUTER  ================');
-        print(' Rutas       : isOnSplash=$isOnSplash, isOnSetup=$isOnSetup');
-        print(' Auth        : isLoadingAuth=$isLoadingAuth');
-        print(
-          ' Perfil      : isFetchingProfile=$isFetchingProfile (hasSession=$hasSession, user=${user?.email})',
-        );
-        print(
-          ' Setup       : API=${user?.isSetupCompleted}, LOCAL=$localSetupDone',
-        );
-        print('=========================================================');
-      }
-
-      // Esperamos a que el Stream de auth se resuelva con un usuario real
       if (isLoadingAuth || isFetchingProfile) {
-        // Redirigimos al Splash SOLO si no estamos ya en una pantalla de Auth
-        // Esto evita el "parpadeo" blanco/azul al loguearse o verificar OTP
         final isAuthScreen =
             isOnLogin ||
             isOnRegister ||
@@ -205,56 +146,46 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             isOnResetPassword ||
             isOnMfaVerify;
         if (!isOnSplash && !isAuthScreen) return '/';
-        return null; // Si ya estamos en Login/OTP/etc, nos quedamos ahí mientras carga
+        return null;
       }
 
-      // Si no ha completado el Onboarding visual y no está logueado -> Onboarding
       if (!isLoggedIn && !hasCompletedOnboarding) {
         if (!isOnOnboarding) return '/onboarding';
         return null;
       }
 
-      // pendingEmail existe -> Redirigir a OTP sin importar nada más
       final pendingEmail = ref.read(authNotifierProvider).pendingEmail;
 
       if (pendingEmail != null && !isLoggedIn) {
         if (!isOnOtp) {
-          print(' ROUTER: Redirecting to /otp-verification (Pending OTP)');
           return '/otp-verification';
         }
-        return null; // Ya está ahí
+        return null;
       }
 
-      // Recuperación de contraseña
       if (isOnResetPassword && authStatus == AuthStatus.loading) {
         return null;
       }
 
       if (ref.read(authNotifierProvider).isPasswordRecovery) {
         if (!isOnResetPassword) {
-          print(' ROUTER: Redirecting to /reset-password (Recovery Mode)');
           return '/reset-password';
         }
         return null;
       }
 
-      // Mfa required
       if (authStatus == AuthStatus.mfaRequired) {
         if (!isOnMfaVerify) {
-          print(' ROUTER: Redirecting to /mfa-verify (MFA Required)');
           return '/mfa-verify';
         }
         return null;
       }
 
-      // Si NO está logueado
       if (!isLoggedIn) {
-        // Si estamos en medio de una carga (SplashScreen), nos quedamos ahí
         if (isLoadingAuth || isFetchingProfile) return null;
 
         if (isOnSplash) return '/login';
 
-        // Si ya está en una pantalla de auth permitida, no redirigir
         if (isOnLogin ||
             isOnRegister ||
             isOnForgotPassword ||
@@ -264,29 +195,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return null;
         }
 
-        // Si intenta acceder a cualquier otra pantalla (Home, Setup, etc) sin sesión -> Login
         return '/login';
       }
 
-      // Si ESTÁ logueado pero el ROL es PENDING (NUEVO)
       if (isLoggedIn && user.role == 'pending') {
         if (!isOnRoleSelection) return '/role-selection';
         return null;
       }
 
-      // Si ESTÁ logueado
       if (isLoggedIn) {
-        // AUTO-SYNC: Si el API dice que el setup ya está hecho pero LOCAL
-        // no lo sabe aún (fresh install, borrado de datos), lo sincronizamos.
         if (user.isSetupCompleted && !localSetupDone) {
-          // Disparamos en background, no bloqueamos el redirect
           Future.microtask(
             () => ref.read(setupCompletedProvider.notifier).complete(),
           );
         }
 
-        // Usuario sin setup medico completo
-        // Skip solo si AMBOS (API y Local) dicen que falta, Y no es un guardián
         if (!user.isSetupCompleted &&
             !localSetupDone &&
             user.role != 'guardian') {
@@ -294,8 +217,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return null;
         }
 
-        // Usuario con sesión y setup al día
-        // Si ya completó setup, pero intenta volver a pantallas de auth/onboarding/onboarding -> Home
         final isOnAuthSystem =
             isOnSetup ||
             isOnRoleSelection ||
@@ -307,16 +228,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             isOnMfaVerify ||
             isOnOnboarding;
 
-        // EXCEPCIÓN CRÍTICA: Si ya estamos en SOS, no hacemos nada (nos quedamos ahí)
         final isOnSos = currentLocation == '/sos';
         if (isOnSos) return null;
 
         if (isOnAuthSystem) {
-          print(' ROUTER: Redirecting to /home (Session active)');
           return user.role == 'guardian' ? '/guardian-home' : '/home';
         }
 
-        // Prevención de cruce de roles
         if (user.role == 'guardian' && currentLocation == '/home')
           return '/guardian-home';
         if (user.role == 'patient' && currentLocation == '/guardian-home')
@@ -526,5 +444,3 @@ Puedes solicitar la eliminación de tu cuenta y todos tus datos en cualquier mom
     ],
   );
 });
-
-// Notifier para manejar el estado del onboarding se movió a auth_provider.dart

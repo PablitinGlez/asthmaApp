@@ -27,7 +27,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
   final GlobalKey _exportKey = GlobalKey();
 
-  // Lista de pantallas para cada tab
   late final List<Widget> _screens = [
     const DashboardTab(),
     MeasurementsTab(exportKey: _exportKey),

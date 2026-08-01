@@ -42,7 +42,6 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
       try {
         await ref.read(authStateProvider.notifier).updateRole(role);
         
-        // Si es Guardián, enviamos la bienvenida de una vez (no tiene onboarding)
         if (role == 'guardian') {
           final user = ref.read(authStateProvider).value;
           final name = user?.fullName.split(' ').first ?? 'Guardián';

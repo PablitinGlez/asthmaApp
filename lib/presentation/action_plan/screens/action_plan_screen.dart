@@ -25,21 +25,17 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
     super.initState();
 
     if (widget.isReadOnly) {
-      // Intentar poblar inmediatamente si ya tenemos la data en el provider
       final currentSteps = ref.read(actionPlanProvider).steps;
       if (currentSteps != null && currentSteps.isNotEmpty) {
         _populateControllers(currentSteps);
       }
 
-      // Forzar recarga fresca del plan
       Future.microtask(
         () => ref.read(actionPlanProvider.notifier).loadActionPlan(),
       );
     }
 
-    // Escuchar reactivamente cuando llegan los datos (o cambian)
     ref.listenManual(actionPlanProvider, (previous, next) {
-      // Si llegan steps nuevos y estamos en modo lectura, poblamos
       if (widget.isReadOnly &&
           next.steps != null &&
           next.steps!.isNotEmpty &&

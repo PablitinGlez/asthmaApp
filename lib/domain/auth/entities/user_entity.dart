@@ -1,6 +1,6 @@
 class UserEntity {
   final int dbId;
-  final String id; // Firebase UID
+  final String id;
   final String email;
   final String fullName;
   final String role;

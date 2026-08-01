@@ -5,16 +5,16 @@ class MeasurementHistoryItem {
   final int? spo2;
   final int? heartRate;
   final String? symptoms;
-  final String? symptomIntensity; // New field
+  final String? symptomIntensity;
   final String? notes;
   final int? aqi;
   final double? temperature;
   final int? humidity;
   final String? pollenLevel;
   final String? locationName;
-  final int? steps;            // New field from smartwatch
-  final double? sleepHours;     // New field from smartwatch
-  final int? respiratoryRate;   // New field from smartwatch
+  final int? steps;
+  final double? sleepHours;
+  final int? respiratoryRate;
 
   MeasurementHistoryItem({
     this.id,

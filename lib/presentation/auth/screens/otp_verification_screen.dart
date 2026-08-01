@@ -36,14 +36,12 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       if (next.errorMessage != null &&
           !next.isLoading &&
           previous?.errorMessage != next.errorMessage) {
-        // Registrar intento fallido
         _handleFailedAttempt();
 
         SnackBarHelper.showError(context, next.errorMessage!);
         pinController.clear();
       }
 
-      // Reaccionamos exclusivamente cuando la cuenta se haya autenticado por completo
       if (next.isAuthenticated && !next.isLoading) {
         _resetLockout();
 

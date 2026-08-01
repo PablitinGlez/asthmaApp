@@ -30,9 +30,7 @@ class LocalNotificationService {
 
     await _notificationsPlugin.initialize(
       settings: initializationSettings,
-      onDidReceiveNotificationResponse: (details) {
-        debugPrint('Notificación presionada: ${details.payload}');
-      },
+      onDidReceiveNotificationResponse: (details) {},
     );
   }
 
@@ -42,11 +40,7 @@ class LocalNotificationService {
     required DateTime scheduledDate,
     List<int>? daysOfWeek,
   }) async {
-    print(' Notifications: Intentando agendar recordatorio para "$name" el $scheduledDate');
-    
-    // Ignorar si la fecha es pasada
     if (scheduledDate.isBefore(DateTime.now())) {
-      print(' Notifications: La fecha ya pasó, saltando agendamiento.');
       return;
     }
 
@@ -74,8 +68,6 @@ class LocalNotificationService {
       );
 
       if (daysOfWeek == null || daysOfWeek.isEmpty || daysOfWeek.length == 7) {
-        // Programación diaria
-        print(' Notifications: Configurando alarma DIARIA con ID: $id a las ${tzDate.hour}:${tzDate.minute}');
         await _notificationsPlugin.zonedSchedule(
           id: id,
           title: ' Hora de tu medicina',
@@ -87,12 +79,8 @@ class LocalNotificationService {
           payload: 'medication_$id',
         );
       } else {
-        // Programación por días seleccionados
-        print(' Notifications: Configurando alarma semanal para los días: $daysOfWeek');
         for (final dayIndex in daysOfWeek) {
           tz.TZDateTime scheduledDay = _nextInstanceOfDay(tzDate, dayIndex);
-          
-          print('   - Agendando para el día $dayIndex con ID: ${id * 10 + dayIndex}');
           await _notificationsPlugin.zonedSchedule(
             id: id * 10 + dayIndex,
             title: ' Recordatorio: $name',
@@ -105,10 +93,8 @@ class LocalNotificationService {
           );
         }
       }
-      print(' Notifications: Alarma(s) configurada(s) correctamente.');
     } catch (e) {
-      print(' Notifications: Error crítico al agendar recordatorio: $e');
-      rethrow; // Reenviar excepción a la interfaz
+      rethrow;
     }
   }
 
@@ -129,7 +115,6 @@ class LocalNotificationService {
 
   static Future<void> scheduleTestOneMinute() async {
     final tzDate = tz.TZDateTime.now(tz.local).add(const Duration(minutes: 1));
-    print(' TEST: Agendando alarma 100% aislada para las: ${tzDate.hour}:${tzDate.minute}:${tzDate.second}');
     
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'medication_reminders_v2',
@@ -148,11 +133,9 @@ class LocalNotificationService {
       notificationDetails: platformDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
-    print(' TEST: ¡Alarma programada, minimiza la app ahora mismo!');
   }
 
   static Future<void> showWelcomeNotification(String name) async {
-    print(' Notifications: Preparando notificación de bienvenida para $name');
     try {
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
         'welcome_notifications',
@@ -181,10 +164,7 @@ class LocalNotificationService {
         notificationDetails: platformDetails,
         payload: 'welcome',
       );
-      print(' Notifications: Notificación de bienvenida enviada con éxito.');
-    } catch (e) {
-      print(' Notifications: Error al enviar bienvenida: $e');
-    }
+    } catch (e) {}
   }
 
   static Future<void> cancelAll() async {

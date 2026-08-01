@@ -45,7 +45,6 @@ abstract class AuthRepository {
 
   Future<void> resendOtp({required String email});
 
-  // Mfa (google authenticator)
   Future<dynamic> enrollMfa();
   Future<dynamic> challengeAndVerifyMfa({
     required String factorId,
@@ -57,7 +56,6 @@ abstract class AuthRepository {
 
   Future<UserEntity> updateRole({required String role});
 
-  // Métodos para guardianes y vinculación (paciente)
   Future<String> getLinkingCode();
   Future<List<Map<String, dynamic>>> getMyGuardians();
   Future<void> unlinkGuardian({required int guardianId});

@@ -50,7 +50,7 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
       if (token == null) {
         state = state.copyWith(
           isLoading: false,
-          errorMessage: null, // Evitar Snackbar fantasma en Logout
+          errorMessage: null,
         );
         return;
       }
@@ -62,7 +62,6 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
 
       if (response.statusCode == 200) {
         final List<dynamic> devices = response.data;
-        // Consideramos que tiene dispositivo vinculado si la Lista no está vacía
         state = state.copyWith(
           hasLinkedDevice: devices.isNotEmpty,
           devices: devices,
@@ -76,7 +75,6 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        // Asume que si tira 404 es que no hay tabla o usuario (pero no debería caer aquí)
         state = state.copyWith(hasLinkedDevice: false, isLoading: false);
       } else {
         state = state.copyWith(
@@ -92,8 +90,6 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
     }
   }
 
-  // Refresca la Lista de dispositivos sin activar el estado global de carga
-  // para evitar el parpadeo que rompe la navegación (pop).
   Future<void> _refreshDevicesSilently() async {
     try {
       final dioClient = ref.read(dioClientProvider);
@@ -115,12 +111,9 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
           isLoading: false,
         );
       }
-    } catch (e) {
-      debugPrint(' PROVIDER: Error en refresco silencioso: $e');
-    }
+    } catch (e) {}
   }
 
-  // Método para vincular un dispositivo e insertarlo en la BD (Supabase)
   Future<bool> linkDevice() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
@@ -137,7 +130,6 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
         return false;
       }
 
-      // Generar una MAC aleatoria para evitar errores de "ya registrado"
       final random = Random();
       final mac = List.generate(
         6,
@@ -145,7 +137,6 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
             random.nextInt(256).toRadixString(16).padLeft(2, '0').toUpperCase(),
       ).join(':');
 
-      // Datos ficticios pero consistentes para todos los usuarios
       final Map<String, dynamic> deviceData = {
         'device_type': 'spirometer',
         'device_brand': 'Spirometer',
@@ -161,14 +152,10 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint(' PROVIDER: Vinculación exitosa. Sincronizando lista...');
-        // Marcamos éxito local y disparamos el refresco silencioso
         state = state.copyWith(hasLinkedDevice: true, isLoading: false);
         await _refreshDevicesSilently();
-        debugPrint(' PROVIDER: Lista sincronizada. Notificando a UI.');
         return true;
       } else {
-        debugPrint(' PROVIDER: Error de servidor: ${response.statusCode}');
         state = state.copyWith(
           isLoading: false,
           errorMessage: 'Error al vincular el dispositivo',

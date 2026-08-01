@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 
-// Cliente HTTP personalizado usando Dio.
 class DioClient {
   final Dio _dio;
 
@@ -36,8 +35,6 @@ class DioClient {
           }
 
           if (error.response?.statusCode == 401) {
-            // Este es el guardia de seguridad que mata sesiones
-            // Lanza una excepción específica que nuestra UI o Notifier pueda atrapar
             return handler.reject(
               DioException(
                 requestOptions: error.requestOptions,

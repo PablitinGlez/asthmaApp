@@ -16,13 +16,7 @@ final supabaseClientProvider = Provider<SupabaseClient>((ref) {
 });
 
 final dioClientProvider = Provider<DioClient>((ref) {
-  // PRODUCCIÓN (Render)
   const baseUrl = 'https://asthma-predictor-api.onrender.com';
-  
-  // LOCAL (Cambia esto por tu IP local si usas celular físico)
-  // const baseUrl = 'http://10.0.2.2:8000'; // Para emulador Android
-  // const baseUrl = 'http://192.168.1.XX:8000'; // Para celular físico en misma red
-  
   return DioClient(baseUrl: baseUrl);
 });
 

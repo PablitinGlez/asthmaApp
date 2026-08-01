@@ -7,7 +7,6 @@ import '../../../core/storage/storage_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../action_plan/providers/action_plan_provider.dart';
 import '../providers/weekly_trend_provider.dart';
-// Importamos nuestros nuevos widgets modulares
 import '../widgets/dashboard/dashboard_greeting.dart';
 import '../widgets/dashboard/spirometer_gauge.dart';
 import '../widgets/dashboard/quick_actions.dart';
@@ -37,7 +36,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
 
   late TutorialCoachMark tutorialCoachMark;
   List<TargetFocus> targets = [];
-  bool _isTutorialRunning = false; // Guardia para evitar solapamientos
+  bool _isTutorialRunning = false;
 
   @override
   void initState() {
