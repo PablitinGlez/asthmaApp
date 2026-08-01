@@ -121,7 +121,6 @@ El archivo ZIP descargado de *Edinburgh DataStore* contiene 12 archivos. De esto
 | anonym_aamos00_patient_info.csv       | Informacion demografica y clinica de cada paciente | pef_best para conversion de PEF |
 
 ## 
-
 ## 3.2 Archivos Descartados y Razón
 
 | **Archivo**                            | **Razon del descarte**                                             |
@@ -426,7 +425,6 @@ La separación entre clases mide qué tan distinguibles son los estados de los p
 Las variables aqi, humedad y temperatura presentan una separación baja de manera deliberada, ya que en la realidad clínica estas variables constituyen desencadenantes (triggers) indirectos y débiles por sí solos.
 
 # 
-
 # 9. Resumen Cronológico del Proceso de Construcción
 
 | **Fase**                 | **Actividad**                                                                                                                 | **Resultado**                                                               |

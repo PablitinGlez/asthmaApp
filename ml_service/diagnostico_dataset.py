@@ -14,9 +14,7 @@ print(f"Distribucion de la clase objetivo:")
 print(df[TARGET].value_counts())
 print(f"Proporcion: {df[TARGET].value_counts(normalize=True).round(4).to_dict()}")
 
-# =============================================================================
 # 1) CORRELACION DE CADA VARIABLE CON LA ETIQUETA DE CRISIS
-# =============================================================================
 print("\n" + "=" * 70)
 print("CORRELACION DE CADA VARIABLE CON 'crisis' (Pearson)")
 print("=" * 70)
@@ -24,9 +22,7 @@ correlaciones = df[FEATURES + [TARGET]].corr()[TARGET].drop(TARGET).sort_values(
 for feat, corr in correlaciones.items():
     print(f"  {feat:<18} {corr:+.4f}")
 
-# =============================================================================
 # 2) PROMEDIO DE CADA VARIABLE, SEPARADO POR CLASE (sano vs crisis)
-# =============================================================================
 print("\n" + "=" * 70)
 print("PROMEDIO DE CADA VARIABLE POR CLASE (Sano vs Crisis)")
 print("=" * 70)
@@ -35,9 +31,7 @@ comparacion.columns = ["Sano (0)", "Crisis (1)"]
 comparacion["Diferencia"] = comparacion["Crisis (1)"] - comparacion["Sano (0)"]
 print(comparacion.round(2))
 
-# =============================================================================
 # 3) EL PUNTO CLAVE: CASOS CON PEF BAJO PERO SPO2 NORMAL -> ¿SE ETIQUETARON COMO CRISIS?
-# =============================================================================
 print("\n" + "=" * 70)
 print("CASOS CON PEF BAJO (<50%) Y SPO2 NORMAL (>=95%)")
 print("=" * 70)
@@ -49,9 +43,7 @@ if len(pef_bajo_spo2_normal) > 0:
 else:
     print("No hay registros en el dataset con esta combinacion -> el modelo nunca vio este escenario.")
 
-# =============================================================================
 # 4) EL CONTRASTE: CASOS CON SPO2 BAJO PERO PEF NORMAL -> ¿SE ETIQUETARON COMO CRISIS?
-# =============================================================================
 print("\n" + "=" * 70)
 print("CASOS CON SPO2 BAJO (<92%) Y PEF NORMAL (>=80%)")
 print("=" * 70)
@@ -63,9 +55,7 @@ if len(spo2_bajo_pef_normal) > 0:
 else:
     print("No hay registros en el dataset con esta combinacion.")
 
-# =============================================================================
 # 5) DISTRIBUCION COMPLETA DE PEF, SEPARADA POR CLASE
-# =============================================================================
 print("\n" + "=" * 70)
 print("ESTADISTICAS DE pef_porcentaje POR CLASE")
 print("=" * 70)

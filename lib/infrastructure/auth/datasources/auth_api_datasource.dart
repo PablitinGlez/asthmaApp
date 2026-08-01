@@ -122,7 +122,7 @@ class AuthApiDataSource {
       );
 
       if (response.statusCode == 200) {
-        print('🔍 DEBUG: Profile Response: ${response.data}');
+        print(' DEBUG: Profile Response: ${response.data}');
         return UserProfileModel.fromJson(response.data);
       } else {
         throw Exception('Error al obtener perfil del backend');
@@ -197,7 +197,7 @@ class AuthApiDataSource {
     }
   }
 
-  // --- MÉTODOS PARA GUARDIANES Y VINCULACIÓN (PACIENTE) ---
+  // Métodos para guardianes y vinculación (paciente)
 
   Future<String> getLinkingCode({required String token}) async {
     try {

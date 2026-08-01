@@ -14,7 +14,7 @@ export class AuthService {
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
     
-    // Listen for auth changes SIN ASYNC para evitar el deadlock de Supabase
+    // Escuchar cambios de autenticación sin bloquear Supabase
     this.supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth event:', event);
       this.currentUserSubject.next(session?.user ?? null);

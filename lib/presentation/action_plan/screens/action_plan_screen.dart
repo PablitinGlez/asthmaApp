@@ -25,19 +25,19 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
     super.initState();
 
     if (widget.isReadOnly) {
-      // 1. Intentar poblar inmediatamente si ya tenemos la data en el provider
+      // Intentar poblar inmediatamente si ya tenemos la data en el provider
       final currentSteps = ref.read(actionPlanProvider).steps;
       if (currentSteps != null && currentSteps.isNotEmpty) {
         _populateControllers(currentSteps);
       }
 
-      // 2. Forzar recarga fresca del plan
+      // Forzar recarga fresca del plan
       Future.microtask(
         () => ref.read(actionPlanProvider.notifier).loadActionPlan(),
       );
     }
 
-    // 3. Escuchar reactivamente cuando llegan los datos (o cambian)
+    // Escuchar reactivamente cuando llegan los datos (o cambian)
     ref.listenManual(actionPlanProvider, (previous, next) {
       // Si llegan steps nuevos y estamos en modo lectura, poblamos
       if (widget.isReadOnly &&
@@ -384,7 +384,7 @@ class _ZoneCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header (Color Ribbon)
+          // Encabezado (Color Ribbon)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(

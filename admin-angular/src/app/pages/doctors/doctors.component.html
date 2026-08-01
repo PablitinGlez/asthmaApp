@@ -3,7 +3,7 @@
   <div class="main-content">
   <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
     <div>
-      <h2 style="font-size: 2rem; font-weight: 800; margin: 0;">Gestión de Doctores 🩺</h2>
+      <h2 style="font-size: 2rem; font-weight: 800; margin: 0;">Gestión de Doctores </h2>
       <p style="color: var(--text-muted); margin-top: 0.5rem;">Crea invitaciones y administra el personal médico.</p>
     </div>
     <button (click)="openModal()" class="btn-primary" style="width: auto;">
@@ -33,8 +33,7 @@
           <td style="padding: 1rem 1.5rem; font-family: monospace; color: var(--primary);">{{ doctor.license_number }}</td>
           <td style="padding: 1rem 1.5rem;">{{ doctor.hospital_name }}</td>
           <td style="padding: 1rem 1.5rem;">
-            <span [style.background]="doctor.is_verified ? '#d1fae5' : '#fee2e2'" 
-                  [style.color]="doctor.is_verified ? '#065f46' : '#991b1b'"
+            <span [style.background]="doctor.is_verified ? '#d1fae5' : '#fee2e2'"[style.color]="doctor.is_verified ? '#065f46' : '#991b1b'"
                   style="padding: 4px 12px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;">
               {{ doctor.is_verified ? 'Verificado' : 'Pendiente' }}
             </span>
@@ -90,7 +89,7 @@
           <textarea [(ngModel)]="newDoctor.bio" name="bio" class="form-input" style="height: 80px;"></textarea>
         </div>
 
-        <button type="submit" [disabled]="isLoading" class="btn-primary">
+        <button type="submit"[disabled]="isLoading" class="btn-primary">
           {{ isLoading ? 'Enviando invitación...' : 'Enviar Invitación' }}
         </button>
       </form>
@@ -99,26 +98,24 @@
 
   <!-- Real Toast Notification -->
   <div class="toast-container" *ngIf="showToast">
-    <div class="toast" [class.error]="toastType === 'error'">
-      <span>{{ toastType === 'success' ? '✅' : '❌' }}</span>
+    <div class="toast"[class.error]="toastType === 'error'">
+      <span>{{ toastType === 'success' ? '' : '' }}</span>
       <span>{{ toastMessage }}</span>
     </div>
   </div>
   <!-- Overlay para el Panel Lateral -->
-  <div class="side-panel-overlay" 
-       [class.active]="showDetailsPanel" 
+  <div class="side-panel-overlay"[class.active]="showDetailsPanel" 
        (click)="closeDetails()"></div>
 
   <!-- Panel Lateral (Drawer) -->
-  <div class="side-panel" [class.open]="showDetailsPanel">
+  <div class="side-panel"[class.open]="showDetailsPanel">
     <div *ngIf="selectedDoctor" style="padding: 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
         <div>
           <h2 style="font-size: 1.5rem; font-weight: 800; margin: 0; color: var(--text-color);">
             Detalles del Doctor
           </h2>
-          <span [style.background]="selectedDoctor.is_verified ? '#d1fae5' : '#fee2e2'" 
-                [style.color]="selectedDoctor.is_verified ? '#065f46' : '#991b1b'"
+          <span [style.background]="selectedDoctor.is_verified ? '#d1fae5' : '#fee2e2'"[style.color]="selectedDoctor.is_verified ? '#065f46' : '#991b1b'"
                 style="padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-top: 0.5rem;">
             {{ selectedDoctor.is_verified ? 'Perfil Verificado' : 'Pendiente de Aprobación' }}
           </span>

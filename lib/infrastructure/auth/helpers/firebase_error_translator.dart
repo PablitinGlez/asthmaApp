@@ -1,4 +1,4 @@
-/// Excepción personalizada para errores de autenticación
+// Excepción personalizada para errores de autenticación
 class AuthException implements Exception {
   final String message;
   AuthException(this.message);
@@ -7,9 +7,9 @@ class AuthException implements Exception {
   String toString() => message; // Sin prefijo "Exception:"
 }
 
-/// Helper para traducir errores de Firebase Auth a español
+// Helper para traducir errores de Firebase Auth a español
 class FirebaseAuthErrorTranslator {
-  /// Traduce códigos de error de Firebase a mensajes en español
+  // Traduce códigos de error de Firebase a mensajes en español
   static String translate(String errorCode) {
     switch (errorCode) {
       // Errores de registro - GENÉRICOS por seguridad
@@ -44,12 +44,12 @@ class FirebaseAuthErrorTranslator {
     }
   }
 
-  /// Verifica si un error indica que el email ya existe
+  // Verifica si un error indica que el email ya existe
   static bool isEmailAlreadyInUse(String errorCode) {
     return errorCode == 'email-already-in-use';
   }
 
-  /// Verifica si un error indica credenciales incorrectas
+  // Verifica si un error indica credenciales incorrectas
   static bool isInvalidCredentials(String errorCode) {
     return errorCode == 'user-not-found' ||
         errorCode == 'wrong-password' ||

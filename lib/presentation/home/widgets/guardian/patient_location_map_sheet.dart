@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../domain/auth/entities/user_entity.dart';
 
-/// Muestra un BottomSheet con mapa interactivo y ubicación en tiempo real del paciente.
+// Muestra un BottomSheet con mapa interactivo y ubicación en tiempo real del paciente.
 void showPatientLocationMapSheet(BuildContext context, UserEntity patient) {
   showModalBottomSheet(
     context: context,
@@ -151,7 +151,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
       ),
       child: Column(
         children: [
-          // ── Header con Handle y Título ──
+          // Header con handle y título
           Container(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
             decoration: BoxDecoration(
@@ -248,7 +248,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
             ),
           ),
 
-          // ── Cuerpo: Mapa Interactivo FlutterMap ──
+          // Cuerpo: mapa interactivo fluttermap
           Expanded(
             child: ClipRect(
               child: FlutterMap(
@@ -282,7 +282,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
             ),
           ),
 
-          // ── Footer: Dirección y Botón External Map ──
+          // Footer: dirección y botón external map
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(

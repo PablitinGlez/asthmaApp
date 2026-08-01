@@ -6,11 +6,11 @@ DATASET_PATH = os.path.join(os.path.dirname(__file__), "DATASETNOW", "dataset_hi
 
 def ajustar_dataset():
     print("=" * 80)
-    print("🛠️ AJUSTANDO DATASET ACTUAL (DATASETNOW/dataset_hibrido_8020_v5.csv)")
+    print(" AJUSTANDO DATASET ACTUAL (DATASETNOW/dataset_hibrido_8020_v5.csv)")
     print("=" * 80)
 
     if not os.path.exists(DATASET_PATH):
-        print(f"❌ Error: No se encontró el archivo {DATASET_PATH}")
+        print(f" Error: No se encontró el archivo {DATASET_PATH}")
         return
 
     df = pd.read_csv(DATASET_PATH)
@@ -24,11 +24,11 @@ def ajustar_dataset():
     print(f"• Registros reales intocables (AAMOS-00): {len(df_real):,}")
     print(f"• Registros sintéticos a ajustar: {len(df_sint):,}")
 
-    # 1. Regla estricta GINA en sintéticos: PEF < 60% o SpO2 <= 92% NUNCA es sano (crisis = 1)
+    # Regla estricta GINA en sintéticos: PEF < 60% o SpO2 <= 92% NUNCA es sano (crisis = 1)
     cond_crisis_gina = (df_sint['pef_porcentaje'] < 60.0) | (df_sint['spo2'] <= 92.0)
     df_sint.loc[cond_crisis_gina, 'crisis'] = 1
 
-    # 2. Inyectar desacoplamiento (PEF bajo + SpO2 normal/default) en sintéticos de crisis
+    # Inyectar desacoplamiento (PEF bajo + SpO2 normal/default) en sintéticos de crisis
     # Seleccionamos registros sintéticos etiquetados como crisis con PEF < 60%
     crisis_indices = df_sint[(df_sint['crisis'] == 1) & (df_sint['pef_porcentaje'] < 60.0)].index
     
@@ -44,7 +44,7 @@ def ajustar_dataset():
     df_sint.loc[default_indices, 'spo2'] = 98.0
     df_sint.loc[default_indices, 'bpm'] = 75.0
 
-    # 3. Re-consolidar y ajustar para mantener EXACTAMENTE 10,000 registros y 2,000 crisis (20.0%)
+    # Re-consolidar y ajustar para mantener EXACTAMENTE 10,000 registros y 2,000 crisis (20.0%)
     df_adjusted = pd.concat([df_real, df_sint], ignore_index=True)
     
     # Ajuste fino de la proporción objetivo: 2,000 crisis / 8,000 sanos
@@ -70,7 +70,7 @@ def ajustar_dataset():
 
     # Guardar en la misma ruta (sobrescribir CSV)
     df_adjusted.to_csv(DATASET_PATH, index=False)
-    print(f"✅ CSV actualizado exitosamente en {DATASET_PATH}")
+    print(f" CSV actualizado exitosamente en {DATASET_PATH}")
 
 if __name__ == "__main__":
     ajustar_dataset()

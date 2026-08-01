@@ -55,9 +55,9 @@ class PersonalInfoNotifier extends Notifier<PersonalInfoState> {
       final updatedProfile = await repository.updateProfile(profileData: data);
       state = state.copyWith(profile: updatedProfile, isSaving: false);
 
-      // 🔥 SINCRONIZACIÓN DE IDENTIDAD EN LA APP:
+      // SINCRONIZACIÓN DE IDENTIDAD EN LA APP:
       // Si el nombre cambió, actualizamos el AuthState para que se refleje 
-      // en el Header, Dashboard y mensajes de Bienvenida al instante.
+      // en el Encabezado, Dashboard y mensajes de Bienvenida al instante.
       final authNotifier = ref.read(authStateProvider.notifier);
       final currentUser = ref.read(authStateProvider).value;
       if (currentUser != null && (data.containsKey('first_name') || data.containsKey('last_name'))) {

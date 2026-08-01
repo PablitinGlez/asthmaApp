@@ -23,7 +23,7 @@ class DashboardGreeting extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '¡Hola, $userName! 👋',
+                '¡Hola, $userName! ',
                 style: const TextStyle(
                   fontFamily: 'Satoshi',
                   fontSize: 28,

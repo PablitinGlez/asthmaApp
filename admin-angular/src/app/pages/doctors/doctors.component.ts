@@ -25,12 +25,12 @@ export class DoctorsComponent implements OnInit {
   selectedDoctor: any = null;
   showDetailsPanel = false;
 
-  // Toast state
+  // Estado de la notificación toast
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
 
-  // Form data
+  // Datos del formulario
   newDoctor = {
     email: '',
     full_name: '',

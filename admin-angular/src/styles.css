@@ -1,4 +1,3 @@
-/* ==========================================================================
    ASTHMA ADMIN - GLOBAL STYLES
    ========================================================================== */
 
@@ -171,7 +170,7 @@ body {
   border-bottom: 4px solid var(--primary);
 }
 
-/* Toast Notification */
+/* Notificación de toast */
 .toast-container {
   position: fixed;
   bottom: 2rem;

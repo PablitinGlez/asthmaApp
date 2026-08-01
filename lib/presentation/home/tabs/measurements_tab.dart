@@ -1117,7 +1117,7 @@ class _MeasurementCardState extends ConsumerState<_MeasurementCard> {
   }
 }
 
-//  MODAL DE DETALLES
+// MODAL DE DETALLES
 class _MeasurementDetailsModal extends ConsumerStatefulWidget {
   final _MeasurementData data;
   final String existingIntensity;
@@ -1412,7 +1412,7 @@ class _MeasurementDetailsModalState
             }).toList(),
           ),
           const SizedBox(height: 24),
-          // ── Intensidad ──
+          // Intensidad
           if (_selected.isNotEmpty) ...[
             const Text(
               'Intensidad',

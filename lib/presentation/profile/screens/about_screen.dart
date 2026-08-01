@@ -90,7 +90,7 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 60),
             const Center(
               child: Text(
-                'Desarrollado con ❤️ para tu salud pulmonar',
+                'Desarrollado con  para tu salud pulmonar',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'GeneralSans',

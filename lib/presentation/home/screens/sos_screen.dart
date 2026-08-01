@@ -170,7 +170,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
                   const SizedBox(height: 28),
 
-                  // ── Caja 1: Recomendaciones de Emergencia Inmediatas ──
+                  // Caja 1: recomendaciones de emergencia inmediatas
                   ZoomIn(
                     delay: const Duration(milliseconds: 600),
                     child: Container(
@@ -234,7 +234,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
                   const SizedBox(height: 20),
 
-                  // ── Caja 2: Instrucción Personalizada del Médico (Plan de Crisis) ──
+                  // Caja 2: instrucción personalizada del médico (plan de crisis)
                   ZoomIn(
                     delay: const Duration(milliseconds: 750),
                     child: Container(

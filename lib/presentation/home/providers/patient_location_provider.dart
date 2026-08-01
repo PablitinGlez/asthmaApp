@@ -61,12 +61,12 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
           longitude: lng,
           lastUpdated: time,
         );
-        debugPrint('📍 [UBICACIÓN CACHÉ] Recuperada de SharedPreferences: Lat=$lat, Lng=$lng');
+        debugPrint('[UBICACIÓN CACHÉ] Recuperada de SharedPreferences: Lat=$lat, Lng=$lng');
       }
     } catch (_) {}
   }
 
-  /// Solicita permisos de GPS, obtiene coordenadas en tiempo real y sincroniza con backend
+  // Solicita permisos de GPS, obtiene coordenadas en tiempo real y sincroniza con backend
   Future<void> fetchAndSyncLocation() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
@@ -86,11 +86,11 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
-      debugPrint('📍 [GPS PERMISOS] Permiso inicial: $permission');
+      debugPrint('[GPS PERMISOS] Permiso inicial: $permission');
 
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        debugPrint('📍 [GPS PERMISOS] Permiso tras solicitar: $permission');
+        debugPrint('[GPS PERMISOS] Permiso tras solicitar: $permission');
       }
 
       if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
@@ -116,7 +116,7 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
       await _saveAndSetLocation(position.latitude, position.longitude);
 
     } catch (e) {
-      debugPrint('❌ [UBICACIÓN ERROR] Excepción al capturar GPS: $e');
+      debugPrint('[UBICACIÓN ERROR] Excepción al capturar GPS: $e');
       try {
         final lastKnown = await Geolocator.getLastKnownPosition();
         if (lastKnown != null) {
@@ -140,7 +140,7 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
       isLoading: false,
     );
 
-    debugPrint('📍 [UBICACIÓN ÉXITO] Lat=$lat, Lng=$lng');
+    debugPrint('[UBICACIÓN ÉXITO] Lat=$lat, Lng=$lng');
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -170,9 +170,9 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      debugPrint('✅ [UBICACIÓN BACKEND] Sincronizada con estado 200/201: ${response.statusCode}');
+      debugPrint('[UBICACIÓN BACKEND] Sincronizada con estado 200/201: ${response.statusCode}');
     } catch (e) {
-      debugPrint('ℹ️ [UBICACIÓN BACKEND] Envió asíncrono realizado. Error de backend: $e');
+      debugPrint('ℹ [UBICACIÓN BACKEND] Envió asíncrono realizado. Error de backend: $e');
     }
   }
 }

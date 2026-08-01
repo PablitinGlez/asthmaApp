@@ -33,7 +33,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 🛡️ Listener profesional: Solo actuar si esta es la pantalla activa
+    // Listener profesional: Solo actuar si esta es la pantalla activa
     ref.listen(authNotifierProvider, (previous, next) {
       if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
 

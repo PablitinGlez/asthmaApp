@@ -27,14 +27,14 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     // que el Router acaba de detectar.
 
     ref.listenManual(authNotifierProvider, (previous, next) {
-      // 1. Manejo de Errores
+      // Manejo de Errores
       if (next.errorMessage != null &&
           !next.isLoading &&
           previous?.errorMessage != next.errorMessage) {
         SnackBarHelper.showError(context, next.errorMessage!);
       }
 
-      // 2. Éxito al enviar correo de recuperación
+      // Éxito al enviar correo de recuperación
       if (next.isResetEmailSent &&
           !next.isLoading &&
           previous?.isLoading == true) {
@@ -45,7 +45,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         ref.read(authNotifierProvider.notifier).resetState();
       }
 
-      // 3. Éxito al actualizar contraseña
+      // Éxito al actualizar contraseña
       if (next.isPasswordUpdateSuccess &&
           !next.isLoading &&
           previous?.isLoading == true) {

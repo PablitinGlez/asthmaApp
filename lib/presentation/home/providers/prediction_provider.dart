@@ -8,7 +8,7 @@ import '../../profile/providers/personal_info_provider.dart';
 
 class PredictionState {
   final int crisis; // 0 o 1
-  final double probability; // 0.0 a 1.0
+  final double probability; // 0 a 1.0
   final String riskLevel; // "green", "yellow", "red"
   final bool isLoading;
   final String? errorMessage;
@@ -87,7 +87,7 @@ class PredictionNotifier extends Notifier<PredictionState> {
 
     final int personalBest = profile?.personalBestPef ?? 500;
     
-    // 📊 PREPARAR PAYLOAD (Simulado o Real - Únicamente 5 variables clínicas)
+    // PREPARAR PAYLOAD (Simulado o Real - Únicamente 5 variables clínicas)
     Map<String, dynamic> payload;
 
     if (state.isSimulationActive && state.simulationData != null) {
@@ -120,24 +120,24 @@ class PredictionNotifier extends Notifier<PredictionState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      print('--- 🧠 IA: INICIO DE PREDICCIÓN (5 VARIABLES) ---');
-      print('🚀 Modo Simulación: ${state.isSimulationActive}');
+      print('---  IA: INICIO DE PREDICCIÓN (5 VARIABLES) ---');
+      print(' Modo Simulación: ${state.isSimulationActive}');
       
       if (!state.isSimulationActive) {
-        print('📊 Datos del Smartwatch y Pulmones (5 Variables):');
+        print(' Datos del Smartwatch y Pulmones (5 Variables):');
         print('   - SpO2: ${watch.spO2 != null ? "${watch.spO2}% (REAL)" : "98% (DEFAULT)"}');
         print('   - BPM: ${watch.heartRate != null ? "${watch.heartRate} (REAL)" : "75 (DEFAULT)"}');
         print('   - Pasos: ${watch.steps != null ? "${watch.steps} (REAL)" : "0 (DEFAULT)"}');
         print('   - Sueño: ${watch.sleepHours != null ? "${watch.sleepHours}h (REAL)" : "8.0h (DEFAULT)"}');
         print('   - PEF %: ${payload['pef_porcentaje']?.toStringAsFixed(1)}%');
       } else {
-        print('🧪 Payload SIMULADO (5 Variables): $payload');
+        print(' Payload SIMULADO (5 Variables): $payload');
       }
 
       final dio = ref.read(dioClientProvider);
       final token = await ref.read(supabaseAuthDataSourceProvider).getIdToken();
 
-      print('📡 Enviando a Backend...');
+      print(' Enviando a Backend...');
       final response = await dio.post(
         '/api/predict',
         data: payload,
@@ -150,7 +150,7 @@ class PredictionNotifier extends Notifier<PredictionState> {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print('✅ [IA] Respuesta del Servidor:');
+        print('[IA] Respuesta del Servidor:');
         print('   - Riesgo: ${data['risk_level']?.toString().toUpperCase()}');
         print('   - Probabilidad: ${(data['probability'] * 100).toStringAsFixed(1)}%');
         print('   - ¿Crisis Detectada?: ${data['crisis'] == 1 ? "SÍ" : "NO"}');
@@ -163,7 +163,7 @@ class PredictionNotifier extends Notifier<PredictionState> {
         );
       }
     } catch (e) {
-      print('❌ [PREDICT] Error: $e');
+      print('[PREDICT] Error: $e');
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'Error en predicción: $e',

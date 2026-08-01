@@ -14,9 +14,7 @@ import time
 
 start_time = time.time()
 
-# =============================================================================
 # FASE 1 - RANDOM FOREST: comparar particiones y folds (8 variables originales)
-# =============================================================================
 # Se prueban 3 particiones x 3 configuraciones de folds, con las 8 variables
 # originales, para elegir la combinacion ganadora de Random Forest antes de
 # pasar a seleccion de variables.
@@ -35,9 +33,7 @@ TARGET = "crisis"
 X = df[FEATURES]
 y = df[TARGET]
 
-# =============================================================================
 # CONFIGURACION DE LOS EXPERIMENTOS: 3 SPLITS x 3 CANTIDADES DE FOLDS
-# =============================================================================
 
 SPLIT_OPTIONS = [0.30, 0.25, 0.20]   # test_size -> genera 70-30, 75-25, 80-20
 FOLD_OPTIONS  = [3, 5, 10]
@@ -50,9 +46,7 @@ def balancear(df_in):
     crisis_over = crisis.sample(len(sanos), replace=True, random_state=42)
     return pd.concat([sanos, crisis_over], axis=0).sample(frac=1, random_state=42)
 
-# =============================================================================
 # BUCLE PRINCIPAL: por cada split, por cada cantidad de folds
-# =============================================================================
 
 for test_size in SPLIT_OPTIONS:
     particion_label = f"{int(round((1 - test_size) * 100))}-{int(round(test_size * 100))}"
@@ -111,9 +105,7 @@ for test_size in SPLIT_OPTIONS:
             "AUC": np.mean(cv_aucs),
         })
 
-# =============================================================================
 # TABLA COMPARATIVA FINAL: LOS 3 SPLITS x LOS 3 FOLDS (9 FILAS)
-# =============================================================================
 
 tabla_cv = pd.DataFrame(resultados_cv)
 

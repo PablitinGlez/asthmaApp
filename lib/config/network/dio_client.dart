@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-/// Cliente HTTP personalizado usando Dio.
+// Cliente HTTP personalizado usando Dio.
 class DioClient {
   final Dio _dio;
 
@@ -25,13 +25,13 @@ class DioClient {
       LogInterceptor(
         requestBody: true,
         responseBody: true,
-        logPrint: (obj) => print('🌐 DIO: $obj'),
+        logPrint: (obj) => print(' DIO: $obj'),
       ),
       InterceptorsWrapper(
         onError: (error, handler) {
           if (error.response?.statusCode != 404) {
             print(
-              '❌ DIO Error: ${error.message} - Status: ${error.response?.statusCode}',
+              ' DIO Error: ${error.message} - Status: ${error.response?.statusCode}',
             );
           }
 

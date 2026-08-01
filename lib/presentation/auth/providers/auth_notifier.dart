@@ -25,7 +25,7 @@ enum AuthStatus {
   error,
 }
 
-/// Estado de la autenticación
+// Estado de la autenticación
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
@@ -65,7 +65,7 @@ class AuthState {
   }
 }
 
-/// Notifier que gestiona la lógica de negocio de Autenticación
+// Notifier que gestiona la lógica de negocio de Autenticación
 class AuthNotifier extends Notifier<AuthState> {
   static const String _pendingEmailKey = 'pending_reg_email';
   static const String _pendingNameKey = 'pending_reg_name';
@@ -77,7 +77,7 @@ class AuthNotifier extends Notifier<AuthState> {
     supabase.auth.onAuthStateChange.listen((data) {
       final event = data.event;
       if (event == AuthChangeEvent.passwordRecovery) {
-        print('🔑 AuthNotifier: Supabase event -> Password Recovery detected!');
+        print(' AuthNotifier: Supabase event -> Password Recovery detected!');
         state = state.copyWith(status: AuthStatus.passwordRecovery);
       }
     });
@@ -187,7 +187,7 @@ class AuthNotifier extends Notifier<AuthState> {
       final repository = ref.read(authRepositoryProvider);
       await repository.login(email: email, password: password);
 
-      // --- CHEQUEO DE MFA (Google Authenticator) ---
+      // Chequeo de mfa (google authenticator)
       final aal = await repository.getAuthenticatorAssuranceLevel();
       final currentLvl = aal.currentLevel.toString();
       final nextLvl = aal.nextLevel.toString();
@@ -196,7 +196,6 @@ class AuthNotifier extends Notifier<AuthState> {
         state = state.copyWith(status: AuthStatus.mfaRequired);
         return;
       }
-      // ---------------------------------------------
 
       state = state.copyWith(status: AuthStatus.authenticated);
     } catch (e) {
@@ -221,7 +220,7 @@ class AuthNotifier extends Notifier<AuthState> {
       final repository = ref.read(authRepositoryProvider);
       await repository.signInWithGoogle();
 
-      // --- CHEQUEO DE MFA ---
+      // Chequeo de mfa
       final aal = await repository.getAuthenticatorAssuranceLevel();
       final currentLvl = aal.currentLevel.toString();
       final nextLvl = aal.nextLevel.toString();
@@ -230,7 +229,6 @@ class AuthNotifier extends Notifier<AuthState> {
         state = state.copyWith(status: AuthStatus.mfaRequired);
         return;
       }
-      // ----------------------
 
       state = state.copyWith(status: AuthStatus.authenticated);
     } catch (e) {
@@ -249,7 +247,7 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
-    // 🔥 IMPORTANTE: Limpiar estado local ANTES del logout de Supabase
+    // IMPORTANTE: Limpiar estado local ANTES del logout de Supabase
     state = AuthState();
     ref.read(authStateProvider.notifier).updateUser(null); // Sincronización atómica
     ref.read(setupCompletedProvider.notifier).reset();
@@ -266,7 +264,7 @@ class AuthNotifier extends Notifier<AuthState> {
     ref.invalidate(notificationSettingsProvider);
     ref.invalidate(measurementsProvider);
     ref.invalidate(predictionProvider);
-    print('🧹 [AUTH] Todos los providers limpiados al cerrar sesión.');
+    print('[AUTH] Todos los providers limpiados al cerrar sesión.');
   }
 
   void clearRecoveryState() {
@@ -320,13 +318,13 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final repository = ref.read(authRepositoryProvider);
 
-      print('🚀 AuthNotifier: Starting updateAvatar request...');
+      print(' AuthNotifier: Starting updateAvatar request...');
       final updatedUser = await repository.updateAvatar(
         avatarSeed: avatarSeed,
         avatarBackground: avatarBackground,
       );
       print(
-        '✅ AuthNotifier: User updated successfully from Backend (${updatedUser.email})',
+        ' AuthNotifier: User updated successfully from Backend (${updatedUser.email})',
       );
 
       // Mutamos el estado localmente para un cambio fluido sin parpadeos

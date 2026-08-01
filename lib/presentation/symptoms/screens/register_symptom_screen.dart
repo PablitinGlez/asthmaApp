@@ -116,7 +116,7 @@ class _RegisterSymptomScreenState extends ConsumerState<RegisterSymptomScreen> {
       if (mounted) {
         SnackBarHelper.showSuccess(
           context,
-          '✅ Síntomas vinculados a tu última medición',
+          ' Síntomas vinculados a tu última medición',
         );
         Navigator.pop(context);
       }

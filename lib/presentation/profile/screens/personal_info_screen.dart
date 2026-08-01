@@ -15,7 +15,7 @@ class PersonalInfoScreen extends ConsumerStatefulWidget {
 class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // ---- CONTROLADORES ----
+  // Controladores
   late TextEditingController _firstNameCtrl;
   late TextEditingController _lastNameCtrl;
   late TextEditingController _phoneCtrl;
@@ -32,7 +32,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   late TextEditingController _diagnosisDateCtrl;
   late TextEditingController _allergiesCtrl;
 
-  // ---- FOCUS NODES ----
+  // Focus nodes
   late FocusNode _firstNameNode;
   late FocusNode _lastNameNode;
   late FocusNode _phoneNode;
@@ -44,7 +44,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   late FocusNode _stateNode;
   late FocusNode _zipNode;
 
-  // ---- ERRORES VISUALES ----
+  // Errores visuales
   String? _firstNameError;
   String? _lastNameError;
   String? _phoneError;
@@ -214,7 +214,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     super.dispose();
   }
 
-  // --- LOGICA DE VALIDACIÓN CADA QUE SE PIERDE EL FOCO --- //
+  // Logica de validación cada que se pierde el foco
   void _setupFocusValidation(
     FocusNode node,
     TextEditingController ctrl,
@@ -288,7 +288,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     return null;
   }
 
-  // --- Validadores de texto --- //
+  // Validadores de texto
   String? _validateName(String? val) {
     if (val == null || val.trim().isEmpty) return 'Campo requerido';
     if (val.trim().length > 50) return 'Máximo 50 caracteres';
@@ -585,7 +585,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // ==================== HEADER BANNER CON ESCUDO ====================
+  // Header banner con escudo
   Widget _buildHeaderBanner() {
     final user = ref.watch(authStateProvider).value;
     return Container(
@@ -694,7 +694,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // ==================== TAB 1 ====================
+  // Tab 1
   Widget _buildPersonalTab() {
     final profile = ref.watch(personalInfoProvider).profile;
     final hasMedicalData =
@@ -884,7 +884,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // ==================== TAB 2 ====================
+  // Tab 2
   Widget _buildMedicalTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -1016,7 +1016,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // ==================== COMPONENTES REUSABLES ====================
+  // Componentes reusables
   Widget _buildCardWrapper({
     required String title,
     required List<Widget> children,

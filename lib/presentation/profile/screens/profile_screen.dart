@@ -37,7 +37,7 @@ class ProfileScreen extends ConsumerWidget {
     final String? linkedDoctorCode = profile?.linkedDoctorCode;
     final bool hasDoctor = linkedDoctorName != null;
     
-    print('🔍 DEBUG: ProfileScreen - hasDoctor: $hasDoctor, Name: $linkedDoctorName');
+    print(' DEBUG: ProfileScreen - hasDoctor: $hasDoctor, Name: $linkedDoctorName');
 
     final String avatarUrl =
         'https://api.dicebear.com/9.x/initials/svg?seed=${user?.fullName ?? 'Usuario'}&backgroundColor=${user?.avatarBackground ?? '023e8a'}';

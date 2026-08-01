@@ -9,13 +9,13 @@ const String kBackgroundSyncTaskName = 'asthma_periodic_sync';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    debugPrint('🔄 [WORKMANAGER] Ejecutando tarea periódica en segundo plano: $task');
+    debugPrint('[WORKMANAGER] Ejecutando tarea periódica en segundo plano: $task');
 
     try {
       final success = await BackgroundSyncService.performBackgroundSync();
       return success;
     } catch (e) {
-      debugPrint('❌ [WORKMANAGER ERROR] Excepción en segundo plano: $e');
+      debugPrint('[WORKMANAGER ERROR] Excepción en segundo plano: $e');
       return Future.value(false);
     }
   });
@@ -24,7 +24,7 @@ void callbackDispatcher() {
 class BackgroundSyncService {
   static const String _baseUrl = 'https://asthma-app.onrender.com'; // O cliente configurable
 
-  /// Inicializa WorkManager e inscribe la tarea periódica cada 15 minutos (mínimo permitido por Android)
+  // Inicializa WorkManager e inscribe la tarea periódica cada 15 minutos (mínimo permitido por Android)
   static Future<void> initialize() async {
     if (kIsWeb) return;
 
@@ -43,21 +43,21 @@ class BackgroundSyncService {
         existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
       );
 
-      debugPrint('✅ [WORKMANAGER] Servicio de sincronización periódica inicializado (15 min).');
+      debugPrint('[WORKMANAGER] Servicio de sincronización periódica inicializado (15 min).');
     } catch (e) {
-      debugPrint('⚠️ [WORKMANAGER WARNING] No se pudo inicializar WorkManager: $e');
+      debugPrint('[WORKMANAGER WARNING] No se pudo inicializar WorkManager: $e');
     }
   }
 
-  /// Ejecuta la lógica completa de captura y sincronización (tanto en Background como en Foreground)
+  // Ejecuta la lógica completa de captura y sincronización (tanto en Background como en Foreground)
   static Future<bool> performBackgroundSync() async {
     final now = DateTime.now();
-    debugPrint('⏱️ [SYNC SERVICIO] Iniciando ciclo de envío automático ($now)...');
+    debugPrint('[SYNC SERVICIO] Iniciando ciclo de envío automático ($now)...');
 
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      // 1. Obtener ubicación GPS en tiempo real
+      // Obtener ubicación GPS en tiempo real
       double? lat = prefs.getDouble('patient_last_latitude');
       double? lng = prefs.getDouble('patient_last_longitude');
 
@@ -80,17 +80,17 @@ class BackgroundSyncService {
           }
         }
       } catch (e) {
-        debugPrint('ℹ️ [SYNC GPS] Usando respaldo de ubicación previa: $e');
+        debugPrint('ℹ [SYNC GPS] Usando respaldo de ubicación previa: $e');
       }
 
-      // 2. Obtener métricas del reloj (leídas del caché o HealthConnect)
+      // Obtener métricas del reloj (leídas del caché o HealthConnect)
       final int heartRate = prefs.getInt('last_watch_hr') ?? 72;
       final int spO2 = prefs.getInt('last_watch_spo2') ?? 98;
       final int steps = prefs.getInt('last_watch_steps') ?? 3400;
       final double sleepHours = prefs.getDouble('last_watch_sleep') ?? 7.5;
       final int respRate = prefs.getInt('last_watch_resp_rate') ?? 16;
 
-      // 3. Construir Payload
+      // Construir Payload
       final Map<String, dynamic> payload = {
         'measured_at': now.toIso8601String(),
         'heart_rate': heartRate,
@@ -103,7 +103,7 @@ class BackgroundSyncService {
         'sync_source': 'automatic_background_monitoring',
       };
 
-      // 4. Enviar a backend vía Dio
+      // Enviar a backend vía Dio
       final dio = Dio();
       dio.options.connectTimeout = const Duration(seconds: 10);
       dio.options.receiveTimeout = const Duration(seconds: 10);
@@ -122,10 +122,10 @@ class BackgroundSyncService {
           data: payload,
           options: Options(headers: headers),
         );
-        debugPrint('✅ [SYNC BACKEND] Envío en segundo plano exitoso: status=${response.statusCode}');
+        debugPrint('[SYNC BACKEND] Envío en segundo plano exitoso: status=${response.statusCode}');
       } catch (e) {
         // Fallback a endpoint de spirometer si /background está en desarrollo
-        debugPrint('ℹ️ [SYNC BACKEND] Reintentando vía endpoint secundario: $e');
+        debugPrint('ℹ [SYNC BACKEND] Reintentando vía endpoint secundario: $e');
         try {
           await dio.post(
             '$_baseUrl/api/measurements/spirometer',
@@ -136,18 +136,18 @@ class BackgroundSyncService {
             },
             options: Options(headers: headers),
           );
-          debugPrint('✅ [SYNC BACKEND] Envío en respaldo exitoso.');
+          debugPrint('[SYNC BACKEND] Envío en respaldo exitoso.');
         } catch (_) {}
       }
 
-      // 5. Registrar timestamp de última sincronización
+      // Registrar timestamp de última sincronización
       await prefs.setString('last_background_sync_time', now.toIso8601String());
       await prefs.setBool('last_background_sync_success', true);
 
-      debugPrint('🎉 [SYNC SERVICIO] Ciclo de monitoreo en segundo plano completado.');
+      debugPrint('[SYNC SERVICIO] Ciclo de monitoreo en segundo plano completado.');
       return true;
     } catch (e) {
-      debugPrint('❌ [SYNC SERVICIO FATAL] Error procesando ciclo: $e');
+      debugPrint('[SYNC SERVICIO FATAL] Error procesando ciclo: $e');
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('last_background_sync_success', false);
       return false;

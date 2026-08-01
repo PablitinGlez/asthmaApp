@@ -82,7 +82,7 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
           ),
           const SizedBox(height: 40),
 
-          // 1. GÉNERO (Tarjetas Seleccionables)
+          // GÉNERO (Tarjetas Seleccionables)
           Text(
             "Género Biológico",
             style: TextStyle(
@@ -122,7 +122,7 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
           ),
           const SizedBox(height: 32),
 
-          // 2. EDAD (Input Numérico Simple)
+          // EDAD (Input Numérico Simple)
           Text(
             "Edad",
             style: TextStyle(
@@ -184,7 +184,7 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
           ),
           const SizedBox(height: 32),
 
-          // 3. ALTURA (Slider Visual)
+          // ALTURA (Slider Visual)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

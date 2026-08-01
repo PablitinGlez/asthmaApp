@@ -62,7 +62,7 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
 
       if (response.statusCode == 200) {
         final List<dynamic> devices = response.data;
-        // Consideramos que tiene dispositivo vinculado si la lista no está vacía
+        // Consideramos que tiene dispositivo vinculado si la Lista no está vacía
         state = state.copyWith(
           hasLinkedDevice: devices.isNotEmpty,
           devices: devices,
@@ -92,8 +92,8 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
     }
   }
 
-  /// Refresca la lista de dispositivos sin activar el estado global de carga
-  /// para evitar el parpadeo que rompe la navegación (pop).
+  // Refresca la Lista de dispositivos sin activar el estado global de carga
+  // para evitar el parpadeo que rompe la navegación (pop).
   Future<void> _refreshDevicesSilently() async {
     try {
       final dioClient = ref.read(dioClientProvider);
@@ -116,7 +116,7 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
         );
       }
     } catch (e) {
-      debugPrint('📡 PROVIDER: Error en refresco silencioso: $e');
+      debugPrint(' PROVIDER: Error en refresco silencioso: $e');
     }
   }
 
@@ -161,14 +161,14 @@ class SpirometerNotifier extends Notifier<SpirometerState> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint('📡 PROVIDER: Vinculación exitosa. Sincronizando lista...');
+        debugPrint(' PROVIDER: Vinculación exitosa. Sincronizando lista...');
         // Marcamos éxito local y disparamos el refresco silencioso
         state = state.copyWith(hasLinkedDevice: true, isLoading: false);
         await _refreshDevicesSilently();
-        debugPrint('📡 PROVIDER: Lista sincronizada. Notificando a UI.');
+        debugPrint(' PROVIDER: Lista sincronizada. Notificando a UI.');
         return true;
       } else {
-        debugPrint('📡 PROVIDER: Error de servidor: ${response.statusCode}');
+        debugPrint(' PROVIDER: Error de servidor: ${response.statusCode}');
         state = state.copyWith(
           isLoading: false,
           errorMessage: 'Error al vincular el dispositivo',

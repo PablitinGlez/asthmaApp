@@ -307,7 +307,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. GREETING
+                // GREETING
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -320,11 +320,11 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 ),
                 const SizedBox(height: 20),
 
-                // 🧪 SIMULADOR DE PRUEBAS (Solo para Debug)
+                // SIMULADOR DE PRUEBAS (Solo para Debug)
                 const AISimulatorPanel(),
                 const SizedBox(height: 20),
 
-                // 2. SEMÁFORO (GAUGE) & AI BUTTON
+                // SEMÁFORO (GAUGE) & AI BUTTON
                 Center(
                   key: _gaugeKey,
                   child: const MainGaugeSection(),
@@ -332,7 +332,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
 
                 const SizedBox(height: 24),
 
-                // 3. ACCIONES RÁPIDAS
+                // ACCIONES RÁPIDAS
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -367,12 +367,12 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
 
                 const SizedBox(height: 24),
 
-                // 3.5 NEXT DOSE CARD
+                // 5 NEXT DOSE CARD
                 const NextDoseCard(),
 
                 const SizedBox(height: 12),
 
-                // 🌟 CTA Plan de Acción Médica
+                // CTA Plan de Acción Médica
                 SizedBox(
                   width: double.infinity,
                   child: QuickActionButton(
@@ -400,22 +400,22 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 Divider(color: Colors.grey.shade100, thickness: 1),
                 const SizedBox(height: 22),
 
-                // 2.5 VITALES DEL RELOJ (CORE)
+                // 5 VITALES DEL RELOJ (CORE)
                 const WatchCoreVitals(),
 
                 const SizedBox(height: 32),
 
-                // 5. TENDENCIA SEMANAL
+                // TENDENCIA SEMANAL
                 WeeklyTrendChart(state: trendState),
 
                 const SizedBox(height: 32),
 
-                // 4. RADAR AMBIENTAL
+                // RADAR AMBIENTAL
                 const EnvironmentalRadar(),
 
                 const SizedBox(height: 32),
 
-                // 2.6 VITALES SECUNDARIOS (PERFORMANCE)
+                // 6 VITALES SECUNDARIOS (PERFORMANCE)
                 const WatchPerformanceVitals(),
               ],
             ),

@@ -34,37 +34,37 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // 1. Tomar los datos del form locales
+      // Tomar los datos del form locales
       final profileData = formState.toJson();
-      print('🚀 Enviando payload a API (SetupWizard): $profileData');
+      print(' Enviando payload a API (SetupWizard): $profileData');
 
       try {
         // Bloquear Botón
         ref.read(setupFormProvider.notifier).setPosting(true);
 
-        // 2. Ejecutar la llamada a la API (FastAPI)
+        // Ejecutar la llamada a la API (FastAPI)
         final repo = ref.read(authRepositoryProvider);
         await repo.createProfile(profileData: profileData);
-        print('✅ Perfil guardado exitosamente en el backend');
+        print(' Perfil guardado exitosamente en el backend');
 
-        // 3. Forzar actualización en Memoria Local (El "Desfase")
+        // Forzar actualización en Memoria Local (El "Desfase")
         final currentUser = ref.read(authStateProvider).value;
         if (currentUser != null) {
           final updatedUser = currentUser.copyWith(isSetupCompleted: true);
           ref.read(authStateProvider.notifier).updateUser(updatedUser);
         }
 
-        // 4. Finalizar Setup localmente (Flags)
+        // Finalizar Setup localmente (Flags)
         ref.read(setupCompletedProvider.notifier).complete();
 
-        // 5. Enviamos la bienvenida al Paciente (Ahora que ya terminó su setup médico)
+        // Enviamos la bienvenida al Paciente (Ahora que ya terminó su setup médico)
         final name = currentUser?.fullName.split(' ').first ?? 'Paciente';
         await LocalNotificationService.showWelcomeNotification(name);
 
-        // 6. Ir a Home (El router ahora sí te dejará pasar)
+        // Ir a Home (El router ahora sí te dejará pasar)
         if (mounted) context.go('/home');
       } catch (e) {
-        print('❌ Error guardando perfil: $e');
+        print(' Error guardando perfil: $e');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -118,7 +118,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
       ),
       body: Column(
         children: [
-          // 1. Barra de Progreso Lineal
+          // Barra de progreso Lineal
           LinearProgressIndicator(
             value: (_currentStep + 1) / _totalSteps,
             backgroundColor: Colors.grey[200],
@@ -128,7 +128,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
             minHeight: 4,
           ),
 
-          // 2. Contenido del Wizard (Pasos Reales)
+          // Contenido del Wizard (Pasos Reales)
           Expanded(
             child: PageView(
               controller: _pageController,
@@ -143,7 +143,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
             ),
           ),
 
-          // 3. Botón de Acción Principal (con SafeArea)
+          // Botón de Acción Principal (con SafeArea)
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),

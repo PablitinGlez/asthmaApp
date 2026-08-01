@@ -60,25 +60,25 @@ final guardianRepositoryProvider = Provider<GuardianRepository>((ref) {
   );
 });
 
-/// Notifier que escucha el flujo de Firebase y permite actualizaciones manuales (Mutation)
+// Notifier que escucha el flujo de Firebase y permite actualizaciones manuales (Mutation)
 class AuthStateNotifier extends StreamNotifier<UserEntity?> {
   @override
   Stream<UserEntity?> build() {
-    print('🏗️ AuthStateNotifier: Build called (Subscribing to Repository)');
+    print(' AuthStateNotifier: Build called (Subscribing to Repository)');
     final repository = ref.watch(authRepositoryProvider);
     return repository.authStateChanges();
   }
 
-  /// Actualiza el estado manualmente sin disparar estados de 'Loading'
+  // Actualiza el estado manualmente sin disparar estados de 'Loading'
   void updateUser(UserEntity? user) {
     print(
-      '💾 AuthStateNotifier: Mutating state with ${user == null ? 'NULL' : 'User data (${user.email})'}',
+      ' AuthStateNotifier: Mutating state with ${user == null ? 'NULL' : 'User data (${user.email})'}',
     );
     state = AsyncData(user);
-    print('✨ AuthStateNotifier: Local state mutated successfully');
+    print(' AuthStateNotifier: Local state mutated successfully');
   }
 
-  /// Actualiza el rol del usuario en el backend y localmente
+  // Actualiza el rol del usuario en el backend y localmente
   Future<void> updateRole(String role) async {
     final repository = ref.read(authRepositoryProvider);
     state = const AsyncLoading();
@@ -86,21 +86,21 @@ class AuthStateNotifier extends StreamNotifier<UserEntity?> {
     try {
       final updatedUser = await repository.updateRole(role: role);
       state = AsyncData(updatedUser);
-      print('✅ AuthStateNotifier: Role updated to $role');
+      print(' AuthStateNotifier: Role updated to $role');
     } catch (e) {
-      print('❌ AuthStateNotifier: Error updating role - $e');
+      print(' AuthStateNotifier: Error updating role - $e');
       state = AsyncError(e, StackTrace.current);
     }
   }
 }
 
-/// Provider que gestiona el estado global del usuario autenticado
+// Provider que gestiona el estado global del usuario autenticado
 final authStateProvider =
     StreamNotifierProvider<AuthStateNotifier, UserEntity?>(() {
       return AuthStateNotifier();
     });
 
-/// Provider auxiliar para PERSISTIR que el setup se completó (Solo UI)
+// Provider auxiliar para PERSISTIR que el setup se completó (Solo UI)
 class SetupCompletedNotifier extends Notifier<bool> {
   @override
   bool build() {
@@ -119,7 +119,7 @@ class SetupCompletedNotifier extends Notifier<bool> {
     final prefs = await SharedPreferences.getInstance();
     state = prefs.getBool('is_setup_completed_$userId') ?? false;
     if (state)
-      print('✅ SetupCompletedNotifier: Persistence loaded for $userId -> Setup DONE');
+      print(' SetupCompletedNotifier: Persistence loaded for $userId -> Setup DONE');
   }
 
   Future<void> complete() async {
@@ -129,7 +129,7 @@ class SetupCompletedNotifier extends Notifier<bool> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('is_setup_completed_${user.id}', true);
     state = true;
-    print('💾 SetupCompletedNotifier: Setup marked as DONE locally for ${user.id}');
+    print(' SetupCompletedNotifier: Setup marked as DONE locally for ${user.id}');
   }
 
   Future<void> reset() async {
@@ -148,7 +148,7 @@ final setupCompletedProvider = NotifierProvider<SetupCompletedNotifier, bool>(
   },
 );
 
-/// Notifier para manejar el estado del onboarding (PERSISTENCIA UI)
+// Notifier para manejar el estado del onboarding (PERSISTENCIA UI)
 class OnboardingNotifier extends Notifier<bool> {
   @override
   bool build() => false;

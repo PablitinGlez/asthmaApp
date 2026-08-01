@@ -53,7 +53,7 @@ export class PatientsComponent implements OnInit {
     medications: []
   };
 
-  // Temp para añadir items al wizard
+  // Temporal para añadir elementos al asistente
   newStep = { step_order: 1, step_title: '', step_description: '', is_critical: false };
   newMed = { name: '', dosage: '', frequency_hours: null as number | null, next_dose: '' };
 
@@ -74,7 +74,7 @@ export class PatientsComponent implements OnInit {
     }
   }
 
-  // ─────────────────────────── PANEL DE DETALLES ───────────────────────────────
+  // Panel de detalles
 
   async openDetails(patient: any) {
     this.selectedPatient = patient;
@@ -83,10 +83,10 @@ export class PatientsComponent implements OnInit {
 
     try {
       this.fullPatientData = await this.doctorService.getPatientFull(patient.id);
-      console.log('✅ Datos completos cargados:', this.fullPatientData);
+      console.log(' Datos completos cargados:', this.fullPatientData);
       this.loadEditForms();
     } catch (e: any) {
-      console.error('❌ Error cargando datos completos de GET /api/patients/ID/full. Cayendo al objeto resumen:', e);
+      console.error(' Error cargando datos completos de GET /api/patients/ID/full. Cayendo al objeto resumen:', e);
       if (e.error) console.error('Detalle del error:', e.error);
       this.fullPatientData = patient;
       this.loadEditForms();
@@ -140,7 +140,7 @@ export class PatientsComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  // ─────────────────────────── GUARDAR CAMBIOS ─────────────────────────────────
+  // Guardar cambios
 
   async saveCurrentTab() {
     if (this.isSaving) return;
@@ -156,10 +156,10 @@ export class PatientsComponent implements OnInit {
       } else if (this.activeTab === 'plan') {
         await this.doctorService.replacePatientActionPlan(id, this.editActionPlan.plan_name, this.editActionPlan.steps);
       }
-      alert('✅ Datos actualizados correctamente');
+      alert(' Datos actualizados correctamente');
       await this.loadPatients();
     } catch (e: any) {
-      alert('❌ Error: ' + (e.error?.detail || 'No se pudo actualizar'));
+      alert(' Error: ' + (e.error?.detail || 'No se pudo actualizar'));
     } finally {
       this.isSaving = false;
       this.cdr.detectChanges();
@@ -183,7 +183,7 @@ export class PatientsComponent implements OnInit {
     this.editActionPlan.steps.splice(i, 1);
   }
 
-  // ─────────────────────────── MODAL DE CREACIÓN ───────────────────────────────
+  // Modal de creación
 
   openCreateModal() {
     this.showCreateModal = true;
@@ -278,9 +278,9 @@ export class PatientsComponent implements OnInit {
         payload.medications = this.createForm.medications;
       }
 
-      console.log('📤 Payload enviado a la API:', JSON.stringify(payload, null, 2));
+      console.log(' Payload enviado a la API:', JSON.stringify(payload, null, 2));
       const res = await this.doctorService.createPatient(payload);
-      alert(`✅ Paciente creado. Se envió invitación al email: ${res.email}`);
+      alert(` Paciente creado. Se envió invitación al email: ${res.email}`);
       this.closeCreateModal();
       await this.loadPatients();
     } catch (e: any) {
@@ -288,7 +288,7 @@ export class PatientsComponent implements OnInit {
       const msg = Array.isArray(detail)
         ? detail.map((d: any) => `${(d.loc || []).slice(-1)[0]}: ${d.msg}`).join('\n')
         : (typeof detail === 'string' ? detail : JSON.stringify(detail) || 'No se pudo crear el paciente');
-      alert('❌ Error de validación:\n' + msg);
+      alert(' Error de validación:\n' + msg);
     } finally {
       this.isCreating = false;
       this.cdr.detectChanges();

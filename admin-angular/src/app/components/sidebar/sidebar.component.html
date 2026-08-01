@@ -6,15 +6,15 @@
 
   <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;" *ngIf="role$ | async as role">
     <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
-      <span style="margin-right: 0.75rem;">📊</span> Dashboard
+      <span style="margin-right: 0.75rem;"></span> Dashboard
     </a>
     
     <a *ngIf="role === 'doctor'" routerLink="/patients" routerLinkActive="active" class="nav-item">
-      <span style="margin-right: 0.75rem;">👥</span> Mis Pacientes
+      <span style="margin-right: 0.75rem;"></span> Mis Pacientes
     </a>
 
     <a *ngIf="role === 'admin'" routerLink="/doctors" routerLinkActive="active" class="nav-item">
-      <span style="margin-right: 0.75rem;">👨‍⚕️</span> Doctores
+      <span style="margin-right: 0.75rem;"></span> Doctores
     </a>
   </div>
 
