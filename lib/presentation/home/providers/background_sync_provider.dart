@@ -37,10 +37,10 @@ class BackgroundSyncNotifier extends Notifier<BackgroundSyncState> {
 
   @override
   BackgroundSyncState build() {
-    // 1. Cargar timestamp de última sincronización
+    // Cargar timestamp de última sincronización
     Future.microtask(() => loadLastSyncInfo());
 
-    // 2. Iniciar temporizador activo de primer plano (envía datos automáticamente cada 5 min)
+    // Iniciar temporizador activo de primer plano (envía datos automáticamente cada 5 min)
     _startForegroundAutoSync();
 
     ref.onDispose(() {
@@ -53,7 +53,7 @@ class BackgroundSyncNotifier extends Notifier<BackgroundSyncState> {
   void _startForegroundAutoSync() {
     _foregroundTimer?.cancel();
     _foregroundTimer = Timer.periodic(const Duration(minutes: 5), (_) {
-      debugPrint('⏱️ [FOREGROUND TIMER] Ejecutando sincronización automática periódica (5 min)...');
+      debugPrint('[FOREGROUND TIMER] Ejecutando sincronización automática periódica (5 min)...');
       triggerSync();
     });
   }

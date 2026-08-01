@@ -46,7 +46,7 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
 
   @override
   ActionPlanState build() {
-    // 0. Observar el estado de autenticación de forma inteligente
+    // Observar el estado de autenticación de forma inteligente
     // Usamos select para reaccionar SOLO si el ID del usuario cambia o si pasa de null a algo
     final userId = ref.watch(authStateProvider.select((v) => v.value?.id));
 
@@ -56,10 +56,10 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
       return ActionPlanState(isLoading: false, hasPlan: false);
     }
 
-    // 1. Cargar estado inicial desde el caché para que sea instantáneo (Warm Cache)
+    // Cargar estado inicial desde el caché para que sea instantáneo (Warm Cache)
     _loadFromCache();
 
-    // 2. Disparar sincronización silenciosa solo al entrar o cambiar de usuario
+    // Disparar sincronización silenciosa solo al entrar o cambiar de usuario
     // Esto evita que actualizaciones de avatar disparen peticiones innecesarias
     Future.microtask(() => loadActionPlan(isSilent: true));
 
@@ -124,7 +124,7 @@ class ActionPlanNotifier extends Notifier<ActionPlanState> {
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        print('ℹ️ ActionPlanNotifier: User does not have an action plan yet (Expected 404).');
+        print('ℹ ActionPlanNotifier: User does not have an action plan yet (Expected 404).');
         await _saveToCache(false);
         state = state.copyWith(isLoading: false, hasPlan: false);
       } else {

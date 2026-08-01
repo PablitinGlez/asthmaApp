@@ -469,7 +469,7 @@ class _AddMedicationModalState extends ConsumerState<_AddMedicationModal> {
     if (success && mounted) {
       try {
         if (nextDose != null) {
-          print('🔔 Notifier: Scheduling notification...');
+          print(' Notifier: Scheduling notification...');
           await LocalNotificationService.scheduleMedicationReminder(
             id: now.millisecondsSinceEpoch % 100000000,
             name: _nameCtrl.text.trim(),
@@ -478,7 +478,7 @@ class _AddMedicationModalState extends ConsumerState<_AddMedicationModal> {
           ).timeout(const Duration(seconds: 3));
         }
       } catch (e) {
-        print('⚠️ Notifier: Error al programar notificación - $e');
+        print(' Notifier: Error al programar notificación - $e');
       }
       if (mounted) Navigator.pop(context);
     } else if (mounted) {

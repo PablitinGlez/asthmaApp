@@ -17,11 +17,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _stopwatch.start();
-    print("🚀 SPLASH SCREEN STARTED");
+    print(" SPLASH SCREEN STARTED");
     initializeDateFormatting('es_ES', null);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _stopwatch.stop();
-      print("⏱️ SPLASH LOAD TIME: ${_stopwatch.elapsedMilliseconds} ms ⏱️");
+      print(" SPLASH LOAD TIME: ${_stopwatch.elapsedMilliseconds} ms ");
     });
   }
 

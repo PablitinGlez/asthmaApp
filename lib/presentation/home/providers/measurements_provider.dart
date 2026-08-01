@@ -59,7 +59,7 @@ class MeasurementsState {
   bool get hasPrevious => currentPage > 1;
   bool get hasMore => hasNext; // Compatibilidad UI
 
-  // -- Métodos de compatibilidad para evitar romper código existente --
+  // Métodos de compatibilidad para evitar romper código existente
   bool get isEmpty => allItems.isEmpty;
   bool get isNotEmpty => allItems.isNotEmpty;
   int get length => allItems.length;
@@ -139,7 +139,7 @@ class MeasurementsNotifier extends AsyncNotifier<MeasurementsState> {
     await goToPage(current.currentPage - 1);
   }
 
-  /// Refresca en silencio sin mostrar el loader.
+  // Refresca en silencio sin mostrar el loader.
   Future<void> silentRefresh({bool checkRisk = false}) async {
     final previous = state.value;
     try {
@@ -152,7 +152,7 @@ class MeasurementsNotifier extends AsyncNotifier<MeasurementsState> {
         ),
       );
 
-      // ✔ Evaluar riesgo si viene desde el WebSocket (checkRisk=true)
+      // Evaluar riesgo si viene desde el WebSocket (checkRisk=true)
       if (checkRisk && freshItems.isNotEmpty) {
         final latestPef = freshItems.first.pef; // Ya vienen ordenados desc
         if (latestPef != null && latestPef < 350) {

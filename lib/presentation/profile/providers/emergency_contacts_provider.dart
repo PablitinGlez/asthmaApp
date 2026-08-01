@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../infrastructure/models/emergency_contact_model.dart';
 import '../../auth/providers/auth_provider.dart';
 
-// ─── State ───────────────────────────────────────────────────────────────────
+// State
 
 class EmergencyContactsState {
   final bool isLoading;
@@ -33,7 +33,7 @@ class EmergencyContactsState {
   }
 }
 
-// ─── Notifier ─────────────────────────────────────────────────────────────────
+// Notifier
 
 class EmergencyContactsNotifier extends Notifier<EmergencyContactsState> {
   @override
@@ -169,7 +169,7 @@ class EmergencyContactsNotifier extends Notifier<EmergencyContactsState> {
   }
 }
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
+// Provider
 
 final emergencyContactsProvider =
     NotifierProvider<EmergencyContactsNotifier, EmergencyContactsState>(() {

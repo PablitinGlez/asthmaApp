@@ -42,11 +42,11 @@ class LocalNotificationService {
     required DateTime scheduledDate,
     List<int>? daysOfWeek,
   }) async {
-    print('🔔 Notifications: Intentando agendar recordatorio para "$name" el $scheduledDate');
+    print(' Notifications: Intentando agendar recordatorio para "$name" el $scheduledDate');
     
-    // Si la fecha ya pasó, no agendamos
+    // Ignorar si la fecha es pasada
     if (scheduledDate.isBefore(DateTime.now())) {
-      print('⚠️ Notifications: La fecha ya pasó, saltando agendamiento.');
+      print(' Notifications: La fecha ya pasó, saltando agendamiento.');
       return;
     }
 
@@ -74,11 +74,11 @@ class LocalNotificationService {
       );
 
       if (daysOfWeek == null || daysOfWeek.isEmpty || daysOfWeek.length == 7) {
-        // Notificación diaria
-        print('📅 Notifications: Configurando alarma DIARIA con ID: $id a las ${tzDate.hour}:${tzDate.minute}');
+        // Programación diaria
+        print(' Notifications: Configurando alarma DIARIA con ID: $id a las ${tzDate.hour}:${tzDate.minute}');
         await _notificationsPlugin.zonedSchedule(
           id: id,
-          title: '💊 Hora de tu medicina',
+          title: ' Hora de tu medicina',
           body: 'Es momento de tomar: $name',
           scheduledDate: tzDate,
           notificationDetails: platformDetails,
@@ -87,15 +87,15 @@ class LocalNotificationService {
           payload: 'medication_$id',
         );
       } else {
-        // Notificación específica por días de la semana
-        print('📅 Notifications: Configurando alarma semanal para los días: $daysOfWeek');
+        // Programación por días seleccionados
+        print(' Notifications: Configurando alarma semanal para los días: $daysOfWeek');
         for (final dayIndex in daysOfWeek) {
           tz.TZDateTime scheduledDay = _nextInstanceOfDay(tzDate, dayIndex);
           
           print('   - Agendando para el día $dayIndex con ID: ${id * 10 + dayIndex}');
           await _notificationsPlugin.zonedSchedule(
             id: id * 10 + dayIndex,
-            title: '💊 Recordatorio: $name',
+            title: ' Recordatorio: $name',
             body: 'Toca dosis de tu medicamento',
             scheduledDate: scheduledDay,
             notificationDetails: platformDetails,
@@ -105,10 +105,10 @@ class LocalNotificationService {
           );
         }
       }
-      print('✅ Notifications: Alarma(s) configurada(s) correctamente.');
+      print(' Notifications: Alarma(s) configurada(s) correctamente.');
     } catch (e) {
-      print('❌ Notifications: Error crítico al agendar recordatorio: $e');
-      rethrow; // Re-lanzamos para que el try-catch del UI lo capture
+      print(' Notifications: Error crítico al agendar recordatorio: $e');
+      rethrow; // Reenviar excepción a la interfaz
     }
   }
 
@@ -129,7 +129,7 @@ class LocalNotificationService {
 
   static Future<void> scheduleTestOneMinute() async {
     final tzDate = tz.TZDateTime.now(tz.local).add(const Duration(minutes: 1));
-    print('⏳ TEST: Agendando alarma 100% aislada para las: ${tzDate.hour}:${tzDate.minute}:${tzDate.second}');
+    print(' TEST: Agendando alarma 100% aislada para las: ${tzDate.hour}:${tzDate.minute}:${tzDate.second}');
     
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'medication_reminders_v2',
@@ -142,17 +142,17 @@ class LocalNotificationService {
 
     await _notificationsPlugin.zonedSchedule(
       id: 88888,
-      title: '⏰ ¡Alarma de 1 minuto!',
+      title: ' ¡Alarma de 1 minuto!',
       body: 'Esto prueba que el encolamiento en segundo plano SÍ funciona.',
       scheduledDate: tzDate,
       notificationDetails: platformDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
-    print('✅ TEST: ¡Alarma programada, minimiza la app ahora mismo!');
+    print(' TEST: ¡Alarma programada, minimiza la app ahora mismo!');
   }
 
   static Future<void> showWelcomeNotification(String name) async {
-    print('🎉 Notifications: Preparando notificación de bienvenida para $name');
+    print(' Notifications: Preparando notificación de bienvenida para $name');
     try {
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
         'welcome_notifications',
@@ -176,14 +176,14 @@ class LocalNotificationService {
 
       await _notificationsPlugin.show(
         id: 0,
-        title: '¡Hola $name! 👋',
+        title: '¡Hola $name! ',
         body: 'Bienvenido a Asthma Predictor, estamos aquí para cuidarte.',
         notificationDetails: platformDetails,
         payload: 'welcome',
       );
-      print('✅ Notifications: Notificación de bienvenida enviada con éxito.');
+      print(' Notifications: Notificación de bienvenida enviada con éxito.');
     } catch (e) {
-      print('❌ Notifications: Error al enviar bienvenida: $e');
+      print(' Notifications: Error al enviar bienvenida: $e');
     }
   }
 

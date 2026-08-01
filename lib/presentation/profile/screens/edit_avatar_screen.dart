@@ -59,7 +59,7 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
     setState(() => _isSaving = true);
 
     try {
-      // 2. Ejecutar actualización real en Backend
+      // Ejecutar actualización real en Backend
       // Nota: El seed ahora es el nombre, así que lo enviamos como tal
       await ref
           .read(authNotifierProvider.notifier)

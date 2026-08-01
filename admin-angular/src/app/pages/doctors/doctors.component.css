@@ -2,7 +2,7 @@
   background-color: var(--bg-body) !important;
 }
 
-/* Side Panel Background Overlay */
+/* Fondo superpuesto del panel lateral */
 .side-panel-overlay {
   position: fixed;
   top: 0;
@@ -22,12 +22,12 @@
   visibility: visible;
 }
 
-/* Animated Side Drawer */
+/* Panel lateral animado */
 .side-panel {
   position: fixed;
   top: 0;
   right: -500px;
-  /* Hidden off-screen by default */
+  /* Oculto fuera de pantalla por defecto */
   width: 100%;
   max-width: 450px;
   height: 100vh;
@@ -40,10 +40,10 @@
 
 .side-panel.open {
   right: 0;
-  /* Slide in */
+  /* Animación de entrada */
 }
 
-/* Close Button Override */
+/* Botón de cierre personalizado */
 .close-btn {
   background: none;
   border: none;
@@ -59,7 +59,7 @@
   color: var(--text-color);
 }
 
-/* Detail Groups */
+/* Grupos de detalle */
 .detail-group label {
   display: block;
   font-size: 0.75rem;

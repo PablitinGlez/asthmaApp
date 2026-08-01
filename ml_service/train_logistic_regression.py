@@ -20,12 +20,10 @@ import time
 
 start_time = time.time()
 
-# =============================================================================
 # CONFIGURACION FIJA PARA REGRESION LOGISTICA (resultado de la Fase 1)
-# =============================================================================
 # - Particion       : 80% entrenamiento / 20% prueba
 # - Validacion       : CV estratificada de 5 folds (gano sobre 3 y 10 para
-#                       Regresion Logistica)
+# Regresion Logistica)
 # - Umbral clinico   : 40%
 # Nota: esta combinacion es propia de Regresion Logistica, distinta a la de
 # Random Forest (80-20 / 10 folds) y XGBoost (80-20 / 3 folds). Cada modelo
@@ -76,7 +74,7 @@ def evaluar_features(features):
         X, y, test_size=TEST_SIZE, random_state=42, stratify=y
     )
 
-    # ---- CV=5 (chequeo de estabilidad) ----
+    # Cv=5 (chequeo de estabilidad)
     cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
 
@@ -108,7 +106,7 @@ def evaluar_features(features):
         "Precision": np.mean(cv_precs), "F1": np.mean(cv_f1s), "AUC": np.mean(cv_aucs),
     }
 
-    # ---- Modelo final con el 100% del train, evaluado contra test real ----
+    # Modelo final con el 100% del train, evaluado contra test real
     train_over = balancear(pd.concat([X_train, y_train], axis=1))
     X_train_final = train_over[features]
     y_train_final = train_over[TARGET]
@@ -157,9 +155,7 @@ def mostrar_matriz_confusion(res, n_vars):
     print(f"    Falsas alarmas    : {cm[0][1]}")
 
 
-# =============================================================================
 # ELIMINACION SECUENCIAL DE VARIABLES (backward elimination)
-# =============================================================================
 # Nota: aqui la "importancia" para decidir que variable sacar es el VALOR
 # ABSOLUTO del coeficiente (magnitud del impacto, sin importar el signo).
 
@@ -170,7 +166,7 @@ print("\n" + "=" * 90)
 print(f"REGRESION LOGISTICA - SELECCION DE VARIABLES (particion {PARTICION_LABEL} fija, CV={N_FOLDS} fija)")
 print("=" * 90)
 
-# --- Paso 1: 8 variables (todas) ---
+# Paso 1: 8 variables (todas)
 print(f"\n--- Paso 1: 8 variables (todas) ---")
 res_8 = evaluar_features(FEATURES_ALL)
 resultados_por_paso["8"] = res_8
@@ -182,7 +178,7 @@ for feat in res_8["importancias"].index:
 mostrar_matriz_confusion(res_8, 8)
 resultados_features.append({"# Variables": "8 (todas)", **res_8["test_metrics"]})
 
-# --- Paso 2: 5 variables (top 5 por magnitud de coeficiente del modelo de 8) ---
+# Paso 2: 5 variables (top 5 por magnitud de coeficiente del modelo de 8)
 top5 = res_8["importancias"].head(5).index.tolist()
 print(f"\n--- Paso 2: 5 variables -> {top5} ---")
 res_5 = evaluar_features(top5)
@@ -195,7 +191,7 @@ for feat in res_5["importancias"].index:
 mostrar_matriz_confusion(res_5, 5)
 resultados_features.append({"# Variables": "5", **res_5["test_metrics"]})
 
-# --- Paso 3: 4 variables ---
+# Paso 3: 4 variables
 peor_de_5 = res_5["importancias"].idxmin()
 top4 = [f for f in top5 if f != peor_de_5]
 print(f"\n--- Paso 3: 4 variables (se quito '{peor_de_5}') -> {top4} ---")
@@ -209,7 +205,7 @@ for feat in res_4["importancias"].index:
 mostrar_matriz_confusion(res_4, 4)
 resultados_features.append({"# Variables": "4", **res_4["test_metrics"]})
 
-# --- Paso 4: 3 variables ---
+# Paso 4: 3 variables
 peor_de_4 = res_4["importancias"].idxmin()
 top3 = [f for f in top4 if f != peor_de_4]
 print(f"\n--- Paso 4: 3 variables (se quito '{peor_de_4}') -> {top3} ---")
@@ -223,9 +219,7 @@ for feat in res_3["importancias"].index:
 mostrar_matriz_confusion(res_3, 3)
 resultados_features.append({"# Variables": "3", **res_3["test_metrics"]})
 
-# =============================================================================
 # TABLA COMPARATIVA FINAL (metricas OFICIALES: sobre test real)
-# =============================================================================
 
 tabla_features = pd.DataFrame(resultados_features)
 

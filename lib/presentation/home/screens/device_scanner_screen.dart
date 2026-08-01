@@ -235,39 +235,39 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
   }
 
   Future<void> _linkDevice() async {
-    debugPrint('🔍 SCANNER: Iniciando proceso de vinculación...');
+    debugPrint(' SCANNER: Iniciando proceso de vinculación...');
 
-    // 2. Ejecutar la vinculación real en el backend vía Provider
+    // Ejecutar la vinculación real en el backend vía Provider
     final success = await ref.read(spirometerProvider.notifier).linkDevice();
 
-    debugPrint('🔍 SCANNER: Resultado de vinculación: $success');
+    debugPrint(' SCANNER: Resultado de vinculación: $success');
 
     if (!mounted) {
-      debugPrint('🔍 SCANNER: El widget ya no está montado.');
+      debugPrint(' SCANNER: El widget ya no está montado.');
       return;
     }
 
     if (success) {
       debugPrint(
-        '🔍 SCANNER: Vinculación exitosa. Mostrando SnackBar y cerrando...',
+        ' SCANNER: Vinculación exitosa. Mostrando SnackBar y cerrando...',
       );
-      // 3. Notificar éxito (Mensaje limpio como pidió el usuario)
+      // Notificar éxito (Mensaje limpio como pidió el usuario)
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('✅ ¡Espirómetro Vinculado Exitosamente!'),
+          content: Text(' ¡Espirómetro Vinculado Exitosamente!'),
           backgroundColor: Colors.green,
           duration: Duration(seconds: 1, milliseconds: 500),
         ),
       );
-      // 4. Regresar de forma natural.
-      debugPrint('🔍 SCANNER: Intentando Navigator.pop(context)...');
+      // Regresar de forma natural.
+      debugPrint(' SCANNER: Intentando Navigator.pop(context)...');
       Navigator.of(context).pop();
     } else {
       final error = ref.read(spirometerProvider).errorMessage;
-      debugPrint('🔍 SCANNER: Error detectado: $error');
+      debugPrint(' SCANNER: Error detectado: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ Error al vincular: ${error ?? "Desconocido"}'),
+          content: Text(' Error al vincular: ${error ?? "Desconocido"}'),
           backgroundColor: Colors.red,
         ),
       );

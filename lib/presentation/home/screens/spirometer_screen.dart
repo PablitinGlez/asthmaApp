@@ -24,7 +24,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
   bool _isSendingWithSymptoms = false;
   bool _isSendingWithoutSymptoms = false;
 
-  // ── Síntomas ─────────────────────────────────────────
+  // Síntomas
   final List<String> _symptomOptions = [
     'Tos',
     'Sibilancias',
@@ -84,7 +84,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
       final token = await supabaseDs.getIdToken();
       if (token == null) throw Exception('No auth token');
 
-      // ── Obtener Ubicación ──
+      // Obtener ubicación
       double? lat;
       double? lng;
       try {
@@ -199,9 +199,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     );
   }
 
-  // ─────────────────────────────────────────────────────
   // FLUJO PRINCIPAL (Entrada Manual)
-  // ─────────────────────────────────────────────────────
   Widget _buildMainFlow() {
     return Center(
       key: const ValueKey('main'),
@@ -289,9 +287,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     );
   }
 
-  // ─────────────────────────────────────────────────────
   // PANEL DE SÍNTOMAS
-  // ─────────────────────────────────────────────────────
   Widget _buildSymptomsPanel() {
     return SingleChildScrollView(
       key: const ValueKey('symptoms'),
@@ -359,7 +355,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          // ── Chips de síntomas ──
+          // Chips de síntomas
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -414,7 +410,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             }).toList(),
           ),
           const SizedBox(height: 24),
-          // ── Intensidad ──
+          // Intensidad
           if (_selectedSymptoms.isNotEmpty) ...[
             Text(
               'Intensidad',
@@ -467,7 +463,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             const SizedBox(height: 24),
           ] else
             const SizedBox(height: 20),
-          // ── Notas ──
+          // Notas
           Text(
             'Notas adicionales',
             style: TextStyle(
@@ -501,7 +497,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             ),
           ),
           const SizedBox(height: 32),
-          // ── Botón principal ──
+          // Botón principal
           SizedBox(
             width: double.infinity,
             height: 54,
@@ -540,7 +536,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          // ── Botón secundario ──
+          // Botón secundario
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -571,9 +567,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     );
   }
 
-  // ─────────────────────────────────────────────────────
   // WIDGETS REUTILIZABLES
-  // ─────────────────────────────────────────────────────
   Color _intensityColor(String level) {
     switch (level) {
       case 'Leve':

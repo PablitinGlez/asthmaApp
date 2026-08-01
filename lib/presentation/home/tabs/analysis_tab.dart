@@ -35,7 +35,7 @@ class AnalysisTab extends ConsumerWidget {
   }
 }
 
-// ─── Header con estadísticas reales ───────────────────────────────────────────
+// Header con estadísticas reales
 class _StatsHeader extends StatelessWidget {
   final WeeklyTrendState trendState;
   const _StatsHeader({required this.trendState});
@@ -219,7 +219,7 @@ class _StatChip extends StatelessWidget {
   }
 }
 
-// ─── Tarjeta de Insights (estática por ahora) ─────────────────────────────────
+// Tarjeta de insights (estática por ahora)
 class _AIInsightsCard extends StatelessWidget {
   const _AIInsightsCard();
 
@@ -289,7 +289,7 @@ class _AIInsightsCard extends StatelessWidget {
   }
 }
 
-// ─── Comparativa Semanal con datos reales ──────────────────────────────────────
+// Comparativa semanal con datos reales
 class _WeeklyComparisonSection extends StatelessWidget {
   final WeeklyTrendState trendState;
   const _WeeklyComparisonSection({required this.trendState});
@@ -451,7 +451,7 @@ class _ComparisonBar extends StatelessWidget {
   }
 }
 
-// ─── Calendario de Adherencia con datos reales ────────────────────────────────
+// Calendario de adherencia con datos reales
 class _AdherenceCalendar extends StatelessWidget {
   final WeeklyTrendState trendState;
   const _AdherenceCalendar({required this.trendState});
@@ -664,7 +664,7 @@ class _Legend extends StatelessWidget {
   }
 }
 
-// ─── Pintor del círculo de progreso ───────────────────────────────────────────
+// Pintor del círculo de progreso
 class _CircularProgressPainter extends CustomPainter {
   final double progress;
   final Color color;

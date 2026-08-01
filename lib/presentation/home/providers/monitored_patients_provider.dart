@@ -30,7 +30,7 @@ class MonitoredPatientsNotifier extends Notifier<AsyncValue<List<UserEntity>>> {
     try {
       final repository = ref.read(guardianRepositoryProvider);
       await repository.linkPatient(code);
-      await loadPatients(); // Recargar lista tras vincular
+      await loadPatients(); // Recargar Lista tras vincular
     } catch (e) {
       rethrow;
     }

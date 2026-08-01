@@ -729,7 +729,7 @@ class _EmergencyContactsScreenState
   }
 }
 
-// ─── Contact Card Widget ──────────────────────────────────────────────────────
+// Contact card widget
 
 class _ContactCard extends StatelessWidget {
   final EmergencyContactModel contact;

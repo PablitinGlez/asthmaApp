@@ -142,15 +142,15 @@ class SupabaseAuthDataSource {
 
   // Enviar correo de recuperación de contraseña
   Future<void> sendPasswordResetEmail(String email) async {
-    print('📧 SupabaseAuthDataSource: Requesting reset for $email');
+    print(' SupabaseAuthDataSource: Requesting reset for $email');
     try {
       await _supabaseClient.auth.resetPasswordForEmail(
         email,
         redirectTo: 'io.supabase.asthmaapp://reset-callback/',
       );
-      print('✅ SupabaseAuthDataSource: resetPasswordForEmail call completed');
+      print(' SupabaseAuthDataSource: resetPasswordForEmail call completed');
     } catch (e) {
-      print('❌ SupabaseAuthDataSource ERROR: $e');
+      print(' SupabaseAuthDataSource ERROR: $e');
       throw AuthException('Error al enviar correo de recuperación.');
     }
   }
@@ -193,7 +193,7 @@ class SupabaseAuthDataSource {
     }
   }
 
-  // --- MÉTODOS DE MFA (Google Authenticator) ---
+  // Métodos de mfa (google authenticator)
 
   Future<AuthMFAEnrollResponse> enrollMfa() async {
     try {

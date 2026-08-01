@@ -39,7 +39,7 @@ export class SetPasswordComponent {
     
     try {
       await this.authService.updatePassword(this.password);
-      console.log('✅ Contraseña actualizada correctamente');
+      console.log(' Contraseña actualizada correctamente');
       
       // Intentar obtener el rol con timeout para no colgarse
       const user = this.authService.currentUserValue;
@@ -50,7 +50,7 @@ export class SetPasswordComponent {
           const timeoutPromise = new Promise<null>(resolve => setTimeout(() => resolve(null), 3000));
           const result = await Promise.race([rolePromise, timeoutPromise]);
           role = result || 'patient';
-          console.log('👤 Rol detectado:', role);
+          console.log(' Rol detectado:', role);
         } catch (roleErr) {
           console.warn('No se pudo obtener el rol, asumiendo paciente:', roleErr);
           role = 'patient';

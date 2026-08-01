@@ -7,16 +7,16 @@ DATASET_PATH = os.path.join(os.path.dirname(__file__), "DATASETNOW", "dataset_hi
 
 def explorar_dataset():
     print("=" * 80)
-    print("🔍 EXPLORACIÓN EXHAUSTIVA Y DIAGNÓSTICO DEL DATASET ACTUAL (DATASETNOW)")
+    print(" EXPLORACIÓN EXHAUSTIVA Y DIAGNÓSTICO DEL DATASET ACTUAL (DATASETNOW)")
     print("=" * 80)
 
     if not os.path.exists(DATASET_PATH):
-        print(f"❌ Error: No se encontró el archivo en {DATASET_PATH}")
+        print(f" Error: No se encontró el archivo en {DATASET_PATH}")
         return
 
     df = pd.read_csv(DATASET_PATH)
     
-    # 1. RESUMEN ESTRUCTURAL
+    # RESUMEN ESTRUCTURAL
     print("\n1. RESUMEN ESTRUCTURAL DEL DATASET:")
     print(f"   • Ubicación: {DATASET_PATH}")
     print(f"   • Total de filas (registros): {len(df):,}")
@@ -24,7 +24,7 @@ def explorar_dataset():
     print(f"   • Columnas presentes: {list(df.columns)}")
     print(f"   • Valores nulos: {df.isnull().sum().sum()}")
 
-    # 2. DISTRIBUCIÓN DE LA CLASE TARGET
+    # DISTRIBUCIÓN DE LA CLASE TARGET
     print("\n" + "=" * 80)
     print("2. DISTRIBUCIÓN DE LA VARIABLE OBJETIVO ('crisis'):")
     counts = df['crisis'].value_counts()
@@ -33,17 +33,17 @@ def explorar_dataset():
         nombre = "Crisis (1)" if cls == 1 else "Sano (0)"
         print(f"   • Clase {cls} ({nombre}): {counts[cls]:,} registros ({props[cls]*100:.2f}%)")
 
-    # 3. CORRELACIÓN DE PEARSON RESPECTO A CRISIS
+    # CORRELACIÓN DE PEARSON RESPECTO A CRISIS
     print("\n" + "=" * 80)
     print("3. CORRELACIÓN DE PEARSON CON 'crisis' (Orden de Impacto):")
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     correlations = df[numeric_cols].corr()['crisis'].drop('crisis').sort_values(ascending=False)
     for col, val in correlations.items():
-        bar = "█" * int(abs(val) * 30)
+        bar = "" * int(abs(val) * 30)
         signo = "+" if val >= 0 else "-"
         print(f"   • {col:<18} : {signo}{abs(val):.4f}  {bar}")
 
-    # 4. ESTADÍSTICAS POR CLASE (SANO vs CRISIS)
+    # ESTADÍSTICAS POR CLASE (SANO vs CRISIS)
     print("\n" + "=" * 80)
     print("4. COMPARATIVA DE PROMEDIOS POR CLASE (Sano vs Crisis):")
     print(f"{'Variable':<18} | {'Promedio Sano (0)':<18} | {'Promedio Crisis (1)':<18} | {'Diferencia':<12}")
@@ -56,7 +56,7 @@ def explorar_dataset():
         diff = mean_crisis - mean_sano
         print(f"{col:<18} | {mean_sano:<18.2f} | {mean_crisis:<18.2f} | {diff:<+12.2f}")
 
-    # 5. DIAGNÓSTICO DE ESCENARIOS CLÍNICOS CRÍTICOS
+    # DIAGNÓSTICO DE ESCENARIOS CLÍNICOS CRÍTICOS
     print("\n" + "=" * 80)
     print("5. DIAGNÓSTICO DE ESCENARIOS CLÍNICOS CRÍTICOS (DESACOPLAMIENTO):")
 
@@ -69,7 +69,7 @@ def explorar_dataset():
         print(f"   • Etiquetados como Crisis (1): {crisis_count} ({crisis_count/len(pef_bajo_spo2_normal)*100:.1f}%)")
         print(f"   • Etiquetados como Sano (0): {len(pef_bajo_spo2_normal) - crisis_count}")
     else:
-        print("   ⚠️ ATENCIÓN: 0 registros encontrados. El modelo NUNCA vio un PEF < 60% acompañado de SpO2 >= 95%.")
+        print("    ATENCIÓN: 0 registros encontrados. El modelo NUNCA vio un PEF < 60% acompañado de SpO2 >= 95%.")
 
     # b) PEF Severo (<50%) con SpO2 Normal (>=95%)
     pef_severo_spo2_normal = df[(df['pef_porcentaje'] < 50) & (df['spo2'] >= 95)]
@@ -84,7 +84,7 @@ def explorar_dataset():
         crisis_cnt = (defaults_pef_bajo['crisis'] == 1).sum()
         print(f"   • Etiquetados como Crisis (1): {crisis_cnt} ({crisis_cnt/len(defaults_pef_bajo)*100:.1f}%)")
     else:
-        print("   ⚠️ ATENCIÓN: 0 registros encontrados.")
+        print("    ATENCIÓN: 0 registros encontrados.")
 
     # d) SpO2 Baja (<92%) con PEF Normal (>=80%)
     spo2_baja_pef_normal = df[(df['spo2'] < 92) & (df['pef_porcentaje'] >= 80)]
@@ -94,7 +94,7 @@ def explorar_dataset():
         c_cnt = (spo2_baja_pef_normal['crisis'] == 1).sum()
         print(f"   • Etiquetados como Crisis (1): {c_cnt} ({c_cnt/len(spo2_baja_pef_normal)*100:.1f}%)")
 
-    # 6. DISTRIBUCIÓN DE CRISIS POR RANGOS DE PEF %
+    # DISTRIBUCIÓN DE CRISIS POR RANGOS DE PEF %
     print("\n" + "=" * 80)
     print("6. DISTRIBUCIÓN DE 'crisis' SEGÚN RANGOS DE pef_porcentaje:")
     bins = [0, 40, 60, 80, 100, 150]
@@ -108,7 +108,7 @@ def explorar_dataset():
         print(f"   • PEF {idx:<20} | Total: {row['total']:>5} | Crisis: {row['crisis_sum']:>4} ({row['pct_crisis']:>5.1f}%) | Sanos: {row['sano_sum']:>5}")
 
     print("\n" + "=" * 80)
-    print("✅ EXPLORACIÓN FINALIZADA DE FORMA EXITOSA.")
+    print(" EXPLORACIÓN FINALIZADA DE FORMA EXITOSA.")
     print("=" * 80)
 
 if __name__ == "__main__":

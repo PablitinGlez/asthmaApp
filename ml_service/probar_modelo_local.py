@@ -19,7 +19,7 @@ def probar_modelo(path, nombre):
     with open(path, "rb") as f:
         model = pickle.load(f)
 
-    # 1. Inspeccionar n_features_in_ y feature_importances_
+    # Inspeccionar n_features_in_ y feature_importances_
     n_features = getattr(model, "n_features_in_", "Desconocido")
     print(f"• Numero de features esperadas: {n_features}")
 
@@ -29,7 +29,7 @@ def probar_modelo(path, nombre):
         for name, imp in zip(nombres, model.feature_importances_):
             print(f"   • {name:<15} : {imp*100:.2f}%  {'#'*int(imp*30)}")
 
-    # 2. Prueba 1: PEF = 4.0%, SpO2 = 98.0%, BPM = 75.0 (Caso de la app sin reloj)
+    # Prueba 1: PEF = 4.0%, SpO2 = 98.0%, BPM = 75.0 (Caso de la app sin reloj)
     if n_features == 5:
         vector_prueba_1 = [[98.0, 75.0, 0.0, 4.0, 8.0]] # [spo2, bpm, pasos, pef_porcentaje, horas_sueno]
     else:
@@ -42,7 +42,7 @@ def probar_modelo(path, nombre):
     print(f"   • Probabilidad de Crisis: {prob_1*100:.2f}%")
     print(f"   • Clasificacion: {'CRISIS (1)' if pred_1 == 1 or prob_1 >= 0.40 else 'SANO (0)'}")
 
-    # 3. Prueba 2: Simulación de Ataque (PEF = 40%, SpO2 = 82%, BPM = 145)
+    # Prueba 2: Simulación de Ataque (PEF = 40%, SpO2 = 82%, BPM = 145)
     if n_features == 5:
         vector_prueba_2 = [[82.0, 145.0, 0.0, 40.0, 3.0]]
     else:

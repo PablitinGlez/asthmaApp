@@ -63,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
         SnackBarHelper.showSuccess(
           context,
-          '👋 ¡Bienvenido, $firstName!',
+          ' ¡Bienvenido, $firstName!',
           leading: avatar,
         );
       }
@@ -80,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'Mi Perfil',
     ];
 
-    // 📍 SOLICITAR Y CAPTURAR UBICACIÓN GPS EN ROL PACIENTE
+    // SOLICITAR Y CAPTURAR UBICACIÓN GPS EN ROL PACIENTE
     ref.listen(authStateProvider, (previous, next) {
       final u = next.value;
       if (u != null && u.role != 'guardian') {
@@ -88,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    // 🔴 ESCUCHAR ALERTAS DE PEF BAJO (ZONA DE RIESGO)
+    // ESCUCHAR ALERTAS DE PEF BAJO (ZONA DE RIESGO)
     ref.listen<int?>(riskAlertProvider, (previous, next) {
       if (next != null && previous != next) {
         showRiskAlertSheet(context, ref, next);
@@ -96,10 +96,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    // 🔴 ESCUCHAR ALERTAS CRÍTICAS DE IA PARA SOS
+    // ESCUCHAR ALERTAS CRÍTICAS DE IA PARA SOS
     ref.listen<PredictionState>(predictionProvider, (previous, next) {
       if (next.riskLevel == 'red' && previous?.riskLevel != 'red') {
-        debugPrint('🚨 SOS TRIGGER: IA detectó riesgo CRÍTICO. Navegando a SOS.');
+        debugPrint(' SOS TRIGGER: IA detectó riesgo CRÍTICO. Navegando a SOS.');
         context.push('/sos');
       }
     });

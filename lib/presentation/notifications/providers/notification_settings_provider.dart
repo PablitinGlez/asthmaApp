@@ -126,7 +126,7 @@ class NotificationSettingsNotifier extends Notifier<NotificationSettings> {
       newSettings.vibrationEnabled,
     );
 
-    print('💾 NotificationSettings: Persisted successfully for $userId');
+    print(' NotificationSettings: Persisted successfully for $userId');
   }
 
   Future<void> togglePefReminders(bool value) =>

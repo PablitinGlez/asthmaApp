@@ -118,14 +118,14 @@ De los 12 archivos del dataset, se seleccionaron **5 específicos**:
 
 | Variable del modelo | ¿Presente en AAMOS-00? | Observación |
 | :--- | :---: | :--- |
-| `bpm` | ✅ Sí | Minuto a minuto desde el smartwatch |
-| `pasos` | ✅ Sí | Minuto a minuto desde el smartwatch |
-| `horas_sueno` | ✅ Sí | Duración media de sueño 7.6 h/día |
-| `pef_porcentaje` | ✅ Sí (calculado) | Medición matutina y vespertina |
-| `aqi` | ✅ Sí (convertido) | API de calidad del aire por ubicación |
-| `humedad` | ✅ Sí | API de clima local |
-| `temperatura` | ✅ Sí | API de clima local |
-| `spo2` | ❌ No existe | **Generada sintéticamente con reglas GINA** |
+| `bpm` |  Sí | Minuto a minuto desde el smartwatch |
+| `pasos` |  Sí | Minuto a minuto desde el smartwatch |
+| `horas_sueno` |  Sí | Duración media de sueño 7.6 h/día |
+| `pef_porcentaje` |  Sí (calculado) | Medición matutina y vespertina |
+| `aqi` |  Sí (convertido) | API de calidad del aire por ubicación |
+| `humedad` |  Sí | API de clima local |
+| `temperatura` |  Sí | API de clima local |
+| `spo2` |  No existe | **Generada sintéticamente con reglas GINA** |
 
 ---
 
@@ -135,11 +135,11 @@ Durante la investigación se analizaron varios datasets públicos. La siguiente 
 
 | Dataset | Color | Decisión | Motivo |
 | :--- | :---: | :--- | :--- |
-| **AAMOS-00** (Universidad de Edimburgo) | 🟢 Verde | **Usado como base principal** | Tiene BPM, PEF, pasos, sueño, AQI, humedad, temperatura de pacientes asmáticos reales. Publicado en Nature. |
-| **BIDMC PPG** (PhysioNet) | 🟡 Amarillo | Solo referencia bibliográfica | Tiene SpO2 y BPM reales, pero son pacientes de UCI general (no asmáticos). Solo 53 grabaciones de 8 min. |
-| **PMC8543171** (DNN Weather paper) | 🟡 Amarillo | Solo referencia bibliográfica | Tiene temperatura y humedad. Solo 10 pacientes, 1,010 registros. Sin SpO2, BPM ni PEF. |
-| **Zenodo 5271780** | 🔴 Rojo | **Descartado** | Mismo estudio que el anterior. 10 pacientes, sin variables fisiológicas clave. |
-| **IEEE Comprehensive Health** | 🟡⚠️ Rojo | **Descartado** | Requiere suscripción de pago. No es dataset de asma. Temperatura corporal (no ambiental). |
+| **AAMOS-00** (Universidad de Edimburgo) |  Verde | **Usado como base principal** | Tiene BPM, PEF, pasos, sueño, AQI, humedad, temperatura de pacientes asmáticos reales. Publicado en Nature. |
+| **BIDMC PPG** (PhysioNet) |  Amarillo | Solo referencia bibliográfica | Tiene SpO2 y BPM reales, pero son pacientes de UCI general (no asmáticos). Solo 53 grabaciones de 8 min. |
+| **PMC8543171** (DNN Weather paper) |  Amarillo | Solo referencia bibliográfica | Tiene temperatura y humedad. Solo 10 pacientes, 1,010 registros. Sin SpO2, BPM ni PEF. |
+| **Zenodo 5271780** |  Rojo | **Descartado** | Mismo estudio que el anterior. 10 pacientes, sin variables fisiológicas clave. |
+| **IEEE Comprehensive Health** |  Rojo | **Descartado** | Requiere suscripción de pago. No es dataset de asma. Temperatura corporal (no ambiental). |
 
 ---
 
@@ -347,14 +347,14 @@ El AAMOS-00 real no mostraba diferencias grandes en estas variables entre días 
 
 | Variable | Separación (d de Cohen) | Estado |
 | :--- | :---: | :---: |
-| `spo2` | 1.70 | ✅ Excelente |
-| `bpm` | 1.54 | ✅ Excelente |
-| `pasos` | 1.29 | ✅ Buena |
-| `horas_sueno` | 1.26 | ✅ Buena |
-| `pef_porcentaje` | 0.86 | ✅ Buena |
-| `aqi` | baja | ⚠️ Trigger indirecto (esperado clínicamente) |
-| `humedad` | baja | ⚠️ Trigger indirecto (esperado clínicamente) |
-| `temperatura` | baja | ⚠️ Trigger indirecto (esperado clínicamente) |
+| `spo2` | 1.70 |  Excelente |
+| `bpm` | 1.54 |  Excelente |
+| `pasos` | 1.29 |  Buena |
+| `horas_sueno` | 1.26 |  Buena |
+| `pef_porcentaje` | 0.86 |  Buena |
+| `aqi` | baja |  Trigger indirecto (esperado clínicamente) |
+| `humedad` | baja |  Trigger indirecto (esperado clínicamente) |
+| `temperatura` | baja |  Trigger indirecto (esperado clínicamente) |
 
 ---
 
@@ -466,9 +466,9 @@ Además del Train-Test Split, se aplicó validación cruzada en 5 partes para ve
 | **Variables predictoras** | 8 |
 | **Variable objetivo** | 1 (`crisis`) |
 | **Valores nulos** | 0 |
-| **Separación SpO2** | 1.70 desv. estándar ✅ |
-| **Separación BPM** | 1.54 desv. estándar ✅ |
-| **Separación PEF** | 0.86 desv. estándar ✅ |
+| **Separación SpO2** | 1.70 desv. estándar  |
+| **Separación BPM** | 1.54 desv. estándar  |
+| **Separación PEF** | 0.86 desv. estándar  |
 
 ### Archivos generados
 
@@ -481,17 +481,17 @@ Además del Train-Test Split, se aplicó validación cruzada en 5 partes para ve
 
 ```
 dataset_hibrido_8020.csv (10,000 registros)
-│
-├── 1,657 registros REALES del AAMOS-00
-│   ├── Preprocesados: PEF convertido a %, AQI convertido a escala EPA
-│   ├── Smartwatch resumido: minuto-a-minuto -> registro diario
-│   ├── Nulos imputados: interpolación lineal + media personal
-│   └── SpO2 generado sintéticamente con reglas GINA 2023
-│
-└── 8,343 registros SINTÉTICOS
-    ├── Augmentación de los registros reales con variación clínica controlada
-    ├── BPM, pasos y sueño ajustados con respaldo GINA / kHealth
-    └── Ratio crisis/sano ajustado a 20/80 (sin tocar registros reales)
+
+ 1,657 registros REALES del AAMOS-00
+    Preprocesados: PEF convertido a %, AQI convertido a escala EPA
+    Smartwatch resumido: minuto-a-minuto -> registro diario
+    Nulos imputados: interpolación lineal + media personal
+    SpO2 generado sintéticamente con reglas GINA 2023
+
+ 8,343 registros SINTÉTICOS
+     Augmentación de los registros reales con variación clínica controlada
+     BPM, pasos y sueño ajustados con respaldo GINA / kHealth
+     Ratio crisis/sano ajustado a 20/80 (sin tocar registros reales)
 ```
 
 ---

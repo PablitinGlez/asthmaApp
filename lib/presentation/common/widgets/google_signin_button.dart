@@ -4,7 +4,7 @@ import '../../auth/providers/auth_notifier.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Botón de Google Sign-In compartido para Login y Register
+// Botón de Google Sign-In compartido para Login y Register
 class GoogleSignInButton extends ConsumerWidget {
   const GoogleSignInButton({super.key});
 
@@ -17,11 +17,11 @@ class GoogleSignInButton extends ConsumerWidget {
           ? null
           : () async {
               final sw = Stopwatch()..start();
-              print('🕵️‍♂️ INICIANDO GOOGLE SIGN-IN...');
+              print(' INICIANDO GOOGLE SIGN-IN...');
               await ref.read(authNotifierProvider.notifier).signInWithGoogle();
               sw.stop();
               print(
-                '⏱️ TIEMPO TOTAL GOOGLE SIGN-IN: ${sw.elapsedMilliseconds}ms',
+                ' TIEMPO TOTAL GOOGLE SIGN-IN: ${sw.elapsedMilliseconds}ms',
               );
             },
       style: OutlinedButton.styleFrom(

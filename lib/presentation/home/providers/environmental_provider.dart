@@ -100,10 +100,10 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
 
   @override
   EnvironmentalState build() {
-    // 1. Iniciar chequeo inicial
+    // Iniciar chequeo inicial
     Future.microtask(checkCurrentStatus);
 
-    // 2. Escuchar cambios en la antena GPS en tiempo real (No soportado en Web)
+    // Escuchar cambios en la antena GPS en tiempo real (No soportado en Web)
     if (!kIsWeb) {
       _serviceStatusSubscription = Geolocator.getServiceStatusStream().listen((
         status,
@@ -117,7 +117,7 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
       });
     }
 
-    // 3. Limpiar al destruir el provider
+    // Limpiar al destruir el provider
     ref.onDispose(() {
       _serviceStatusSubscription?.cancel();
     });
@@ -125,8 +125,8 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
     return EnvironmentalState.initial();
   }
 
-  /// Verifica el estado actual de los permisos y el GPS sin disparar diálogos.
-  /// Verifica el estado actual de los permisos y el GPS, luego obtiene los datos del backend.
+  // Verifica el estado actual de los permisos y el GPS sin disparar diálogos.
+  // Verifica el estado actual de los permisos y el GPS, luego obtiene los datos del backend.
   Future<void> checkCurrentStatus() async {
     // Solo poner loading si no tenemos datos previos (para evitar parpadeos)
     if (state.status == EnvironmentalStatus.initial) {
@@ -134,14 +134,14 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
     }
 
     try {
-      // 1. Verificar si el servicio de GPS está encendido
+      // Verificar si el servicio de GPS está encendido
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         state = state.copyWith(status: EnvironmentalStatus.serviceDisabled);
         return;
       }
 
-      // 2. Verificar permisos
+      // Verificar permisos
       LocationPermission permission = await Geolocator.checkPermission();
 
       if (permission == LocationPermission.denied) {
@@ -157,7 +157,7 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
         );
         debugPrint('[GPS DEBUG] Ubicación capturada: Lat: ${position.latitude}, Lng: ${position.longitude}');
 
-        // 3. Llamar a nuestra API en Render con las coordenadas
+        // Llamar a nuestra API en Render con las coordenadas
         await _fetchEnvironmentalData(position);
       }
     } catch (e) {
@@ -174,7 +174,7 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
     }
   }
 
-  /// Solicita el permiso y luego obtiene los datos.
+  // Solicita el permiso y luego obtiene los datos.
   Future<void> requestPermission() async {
     state = state.copyWith(status: EnvironmentalStatus.loading);
 
@@ -209,12 +209,12 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
     }
   }
 
-  /// Conexión real con el Backend
+  // Conexión real con el Backend
   Future<void> _fetchEnvironmentalData(Position pos) async {
     try {
       final dio = ref.read(dioClientProvider);
 
-      // --- REVERSE GEOCODING (Detectar nombre del pueblo/localidad) ---
+      // Geocodificación inversa para obtener localidad
       String? localName;
       try {
         List<gc.Placemark> placemarks = await gc.placemarkFromCoordinates(
@@ -317,12 +317,12 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
     return rawValue; // Fallback si no coincide con los anteriores
   }
 
-  /// Abre los ajustes del sistema para habilitar el GPS o los permisos.
+  // Abre los ajustes del sistema para habilitar el GPS o los permisos.
   Future<void> openAppPermissionSettings() async {
     await ph.openAppSettings();
   }
 
-  /// Abre los ajustes de ubicación específicamente.
+  // Abre los ajustes de ubicación específicamente.
   Future<void> openLocationSettings() async {
     await Geolocator.openLocationSettings();
   }

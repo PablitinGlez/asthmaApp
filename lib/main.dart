@@ -16,22 +16,22 @@ import 'infrastructure/services/background_sync_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicialización de Firebase (Para Push Notifications y Crashlytics)
+  // Inicializar Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Inicialización de Supabase (Para Base de Datos y Autenticación)
+  // Inicializar Supabase
   await Supabase.initialize(
     url: 'https://gspjcaqonnvrzuviqrjq.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzcGpjYXFvbm52cnp1dmlxcmpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY4Njk5NjMsImV4cCI6MjA4MjQ0NTk2M30.H-V78osW0tkcTfFQbIKKtEAdoEbhyQnVznwQCTiyOWw',
   );
 
-  // Inicialización de Notificaciones Locales
+  // Inicializar notificaciones locales
   await LocalNotificationService.init();
 
-  // Inicialización de Sincronización en Segundo Plano (WorkManager)
+  // Inicializar trabajo en segundo plano
   await BackgroundSyncService.initialize();
 
-  // Pre-carga de SharedPreferences para evitar loading asíncrono en Router
+  // Precargar preferencias del sistema
   final prefs = await SharedPreferences.getInstance();
   final onboardingCompleted = prefs.getBool('onboarding_completed') ?? false;
   final setupCompleted = prefs.getBool('is_setup_completed') ?? false;
@@ -76,7 +76,7 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Inicializar el sistema de notificaciones push
+    // Configurar notificaciones push
     ref.listen(pushNotificationsProvider, (_, __) {});
     
     final router = ref.watch(appRouterProvider);
@@ -91,7 +91,7 @@ class MainApp extends ConsumerWidget {
           fontFamily: 'Satoshi',
         ),
         routerConfig: router,
-        // Configuración de Idioma
+        // Idioma de la aplicación
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -99,9 +99,9 @@ class MainApp extends ConsumerWidget {
         ],
         supportedLocales: const [
           Locale('es', 'ES'), // Español
-          Locale('en', 'US'), // Inglés (opcional)
+          Locale('en', 'US'), // Inglés
         ],
-        locale: const Locale('es', 'ES'), // Forzar Español
+        locale: const Locale('es', 'ES'), // Idioma por defecto
       ),
     );
   }

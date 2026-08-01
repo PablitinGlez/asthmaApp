@@ -97,9 +97,9 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
       WidgetsBinding.instance.removeObserver(this);
     });
 
-    // 1. Instanciamos el factory
+    // Instanciamos el factory
     Health().configure();
-    // 2. Verificamos permisos locales primero (sin consultar la red)
+    // Verificamos permisos locales primero (sin consultar la red)
     Future.microtask(checkLocalPermissionsAndFetch);
     return SmartwatchState();
   }
@@ -134,9 +134,9 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     }
   }
 
-  /// Verifica permisos locales en Android/iOS sin consultar la red.
-  /// Si ya existen permisos, extrae los datos al instante.
-  /// Solo muestra el banner de vinculación si no hay permisos previos.
+  // Verifica permisos locales en Android/iOS sin consultar la red.
+  // Si ya existen permisos, extrae los datos al instante.
+  // Solo muestra el banner de vinculación si no hay permisos previos.
   Future<void> checkLocalPermissionsAndFetch() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
@@ -154,7 +154,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
         );
         state = state.copyWith(isLinked: true);
         await fetchTodayVitals();
-        // ✔ Arrancar auto-refresh cada 5 minutos (limpia el anterior si existía)
+        // Arrancar auto-refresh cada 5 minutos (limpia el anterior si existía)
         _refreshTimer?.cancel();
         _refreshTimer = Timer.periodic(const Duration(minutes: 5), (_) {
           if (state.isLinked) {
@@ -176,13 +176,13 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     }
   }
 
-  /// Desvincula el SmartWatch reseteando el estado local.
+  // Desvincula el SmartWatch reseteando el estado local.
   void unlinkSmartwatch() {
     _refreshTimer?.cancel(); // Apagar el auto-refresh al desvincular
     state = SmartwatchState(isLinked: false, isLoading: false);
   }
 
-  /// Abre los ajustes de la aplicación para que el usuario pueda corregir permisos denegados permanentemente.
+  // Abre los ajustes de la aplicación para que el usuario pueda corregir permisos denegados permanentemente.
   Future<void> openSettings() async {
     await openAppSettings();
     // Reiniciamos el estado para que deje de mostrar el error y permita intentar de nuevo al volver
@@ -196,7 +196,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     try {
       _addLog('--- INICIANDO VINCULACIÓN DE SMARTWATCH ---');
 
-      // 0. En Android, Health Connect requiere permisos base
+      // En Android, Health Connect requiere permisos base
       if (Platform.isAndroid) {
         _addLog('[LOG] Solicitando permisos base...');
         
@@ -219,7 +219,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
         }
       }
 
-      // 1. Verificar cuales tipos soporta este dispositivo antes de pedir auth
+      // Verificar cuales tipos soporta este dispositivo antes de pedir auth
       _addLog('[LOG] Verificando soporte de Health Connect en este dispositivo...');
       _addLog('[DEBUG] Tipos a solicitar: HEART_RATE, STEPS, BLOOD_OXYGEN, SLEEP_SESSION');
 
@@ -277,7 +277,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
         return;
       }
 
-      // 2. Registramos el dispositivo DE VERDAD en la Base de Datos
+      // Registramos el dispositivo DE VERDAD en la Base de Datos
       final dioClient = ref.read(dioClientProvider);
       final supabaseAuthDS = ref.read(supabaseAuthDataSourceProvider);
       final token = await supabaseAuthDS.getIdToken();
@@ -297,7 +297,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
             },
             options: Options(headers: {'Authorization': 'Bearer $token'}),
           );
-          _addLog('✅ Sincronización: Reloj guardado en backend.');
+          _addLog(' Sincronización: Reloj guardado en backend.');
         } on DioException catch (dioErr) {
           if (dioErr.response?.statusCode == 400 &&
               dioErr.response?.data.toString().contains('registrado') == true) {
@@ -310,7 +310,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
       }
 
       state = state.copyWith(isLinked: true, errorMessage: null);
-      _addLog('🚀 ¡VINCULACIÓN COMPLETADA CON ÉXITO!');
+      _addLog(' ¡VINCULACIÓN COMPLETADA CON ÉXITO!');
       await fetchTodayVitals();
     } catch (e) {
       _addLog('[FATAL] $e');

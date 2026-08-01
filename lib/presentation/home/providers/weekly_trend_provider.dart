@@ -31,7 +31,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
 
   @override
   WeeklyTrendState build() {
-    // 🚀 ARRANQUE TEMPRANO: Conectar WS tan pronto como tengamos el userId,
+    // ARRANQUE TEMPRANO: Conectar WS tan pronto como tengamos el userId,
     // sin esperar a que termine el HTTP fetch (evita race condition en cold start)
     final user = ref.read(authStateProvider).value;
     if (user != null) {
@@ -63,7 +63,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
       final uri = Uri.parse('$wsUrl/api/measurements/ws/trend/$userId');
 
       _channel = WebSocketChannel.connect(uri);
-      print('🔌 WebSocket: Conectado para user $userId');
+      print(' WebSocket: Conectado para user $userId');
 
       _channel?.stream.listen(
         (message) {
@@ -78,7 +78,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
           } catch (_) {}
         },
         onError: (_) {
-          print('⚠️ WebSocket: Error — reconectando en 5s...');
+          print(' WebSocket: Error — reconectando en 5s...');
           _channel = null;
           // Auto-reconectar después de 5 segundos
           Future.delayed(const Duration(seconds: 5), () {
@@ -86,7 +86,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
           });
         },
         onDone: () {
-          print('⚠️ WebSocket: Canal cerrado — reconectando en 5s...');
+          print(' WebSocket: Canal cerrado — reconectando en 5s...');
           _channel = null;
           Future.delayed(const Duration(seconds: 5), () {
             if (state.data != null) _initWebSocket(userId);

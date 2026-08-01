@@ -40,7 +40,7 @@ class AISimulatorPanel extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                '🧪 MODO SIMULACIÓN',
+                ' MODO SIMULACIÓN',
                 style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange),
               ),
               IconButton(

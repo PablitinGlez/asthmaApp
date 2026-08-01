@@ -52,12 +52,12 @@ class HealthConnectSyncScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Estado General ---
+            // Estado general
             _buildStatusCard(isLinked, lastSyncLabel, readCount),
 
             const SizedBox(height: 28),
 
-            // --- Permisos ---
+            // Permisos
             const Text(
               'Permisos Otorgados',
               style: TextStyle(
@@ -116,7 +116,7 @@ class HealthConnectSyncScreen extends ConsumerWidget {
 
             const SizedBox(height: 28),
 
-            // --- Estadísticas de Hoy ---
+            // Estadísticas de hoy
             if (isLinked) ...[
               const Text(
                 'Estadísticas de Hoy',
@@ -132,7 +132,7 @@ class HealthConnectSyncScreen extends ConsumerWidget {
               const SizedBox(height: 28),
             ],
 
-            // --- Botón de Ajustes ---
+            // Botón de ajustes
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
@@ -157,7 +157,7 @@ class HealthConnectSyncScreen extends ConsumerWidget {
 
             const SizedBox(height: 12),
 
-            // --- Botón Desvincular ---
+            // Botón desvincular
             if (isLinked)
               SizedBox(
                 width: double.infinity,
@@ -180,7 +180,7 @@ class HealthConnectSyncScreen extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            // --- Descripción técnica ---
+            // Descripción técnica
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(

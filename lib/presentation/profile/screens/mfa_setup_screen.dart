@@ -96,7 +96,7 @@ class _MfaSetupScreenState extends ConsumerState<MfaSetupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('¡2FA Activado exitosamente! 🎉'),
+            content: Text('¡2FA Activado exitosamente! '),
             backgroundColor: Colors.green,
           ),
         );
