@@ -35,7 +35,6 @@ class AnalysisTab extends ConsumerWidget {
   }
 }
 
-// Header con estadísticas reales
 class _StatsHeader extends StatelessWidget {
   final WeeklyTrendState trendState;
   const _StatsHeader({required this.trendState});
@@ -47,13 +46,13 @@ class _StatsHeader extends StatelessWidget {
     final maxPef = data?.maxPef;
     final minPef = data?.minPef;
 
-    // Calcular puntuación basada en el PEF promedio (scale 0-100)
+    
     double score = 0.0;
     String scoreText = '--';
     String scoreLabel = 'Sin datos aún';
 
     if (avgPef != null && avgPef > 0) {
-      // PEF saludable para adulto ~400-600 L/min → 100 puntos
+      
       score = (avgPef / 500.0).clamp(0.0, 1.0);
       scoreText = (score * 100).round().toString();
       if (score >= 0.8) {
@@ -219,7 +218,6 @@ class _StatChip extends StatelessWidget {
   }
 }
 
-// Tarjeta de insights (estática por ahora)
 class _AIInsightsCard extends StatelessWidget {
   const _AIInsightsCard();
 
@@ -289,7 +287,6 @@ class _AIInsightsCard extends StatelessWidget {
   }
 }
 
-// Comparativa semanal con datos reales
 class _WeeklyComparisonSection extends StatelessWidget {
   final WeeklyTrendState trendState;
   const _WeeklyComparisonSection({required this.trendState});
@@ -298,7 +295,7 @@ class _WeeklyComparisonSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = trendState.data;
 
-    // Calcular promedios de esta semana y la semana pasada
+    
     double thisWeekAvg = 0;
     double lastWeekAvg = 0;
     int thisWeekCount = 0;
@@ -451,7 +448,6 @@ class _ComparisonBar extends StatelessWidget {
   }
 }
 
-// Calendario de adherencia con datos reales
 class _AdherenceCalendar extends StatelessWidget {
   final WeeklyTrendState trendState;
   const _AdherenceCalendar({required this.trendState});
@@ -462,7 +458,7 @@ class _AdherenceCalendar extends StatelessWidget {
     final monthName = DateFormat('MMMM', 'es_ES').format(now);
     final year = now.year;
 
-    // Construir set de días donde hubo medición este mes
+    
     final Set<int> measuredDays = {};
     if (trendState.data != null) {
       for (final point in trendState.data!.dailyData) {
@@ -472,11 +468,11 @@ class _AdherenceCalendar extends StatelessWidget {
       }
     }
 
-    // Días en el mes
+    
     final daysInMonth = DateUtils.getDaysInMonth(now.year, now.month);
-    // Primer día de la semana del mes (1=Lun...7=Dom en Dart)
+    
     final firstWeekday = DateTime(now.year, now.month, 1).weekday;
-    // Número de celdas vacías al inicio
+    
     final leadingBlanks = firstWeekday - 1;
     final totalCells = leadingBlanks + daysInMonth;
 
@@ -533,7 +529,7 @@ class _AdherenceCalendar extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Cabecera días de la semana
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d) {
@@ -618,7 +614,7 @@ class _AdherenceCalendar extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        // Leyenda
+        
         Row(
           children: [
             _Legend(
@@ -664,7 +660,6 @@ class _Legend extends StatelessWidget {
   }
 }
 
-// Pintor del círculo de progreso
 class _CircularProgressPainter extends CustomPainter {
   final double progress;
   final Color color;

@@ -11,8 +11,8 @@ class BiometriaStep extends ConsumerStatefulWidget {
 }
 
 class _BiometriaStepState extends ConsumerState<BiometriaStep> {
-  // Datos locales para la UI
-  String _selectedGender = 'male'; // 'male' or 'female'
+  
+  String _selectedGender = 'male'; 
   double _heightCm = 170.0;
   final TextEditingController _ageController = TextEditingController();
 
@@ -61,12 +61,12 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TITULO
+          
           const Text(
             "Cuéntanos de ti",
             style: TextStyle(
               color: Colors.black87,
-              fontFamily: 'Satoshi', // Tu fuente principal
+              fontFamily: 'Satoshi', 
               fontSize: 28,
               fontWeight: FontWeight.w600,
             ),
@@ -76,13 +76,13 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
             "Necesitamos esto para calcular tu capacidad pulmonar teórica (PEF).",
             style: TextStyle(
               color: Colors.grey.shade600,
-              fontFamily: 'GeneralSans', // Tu fuente secundaria
+              fontFamily: 'GeneralSans', 
               fontSize: 16,
             ),
           ),
           const SizedBox(height: 40),
 
-          // GÉNERO (Tarjetas Seleccionables)
+          
           Text(
             "Género Biológico",
             style: TextStyle(
@@ -122,7 +122,7 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
           ),
           const SizedBox(height: 32),
 
-          // EDAD (Input Numérico Simple)
+          
           Text(
             "Edad",
             style: TextStyle(
@@ -142,15 +142,15 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
             ],
             style: const TextStyle(
               color: Colors.black87,
-              fontSize: 16, // Reducido para match Login
+              fontSize: 16, 
               fontFamily: 'Satoshi',
-              fontWeight: FontWeight.w400, // Normal weight como en Login
+              fontWeight: FontWeight.w400, 
             ),
             decoration: InputDecoration(
               hintText: "Ej: 25",
               hintStyle: TextStyle(
-                color: Colors.grey.shade400, // Match Login hint
-                fontSize: 14, // Match Login hint size
+                color: Colors.grey.shade400, 
+                fontSize: 14, 
                 fontFamily: 'Satoshi',
               ),
               filled: true,
@@ -184,7 +184,7 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
           ),
           const SizedBox(height: 32),
 
-          // ALTURA (Slider Visual)
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -238,15 +238,14 @@ class _BiometriaStepState extends ConsumerState<BiometriaStep> {
   }
 }
 
-// Widget Auxiliar Local para las tarjetas de género
 class _GenderCard extends StatelessWidget {
-  final IconData icon; // Restored Icon
+  final IconData icon; 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _GenderCard({
-    required this.icon, // Restored Icon
+    required this.icon, 
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -262,12 +261,12 @@ class _GenderCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF023E8A).withOpacity(0.05)
-              : Colors.white, // Fondo activo/inactivo
+              : Colors.white, 
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF023E8A)
-                : Colors.grey.shade300, // Borde brillante si seleccionado
+                : Colors.grey.shade300, 
             width: isSelected ? 1.5 : 1,
           ),
           boxShadow: [

@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../domain/auth/entities/user_entity.dart';
 
-// Muestra un BottomSheet con mapa interactivo y ubicación en tiempo real del paciente.
 void showPatientLocationMapSheet(BuildContext context, UserEntity patient) {
   showModalBottomSheet(
     context: context,
@@ -56,7 +55,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
       return;
     }
 
-    // Respaldo en caché local de SharedPreferences (Pruebas en el mismo dispositivo o caché reciente)
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       final cachedLat = prefs.getDouble('patient_last_latitude');
@@ -73,7 +72,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
       }
     } catch (_) {}
 
-    // Respaldo por lectura directa del dispositivo
+    
     try {
       final lastPos = await Geolocator.getLastKnownPosition();
       if (lastPos != null && mounted) {
@@ -87,7 +86,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
       }
     } catch (_) {}
 
-    // Ubicación por defecto de respaldo (CDMX)
+    
     if (mounted) {
       setState(() {
         _activeLat = 19.4326077;
@@ -151,7 +150,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
       ),
       child: Column(
         children: [
-          // Header con handle y título
+          
           Container(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
             decoration: BoxDecoration(
@@ -248,7 +247,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
             ),
           ),
 
-          // Cuerpo: mapa interactivo fluttermap
+          
           Expanded(
             child: ClipRect(
               child: FlutterMap(
@@ -282,7 +281,7 @@ class _PatientLocationMapSheetState extends State<PatientLocationMapSheet> {
             ),
           ),
 
-          // Footer: dirección y botón external map
+          
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -369,7 +368,7 @@ class _PatientMapMarker extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Onda externa de pulso
+        
         Container(
           width: 66,
           height: 66,
@@ -382,7 +381,7 @@ class _PatientMapMarker extends StatelessWidget {
             ),
           ),
         ),
-        // Pin central con el avatar del paciente
+        
         Container(
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(

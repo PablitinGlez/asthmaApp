@@ -49,7 +49,7 @@ class _GuardianHomeScreenState extends ConsumerState<GuardianHomeScreen> {
                 ),
               ),
               actions: [
-                // Mini Avatar decorativo
+                
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0, left: 8.0),
                   child: InkWell(

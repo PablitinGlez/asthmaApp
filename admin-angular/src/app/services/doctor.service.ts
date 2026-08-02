@@ -18,13 +18,13 @@ export class DoctorService {
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
-  // Perfil del doctor
+  
   async getMyProfile(): Promise<any> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/api/doctor/profile`, { headers }));
   }
 
-  // Listar pacientes
+  
   async getMyPatients(search?: string, riskLevel?: string): Promise<any> {
     const headers = await this.getHeaders();
     let url = `${this.apiUrl}/api/patients?limit=100`;
@@ -33,37 +33,37 @@ export class DoctorService {
     return firstValueFrom(this.http.get<any>(url, { headers }));
   }
 
-  // Detalle completo de un paciente (para el formulario de edición)
+  
   async getPatientFull(patientId: number): Promise<any> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/api/patients/${patientId}/full`, { headers }));
   }
 
-  // Crear paciente completo (flujo multi-paso)
+  
   async createPatient(data: any): Promise<any> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.post<any>(`${this.apiUrl}/api/patients`, data, { headers }));
   }
 
-  // Actualizar datos del paciente
+  
   async updatePatient(patientId: number, data: any): Promise<any> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.patch<any>(`${this.apiUrl}/api/patients/${patientId}`, data, { headers }));
   }
 
-  // Reemplazar medicamentos
+  
   async replacePatientMedications(patientId: number, medications: any[]): Promise<any> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.put<any>(`${this.apiUrl}/api/patients/${patientId}/medications`, medications, { headers }));
   }
 
-  // Reemplazar plan de acción
+  
   async replacePatientActionPlan(patientId: number, planName: string, steps: any[]): Promise<any> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.put<any>(`${this.apiUrl}/api/patients/${patientId}/action-plan`, { plan_name: planName, steps }, { headers }));
   }
 
-  // Desvincular paciente
+  
   async removePatient(patientId: number): Promise<void> {
     const headers = await this.getHeaders();
     return firstValueFrom(this.http.delete<any>(`${this.apiUrl}/api/patients/${patientId}`, { headers }));

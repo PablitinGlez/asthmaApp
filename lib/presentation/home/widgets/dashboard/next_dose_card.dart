@@ -11,7 +11,7 @@ class NextDoseCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(medicationsProvider);
     
-    // Si está cargando, mostramos un esqueleto simple
+    
     if (state.isLoading) {
       return _buildBaseContainer(
         child: const Center(child: SizedBox(height: 24, width: 24, child: CircularProgressIndicator(strokeWidth: 2))),
@@ -20,7 +20,7 @@ class NextDoseCard extends ConsumerWidget {
 
     final activeMeds = state.medications.where((m) => m.isActive).toList();
     
-    // Buscamos el medicamento más cercano
+    
     activeMeds.sort((a, b) {
       if (a.nextDose == null) return 1;
       if (b.nextDose == null) return -1;

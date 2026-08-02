@@ -42,7 +42,7 @@ class PatientLocationState {
 class PatientLocationNotifier extends Notifier<PatientLocationState> {
   @override
   PatientLocationState build() {
-    // Intentar recuperar de caché inicial en background
+    
     Future.microtask(() => loadFromCache());
     return PatientLocationState();
   }
@@ -66,14 +66,14 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
     } catch (_) {}
   }
 
-  // Solicita permisos de GPS, obtiene coordenadas en tiempo real y sincroniza con backend
+  
   Future<void> fetchAndSyncLocation() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        // Si el GPS del sistema está desactivado, intentar obtener la última posición conocida
+        
         final lastPosition = await Geolocator.getLastKnownPosition();
         if (lastPosition != null) {
           await _saveAndSetLocation(lastPosition.latitude, lastPosition.longitude);
@@ -105,7 +105,7 @@ class PatientLocationNotifier extends Notifier<PatientLocationState> {
         return;
       }
 
-      // Obtener posición en tiempo real precisa
+      
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,

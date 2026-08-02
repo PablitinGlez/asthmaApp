@@ -14,7 +14,7 @@ class _HistorialStepState extends ConsumerState<HistorialStep> {
   final TextEditingController _pefController = TextEditingController();
   bool _showTheoretical = false;
 
-  // Valor simulado (En realidad vendría de la lógica biometrica anterior)
+  
   final int _theoreticalPEF = 540;
 
   @override
@@ -57,7 +57,7 @@ class _HistorialStepState extends ConsumerState<HistorialStep> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TITULO
+          
           const Text(
             "Tu Historial",
             style: TextStyle(
@@ -78,7 +78,7 @@ class _HistorialStepState extends ConsumerState<HistorialStep> {
           ),
           const SizedBox(height: 40),
 
-          // PREGUNTA PRINCIPAL
+          
           Center(
             child: Column(
               children: [
@@ -94,7 +94,7 @@ class _HistorialStepState extends ConsumerState<HistorialStep> {
                 ),
                 const SizedBox(height: 16),
 
-                // INPUT GIGANTE
+                
                 SizedBox(
                   width: 200,
                   child: TextFormField(
@@ -155,7 +155,7 @@ class _HistorialStepState extends ConsumerState<HistorialStep> {
 
           const SizedBox(height: 48),
 
-          // SECCIÓN DE AYUDA (CALCULO TEÓRICO)
+          
           if (!_showTheoretical)
             Center(
               child: GestureDetector(

@@ -10,7 +10,7 @@ class WatchPerformanceVitals extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final watchState = ref.watch(smartwatchProvider);
 
-    // Si no hay reloj vinculado, NO mostramos esta sección
+    
     if (!watchState.isLinked) return const SizedBox.shrink();
 
     final String stepsText = watchState.steps != null

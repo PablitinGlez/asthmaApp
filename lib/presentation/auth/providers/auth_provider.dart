@@ -54,7 +54,6 @@ final guardianRepositoryProvider = Provider<GuardianRepository>((ref) {
   );
 });
 
-// Notifier que escucha el flujo de Firebase y permite actualizaciones manuales (Mutation)
 class AuthStateNotifier extends StreamNotifier<UserEntity?> {
   @override
   Stream<UserEntity?> build() {
@@ -63,7 +62,7 @@ class AuthStateNotifier extends StreamNotifier<UserEntity?> {
     return repository.authStateChanges();
   }
 
-  // Actualiza el estado manualmente sin disparar estados de 'Loading'
+  
   void updateUser(UserEntity? user) {
     print(
       ' AuthStateNotifier: Mutating state with ${user == null ? 'NULL' : 'User data (${user.email})'}',
@@ -72,7 +71,7 @@ class AuthStateNotifier extends StreamNotifier<UserEntity?> {
     print(' AuthStateNotifier: Local state mutated successfully');
   }
 
-  // Actualiza el rol del usuario en el backend y localmente
+  
   Future<void> updateRole(String role) async {
     final repository = ref.read(authRepositoryProvider);
     state = const AsyncLoading();
@@ -88,13 +87,11 @@ class AuthStateNotifier extends StreamNotifier<UserEntity?> {
   }
 }
 
-// Provider que gestiona el estado global del usuario autenticado
 final authStateProvider =
     StreamNotifierProvider<AuthStateNotifier, UserEntity?>(() {
       return AuthStateNotifier();
     });
 
-// Provider auxiliar para PERSISTIR que el setup se completó (Solo UI)
 class SetupCompletedNotifier extends Notifier<bool> {
   @override
   bool build() {
@@ -106,7 +103,7 @@ class SetupCompletedNotifier extends Notifier<bool> {
     }
     
     _loadFromPrefs(user.id);
-    return false; // Por defecto asumimos false hasta que se cargue
+    return false; 
   }
 
   Future<void> _loadFromPrefs(String userId) async {
@@ -142,7 +139,6 @@ final setupCompletedProvider = NotifierProvider<SetupCompletedNotifier, bool>(
   },
 );
 
-// Notifier para manejar el estado del onboarding (PERSISTENCIA UI)
 class OnboardingNotifier extends Notifier<bool> {
   @override
   bool build() => false;

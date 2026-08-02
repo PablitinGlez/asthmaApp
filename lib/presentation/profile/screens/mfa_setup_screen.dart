@@ -38,7 +38,7 @@ class _MfaSetupScreenState extends ConsumerState<MfaSetupScreen> {
     try {
       final repository = ref.read(authRepositoryProvider);
 
-      // Chequear si ya está activo
+      
       final aal = await repository.getAuthenticatorAssuranceLevel();
       if (aal.nextLevel.toString().contains('aal2')) {
         if (mounted) {
@@ -50,7 +50,7 @@ class _MfaSetupScreenState extends ConsumerState<MfaSetupScreen> {
         return;
       }
 
-      // Limpiar factores no verificados que puedan causar conflictos
+      
       try {
         final factors = await repository.listFactors();
         for (final factor in factors) {

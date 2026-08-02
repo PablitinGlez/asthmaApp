@@ -96,7 +96,7 @@ class PermissionsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(
                     height: 80,
-                  ), // Espacio extra al final para evitar solapamiento
+                  ), 
                 ],
               ),
             ),
@@ -127,7 +127,7 @@ class _PermissionTile extends StatelessWidget {
     final bool isPermanentlyDenied =
         status == PermissionStatus.permanentlyDenied;
 
-    // Colores
+    
     final Color mainColor = isGranted
         ? Colors.green.shade600
         : Colors.grey.shade400;

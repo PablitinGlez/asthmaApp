@@ -103,13 +103,13 @@ class AISimulatorPanel extends ConsumerWidget {
       'pasos': 500.0,
       'horas_sueno': 7.0,
       'pef_percent': 85.0,
-      'aqi': 250.0, // Muy alto
+      'aqi': 250.0, 
       'humedad': 85.0,
       'temperatura': 30.0,
     },
     'vitals_risk': {
-      'spo2': 88.0, // Bajo
-      'bpm': 130.0, // Muy alto
+      'spo2': 88.0, 
+      'bpm': 130.0, 
       'pasos': 0.0,
       'horas_sueno': 4.0,
       'pef_percent': 70.0,
@@ -122,7 +122,7 @@ class AISimulatorPanel extends ConsumerWidget {
       'bpm': 145.0,
       'pasos': 0.0,
       'horas_sueno': 3.0,
-      'pef_percent': 40.0, // Muy bajo
+      'pef_percent': 40.0, 
       'aqi': 350.0,
       'humedad': 90.0,
       'temperatura': 35.0,

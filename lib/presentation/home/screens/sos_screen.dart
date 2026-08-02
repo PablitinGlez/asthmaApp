@@ -73,11 +73,11 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtenemos los contactos de emergencia y el plan de acción
+    
     final contactsState = ref.watch(emergencyContactsProvider);
     final actionState = ref.watch(actionPlanProvider);
     
-    // Buscar el contacto primario
+    
     final primaryContact = contactsState.contacts.isNotEmpty 
         ? contactsState.contacts.firstWhere(
             (c) => c.isPrimary,
@@ -85,7 +85,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
           )
         : null;
 
-    // Buscar la instrucción de la Zona Roja
+    
     final redZoneStep = actionState.steps != null && actionState.steps!.isNotEmpty
         ? actionState.steps!.firstWhere(
             (step) => step.isCritical || step.stepTitle.toLowerCase().contains('roja') || step.stepOrder == 3,
@@ -103,10 +103,10 @@ class _SosScreenState extends ConsumerState<SosScreen> {
     final emergencyContactName = primaryContact?.contactName ?? "Contacto de Emergencia";
 
     return Scaffold(
-      backgroundColor: const Color(0xFFD90429), // Rojo SOS
+      backgroundColor: const Color(0xFFD90429), 
       body: Stack(
         children: [
-          // Fondo pulsante
+          
           Positioned.fill(
             child: AvatarGlow(
               glowColor: Colors.white,
@@ -170,7 +170,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
                   const SizedBox(height: 28),
 
-                  // Caja 1: recomendaciones de emergencia inmediatas
+                  
                   ZoomIn(
                     delay: const Duration(milliseconds: 600),
                     child: Container(
@@ -234,7 +234,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Caja 2: instrucción personalizada del médico (plan de crisis)
+                  
                   ZoomIn(
                     delay: const Duration(milliseconds: 750),
                     child: Container(
@@ -289,7 +289,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Botón de llamada
+                  
                   ElasticIn(
                     delay: const Duration(milliseconds: 900),
                     child: SizedBox(
@@ -321,7 +321,7 @@ class _SosScreenState extends ConsumerState<SosScreen> {
 
                   const SizedBox(height: 16),
 
-                  // Botón para cancelar / estoy bien
+                  
                   FadeIn(
                     delay: const Duration(milliseconds: 1100),
                     child: TextButton(

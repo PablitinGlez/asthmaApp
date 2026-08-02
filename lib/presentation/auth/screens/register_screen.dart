@@ -82,13 +82,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _passwordFocusNode.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose(); // RESTORED
+    _nameController.dispose(); 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Listener profesional: Solo actuar si esta es la pantalla activa
+    
     ref.listen(authNotifierProvider, (previous, next) {
       if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
 
@@ -112,7 +112,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Fondo PNG (Full Width)
+          
           Positioned(
             top: 0,
             right: 0,
@@ -146,7 +146,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       const SizedBox(height: 48),
 
-                      // Name Input (RESTORED)
+                      
                       _buildInputLabel('Nombre'),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -167,7 +167,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Email Input
+                      
                       _buildInputLabel('Correo electrónico'),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -188,7 +188,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Password Input
+                      
                       _buildInputLabel('Contraseña'),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -224,7 +224,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Remember Me & Forgot Password
+                      
                       Row(
                         children: [
                           SizedBox(
@@ -274,7 +274,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       const SizedBox(height: 40),
 
-                      // Register Button
+                      
                       SizedBox(
                         width: double.infinity,
                         height: 56,
@@ -312,7 +312,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Divider
+                      
                       Row(
                         children: [
                           Expanded(child: Divider(color: Colors.grey.shade300)),
@@ -332,7 +332,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Google Sign In
+                      
                       const SizedBox(
                         width: double.infinity,
                         child: GoogleSignInButton(),
@@ -340,7 +340,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Register Link
+                      
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -396,7 +396,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return InputDecoration(
       hintText: hint,
       errorText: errorText,
-      counterText: "", // Hide character counter
+      counterText: "", 
       hintStyle: TextStyle(
         fontFamily: 'Satoshi',
         color: Colors.grey.shade400,

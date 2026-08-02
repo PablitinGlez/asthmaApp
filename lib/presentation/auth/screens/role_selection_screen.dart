@@ -64,7 +64,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Fondo con gradiente sutil
+          
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -105,7 +105,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                   ),
                   const SizedBox(height: 60),
                   
-                  // Opción Paciente
+                  
                   _RoleCard(
                     title: 'Soy Paciente',
                     description: 'Quiero monitorear mi asma, usar el espirómetro y recibir alertas personalizadas.',
@@ -116,7 +116,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                   
                   const SizedBox(height: 24),
                   
-                  // Opción Familiar
+                  
                   _RoleCard(
                     title: 'Soy Familiar / Guardián',
                     description: 'Quiero cuidar a un ser querido, recibir sus alertas de riesgo y ver su progreso.',

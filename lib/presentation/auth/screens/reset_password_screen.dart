@@ -23,18 +23,18 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   @override
   void initState() {
     super.initState();
-    // NO reseteamos el estado aquí porque borraríamos el flag de recuperación
-    // que el Router acaba de detectar.
+    
+    
 
     ref.listenManual(authNotifierProvider, (previous, next) {
-      // Manejo de Errores
+      
       if (next.errorMessage != null &&
           !next.isLoading &&
           previous?.errorMessage != next.errorMessage) {
         SnackBarHelper.showError(context, next.errorMessage!);
       }
 
-      // Éxito al enviar correo de recuperación
+      
       if (next.isResetEmailSent &&
           !next.isLoading &&
           previous?.isLoading == true) {
@@ -45,7 +45,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         ref.read(authNotifierProvider.notifier).resetState();
       }
 
-      // Éxito al actualizar contraseña
+      
       if (next.isPasswordUpdateSuccess &&
           !next.isLoading &&
           previous?.isLoading == true) {
@@ -54,7 +54,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           'Tu contraseña ha sido actualizada correctamente',
         );
 
-        // Flujo de seguridad: Limpiar estado de recuperación y redirigir
+        
         Future.delayed(const Duration(seconds: 2), () {
           if (!mounted) return;
 
@@ -62,11 +62,11 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
               GoRouterState.of(context).uri.path == '/reset-password';
 
           if (isRecoveryPath) {
-            // Si venía de recuperación (por link o desde afuera), deslogueamos
+            
             ref.read(authNotifierProvider.notifier).logout();
             context.go('/login');
           } else {
-            // Si fue un cambio normal (/change-password), volvemos al perfil
+            
             ref.read(authNotifierProvider.notifier).clearRecoveryState();
             context.pop();
           }
@@ -86,7 +86,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
-    // Determinar el modo basándonos en la ruta para evitar parpadeos durante el loading
+    
     final isRecoveryMode =
         GoRouterState.of(context).uri.path == '/reset-password';
 

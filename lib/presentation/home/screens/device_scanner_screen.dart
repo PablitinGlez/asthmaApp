@@ -27,7 +27,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
   }
 
   Future<void> _checkInitialPermissions() async {
-    // Revisar nativamente el permiso de Bluetooth
+    
     final status = await Permission.bluetooth.status;
     final serviceStatus = await Permission.bluetooth.serviceStatus;
 
@@ -35,7 +35,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
 
     if (status.isGranted) {
       if (serviceStatus == ServiceStatus.disabled) {
-        // Enlazar al paquete oficial para pedir encendido nativo
+        
         try {
           await FlutterBluePlus.turnOn();
           if (mounted) {
@@ -46,7 +46,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
             _startRadarSimulation();
           }
         } catch (e) {
-          // Si el usuario da "Deny" en la pantalla nativa de encendido
+          
           if (mounted) context.pop();
         }
       } else {
@@ -61,7 +61,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
         _isCheckingPermissions = false;
         _hasPermissions = false;
       });
-      // Mostrar popup elegante de los permisos
+      
       _showPermissionModal();
     }
   }
@@ -123,10 +123,10 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () async {
-                    context.pop(); // Cerrar modal
+                    context.pop(); 
 
                     print('RADAR: Solicitando permisos nativamente...');
-                    // Pedir permiso nativamente
+                    
                     Map<Permission, PermissionStatus> statuses = await [
                       Permission.bluetooth,
                       Permission.bluetoothScan,
@@ -135,7 +135,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
 
                     print('RADAR: Resultados de permisos: $statuses');
 
-                    // Mapear resultado real para Android 12+ y anteriores
+                    
                     bool granted =
                         statuses[Permission.bluetoothScan]?.isGranted == true ||
                         statuses[Permission.bluetooth]?.isGranted == true ||
@@ -158,7 +158,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
                           _startRadarSimulation();
                         } catch (e) {
                           if (mounted)
-                            context.pop(); // Usuario rechazó encender BT
+                            context.pop(); 
                         }
                       } else {
                         setState(() {
@@ -180,7 +180,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
                           ),
                         );
                         context
-                            .pop(); // Regresar al Dashboard explicándole al usuario por qué
+                            .pop(); 
                       }
                     }
                   },
@@ -204,8 +204,8 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
-                  context.pop(); // Cierra el modal
-                  context.pop(); // Regresa al dashboard
+                  context.pop(); 
+                  context.pop(); 
                 },
                 child: Text(
                   'Ahora no',
@@ -224,7 +224,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
   }
 
   void _startRadarSimulation() {
-    // Al pasar 4 segundos de radar, simular el hallazgo del espirómetro
+    
     Future.delayed(const Duration(seconds: 4), () {
       if (mounted) {
         setState(() {
@@ -237,7 +237,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
   Future<void> _linkDevice() async {
     debugPrint(' SCANNER: Iniciando proceso de vinculación...');
 
-    // Ejecutar la vinculación real en el backend vía Provider
+    
     final success = await ref.read(spirometerProvider.notifier).linkDevice();
 
     debugPrint(' SCANNER: Resultado de vinculación: $success');
@@ -251,7 +251,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
       debugPrint(
         ' SCANNER: Vinculación exitosa. Mostrando SnackBar y cerrando...',
       );
-      // Notificar éxito (Mensaje limpio como pidió el usuario)
+      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(' ¡Espirómetro Vinculado Exitosamente!'),
@@ -259,7 +259,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
           duration: Duration(seconds: 1, milliseconds: 500),
         ),
       );
-      // Regresar de forma natural.
+      
       debugPrint(' SCANNER: Intentando Navigator.pop(context)...');
       Navigator.of(context).pop();
     } else {
@@ -279,7 +279,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
     return Scaffold(
       backgroundColor: const Color(
         0xFF0F172A,
-      ), // Slate 900 (Tecnológico Oscuro)
+      ), 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -292,13 +292,13 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
         child: _isCheckingPermissions
             ? const CircularProgressIndicator(color: Colors.blue)
             : !_hasPermissions
-            ? const SizedBox.shrink() // El modal está visible
+            ? const SizedBox.shrink() 
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(),
 
-                  // RADAR ANIMATION (avatar_glow)
+                  
                   if (!_deviceFound)
                     AvatarGlow(
                       glowColor: Colors.blueAccent,
@@ -319,7 +319,7 @@ class _DeviceScannerScreenState extends ConsumerState<DeviceScannerScreen> {
                       ),
                     )
                   else
-                    // DEVICE CARD APPEARS
+                    
                     TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0.0, end: 1.0),
                       duration: const Duration(milliseconds: 600),

@@ -10,7 +10,7 @@ class MonitoredPatientsNotifier extends Notifier<AsyncValue<List<UserEntity>>> {
 
   @override
   AsyncValue<List<UserEntity>> build() {
-    // Iniciamos la carga en el siguiente frame para no bloquear el build
+    
     Future.microtask(() => loadPatients());
     return const AsyncValue.loading();
   }
@@ -30,7 +30,7 @@ class MonitoredPatientsNotifier extends Notifier<AsyncValue<List<UserEntity>>> {
     try {
       final repository = ref.read(guardianRepositoryProvider);
       await repository.linkPatient(code);
-      await loadPatients(); // Recargar Lista tras vincular
+      await loadPatients(); 
     } catch (e) {
       rethrow;
     }

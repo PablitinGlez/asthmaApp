@@ -34,7 +34,7 @@ class GuardianProfileScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Avatar centrado (Sin edición para guardián por ahora)
+            
             Center(
               child: Container(
                 width: 100,
@@ -110,7 +110,7 @@ class GuardianProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 48),
 
-            // Botón de Cerrar Sesión
+            
             SizedBox(
               width: double.infinity,
               height: 56,

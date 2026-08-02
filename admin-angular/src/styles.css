@@ -27,7 +27,6 @@ body {
   line-height: 1.5;
 }
 
-/* Layout */
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
@@ -39,7 +38,6 @@ body {
   overflow-y: auto;
 }
 
-/* Sidebar Component Styles */
 .sidebar {
   width: 280px;
   background: var(--sidebar-bg);
@@ -79,7 +77,6 @@ body {
   color: white;
 }
 
-/* Components */
 .admin-card {
   background: var(--white);
   border-radius: 1.5rem;
@@ -109,7 +106,6 @@ body {
   cursor: not-allowed;
 }
 
-/* Form Styles */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -136,7 +132,6 @@ body {
   border-color: var(--primary);
 }
 
-/* Login specific */
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -155,7 +150,6 @@ body {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
 }
 
-/* Dashboard specific */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -170,7 +164,6 @@ body {
   border-bottom: 4px solid var(--primary);
 }
 
-/* Notificación de toast */
 .toast-container {
   position: fixed;
   bottom: 2rem;

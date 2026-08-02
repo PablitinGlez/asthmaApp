@@ -168,7 +168,6 @@ from app.infrastructure.models.doctor import Doctor
 
 from app.domain.schemas.auth_schemas import CheckEmailRequest
 
-
 def _ensure_doctor_profile(db: Session, user_id: int, full_name: str) -> None:
     """Crea el perfil de doctor si no existe aún."""
     existing = db.query(Doctor).filter(Doctor.user_id == user_id).first()
@@ -303,9 +302,6 @@ Comments
  (0)
 Comment
 You're not receiving notifications from this thread.
-
-
-
 
 ------------- seugndapull eques
 Skip to content
@@ -477,7 +473,6 @@ from app.infrastructure.repositories.doctor_repository import DoctorRepository
 from app.infrastructure.models.doctor import Doctor
 
 from app.domain.schemas.auth_schemas import CheckEmailRequest
-
 
 def _ensure_doctor_profile(db: Session, user_id: int, full_name: str) -> None:
     """Crea el perfil de doctor si no existe aún."""
@@ -934,5 +929,4 @@ Comments
  (0)
 Comment
 You're not receiving notifications from this thread.
-
 

@@ -41,7 +41,7 @@ export class SetPasswordComponent {
       await this.authService.updatePassword(this.password);
       console.log(' Contraseña actualizada correctamente');
       
-      // Intentar obtener el rol con timeout para no colgarse
+      
       const user = this.authService.currentUserValue;
       let role = 'patient';
       if (user) {
@@ -64,7 +64,7 @@ export class SetPasswordComponent {
           this.router.navigate(['/dashboard']);
         }, 2000);
       } else {
-        // Es paciente — mostrar pantalla de éxito
+        
         this.isPatientSuccess = true;
         this.isError = false;
         this.message = '¡Cuenta activada! Ya puedes ingresar a la app con tu email y contraseña.';

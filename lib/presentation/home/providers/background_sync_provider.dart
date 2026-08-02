@@ -37,10 +37,10 @@ class BackgroundSyncNotifier extends Notifier<BackgroundSyncState> {
 
   @override
   BackgroundSyncState build() {
-    // Cargar timestamp de última sincronización
+    
     Future.microtask(() => loadLastSyncInfo());
 
-    // Iniciar temporizador activo de primer plano (envía datos automáticamente cada 5 min)
+    
     _startForegroundAutoSync();
 
     ref.onDispose(() {

@@ -27,7 +27,7 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
 
   late TutorialCoachMark tutorialCoachMark;
   List<TargetFocus> targets = [];
-  bool _isTutorialRunning = false; // Guardia para evitar solapamientos
+  bool _isTutorialRunning = false; 
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
   }
 
   void _onScroll() {
-    // Ya no cargamos más por scroll, usamos paginación manual
+    
   }
 
   Future<void> _checkShowTutorial() async {
@@ -51,12 +51,12 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
     final hasSeenTour = await storage.getValue('measurements_tour_seen');
 
     if (hasSeenTour != 'true' && !_isTutorialRunning) {
-      _isTutorialRunning = true; // Bloquear nuevas llamadas de inmediato
+      _isTutorialRunning = true; 
 
-      // Marcar como visto antes del delay para evitar colisiones de hilos
+      
       await storage.saveValue('measurements_tour_seen', 'true');
 
-      // Retrasar el inicio del tour para permitir que la UI se asiente y evitar "flicker"
+      
       Future.delayed(const Duration(milliseconds: 500), () {
         if (!mounted) {
           _isTutorialRunning = false;
@@ -119,7 +119,7 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
       targets: targets,
       colorShadow: const Color(0xFF023E8A),
       opacityShadow:
-          0.7, // Reducido para mayor fluidez en dispositivos como Poco M4
+          0.7, 
       paddingFocus: 10,
       textSkip: "SALTAR",
       textStyleSkip: const TextStyle(
@@ -146,12 +146,12 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
 
-    // Convert to UI model
+    
     final List<_MeasurementData> mapped = history.map((h) {
       _Zone zone = _Zone.green;
       double pefValue = (h.pef ?? 0).toDouble();
 
-      // Personal Best Real (Desde el perfil)
+      
       if (pefValue > 0) {
         if (pefValue >= pb * 0.8)
           zone = _Zone.green;
@@ -189,9 +189,9 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
         intensity: h.symptomIntensity ?? parsedIntensity,
         spo2: h.spo2,
         heartRate: h.heartRate,
-        steps: h.steps,              // New
-        sleepHours: h.sleepHours,      // New
-        respiratoryRate: h.respiratoryRate, // New
+        steps: h.steps,              
+        sleepHours: h.sleepHours,      
+        respiratoryRate: h.respiratoryRate, 
         notes: h.notes,
         aqi: h.aqi,
         temperature: h.temperature,
@@ -258,7 +258,7 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
             error: (err, stack) =>
                 Center(child: Text('Error al cargar mediciones: $err')),
             data: (state) {
-              // Obtenemos el perfil para usar el Personal Best Real
+              
               final profile = ref.watch(personalInfoProvider).profile;
               final double pb = (profile?.personalBestPef ?? 450).toDouble();
 
@@ -281,7 +281,7 @@ class _MeasurementsTabState extends ConsumerState<MeasurementsTab> {
                           _SummaryHeader(
                             onHelpPress: _showTutorial,
                             history: state
-                                .allItems, // Calculamos sobre TODO el historial
+                                .allItems, 
                           ),
                           const SizedBox(height: 24),
                           _SymptomFilters(
@@ -523,7 +523,7 @@ class _SummaryHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Buscar el mejor PEF de hoy
+    
     final now = DateTime.now();
     final todayHistory = history.where((h) {
       final localDate = h.measuredAt.toLocal();
@@ -540,8 +540,8 @@ class _SummaryHeader extends ConsumerWidget {
           .reduce((a, b) => a > b ? a : b);
     }
 
-    // â”€â”€ LÃ“GICA DE ESTADO INTELIGENTE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // Personal Best Real (Desde el perfil)
+    
+    
     final profile = ref.watch(personalInfoProvider).profile;
     final double pb = (profile?.personalBestPef ?? 450).toDouble();
 
@@ -554,22 +554,22 @@ class _SummaryHeader extends ConsumerWidget {
       statusColor = Colors.grey.shade400;
       statusIcon = Icons.remove_circle_outline_rounded;
     } else if (bestToday >= pb * 0.8) {
-      // â‰¥ 360 L/min  â†’ Zona Verde
+      
       statusLabel = 'Controlado';
       statusColor = const Color(0xFF4CAF50);
       statusIcon = Icons.check_circle_outline_rounded;
     } else if (bestToday >= pb * 0.5) {
-      // 225â€“359 L/min â†’ Zona Amarilla
+      
       statusLabel = 'Precaución';
       statusColor = const Color(0xFFFFC107);
       statusIcon = Icons.warning_amber_rounded;
     } else {
-      // < 225 L/min  â†’ Zona Roja
+      
       statusLabel = 'Riesgo';
       statusColor = const Color(0xFFF44336);
       statusIcon = Icons.dangerous_outlined;
     }
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    
 
     return Column(
       children: [
@@ -781,7 +781,7 @@ class _EmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 60),
-          // Usamos una ilustración sutil si existe, o un icono premium
+          
           Icon(Icons.air_rounded, size: 80, color: Colors.grey.shade200),
           const SizedBox(height: 24),
           const Text(
@@ -1117,7 +1117,6 @@ class _MeasurementCardState extends ConsumerState<_MeasurementCard> {
   }
 }
 
-// MODAL DE DETALLES
 class _MeasurementDetailsModal extends ConsumerStatefulWidget {
   final _MeasurementData data;
   final String existingIntensity;
@@ -1162,7 +1161,7 @@ class _MeasurementDetailsModalState
       case 'Severa':
         return const Color(0xFFD90429);
       default:
-        return const Color(0xFFFF9800); // Moderada
+        return const Color(0xFFFF9800); 
     }
   }
 
@@ -1412,7 +1411,7 @@ class _MeasurementDetailsModalState
             }).toList(),
           ),
           const SizedBox(height: 24),
-          // Intensidad
+          
           if (_selected.isNotEmpty) ...[
             const Text(
               'Intensidad',
@@ -1545,7 +1544,7 @@ class _MeasurementDetailsModalState
   }
 
   Widget _buildEnvironmentTab(ScrollController scrollController) {
-    // Determine colors/status based on values (simplified logic)
+    
     Color aqiColor = Colors.green;
     String aqiStatus = "Bueno";
     if (widget.data.aqi != null) {
@@ -1693,7 +1692,7 @@ class _MeasurementDetailsModalState
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
       child: Column(
         children: [
-          // Ritmo Cardíaco
+          
           _buildInfoCard(
             title: "Ritmo Cardíaco (BPM)",
             value: widget.data.heartRate?.toString() ?? "--",
@@ -1705,7 +1704,7 @@ class _MeasurementDetailsModalState
           ),
           const SizedBox(height: 16),
 
-          // Oxígeno
+          
           _buildInfoCard(
             title: "Oxígeno en Sangre (SpO2)",
             value: widget.data.spo2 != null ? "${widget.data.spo2}%" : "--",
@@ -1716,7 +1715,7 @@ class _MeasurementDetailsModalState
           ),
           const SizedBox(height: 16),
 
-          // Pasos
+          
           _buildInfoCard(
             title: "Pasos",
             value: widget.data.steps?.toString() ?? "--",
@@ -1727,7 +1726,7 @@ class _MeasurementDetailsModalState
           ),
           const SizedBox(height: 16),
 
-          // Sueño
+          
           _buildInfoCard(
             title: "Sueño",
             value: widget.data.sleepHours != null
@@ -1741,7 +1740,7 @@ class _MeasurementDetailsModalState
           ),
           const SizedBox(height: 16),
 
-          // Tasa Respiratoria
+          
           _buildInfoCard(
             title: "Tasa Respiratoria",
             value: widget.data.respiratoryRate != null
@@ -1934,14 +1933,14 @@ class _PaginationFooter extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Botón Anterior
+            
             _PageButton(
               label: 'Anterior',
               icon: Icons.arrow_back_ios_new_rounded,
               onTap: hasPrevious && !isLoading ? onPrevious : null,
             ),
 
-            // Indicador de Página
+            
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -1960,7 +1959,7 @@ class _PaginationFooter extends StatelessWidget {
               ),
             ),
 
-            // Botón Siguiente
+            
             _PageButton(
               label: 'Siguiente',
               icon: Icons.arrow_forward_ios_rounded,

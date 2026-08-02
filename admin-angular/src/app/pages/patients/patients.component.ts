@@ -15,45 +15,45 @@ export class PatientsComponent implements OnInit {
   private doctorService = inject(DoctorService);
   private cdr = inject(ChangeDetectorRef);
 
-  // Lista
+  
   patients: any[] = [];
   isLoading = true;
 
-  // Panel de edición
+  
   selectedPatient: any = null;
   fullPatientData: any = null;
   showDetailsPanel = false;
   isSaving = false;
   activeTab: 'basic' | 'clinical' | 'medications' | 'plan' = 'basic';
 
-  // Formulario de edición
+  
   editBasic: any = {};
   editClinical: any = {};
   editMedications: any[] = [];
   editActionPlan: any = { plan_name: '', steps: [] };
 
-  // Modal de creación (multi-paso)
+  
   showCreateModal = false;
   createStep = 1;
   totalSteps = 5;
   isCreating = false;
   createForm: any = {
-    // Paso 1
+    
     email: '', first_name: '', last_name: '',
-    // Paso 2
+    
     age: null, gender: '', phone_number: '',
     address_street: '', address_city: '', address_state: '', address_zip: '',
     health_insurance_number: '',
-    // Paso 3
+    
     height_cm: null, weight_kg: null, blood_type: '',
     asthma_type: '', diagnosis_date: '', known_allergies: '', personal_best_pef: null,
-    // Paso 4
+    
     action_plan_name: '', action_steps: [],
-    // Paso 5
+    
     medications: []
   };
 
-  // Temporal para añadir elementos al asistente
+  
   newStep = { step_order: 1, step_title: '', step_description: '', is_critical: false };
   newMed = { name: '', dosage: '', frequency_hours: null as number | null, next_dose: '' };
 
@@ -74,7 +74,7 @@ export class PatientsComponent implements OnInit {
     }
   }
 
-  // Panel de detalles
+  
 
   async openDetails(patient: any) {
     this.selectedPatient = patient;
@@ -140,7 +140,7 @@ export class PatientsComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  // Guardar cambios
+  
 
   async saveCurrentTab() {
     if (this.isSaving) return;
@@ -166,7 +166,7 @@ export class PatientsComponent implements OnInit {
     }
   }
 
-  // Medicamentos en edición
+  
   addEditMed() {
     this.editMedications.push({ name: '', dosage: '', frequency_hours: null, next_dose: null });
   }
@@ -174,7 +174,7 @@ export class PatientsComponent implements OnInit {
     this.editMedications.splice(i, 1);
   }
 
-  // Pasos en edición
+  
   addEditStep() {
     const order = (this.editActionPlan.steps.length || 0) + 1;
     this.editActionPlan.steps.push({ step_order: order, step_title: '', step_description: '', is_critical: false });
@@ -183,7 +183,7 @@ export class PatientsComponent implements OnInit {
     this.editActionPlan.steps.splice(i, 1);
   }
 
-  // Modal de creación
+  
 
   openCreateModal() {
     this.showCreateModal = true;
@@ -245,7 +245,7 @@ export class PatientsComponent implements OnInit {
     if (this.isCreating) return;
     this.isCreating = true;
 
-    // Auto-guardar si el usuario llenó campos pero olvidó presionar "+"
+    
     if (this.newMed.name) this.addWizardMed();
     if (this.newStep.step_title) this.addWizardStep();
 

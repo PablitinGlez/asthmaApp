@@ -21,14 +21,6 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn.svm._b
 
 start_time = time.time()
 
-# CONFIGURACION FIJA PARA SVM (resultado de la Fase 1)
-# - Particion       : 75% entrenamiento / 25% prueba
-# - Validacion       : CV estratificada de 5 folds
-# - Umbral clinico   : 40%
-# Nota: en el CV interno se usa probability=False (decision_function, mas
-# rapido); el modelo final de cada paso SI usa probability=True para poder
-# aplicar el umbral clinico del 40% con predict_proba.
-
 DATASET_PATH = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\DATASETNOW\dataset_hibrido_8020_v5.csv"
 MODELS_DIR   = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\modelo"
 GRAPHS_DIR   = r"C:\Users\gonza\Documents\FlutterX\asthmaapp\ml_service\graphs"
@@ -55,7 +47,6 @@ def balancear(df_in):
     crisis_over = crisis.sample(len(sanos), replace=True, random_state=42)
     return pd.concat([sanos, crisis_over], axis=0).sample(frac=1, random_state=42)
 
-
 def evaluar_features(features):
     """
     Con la particion y folds fijos para SVM (75-25, CV=5):
@@ -74,7 +65,6 @@ def evaluar_features(features):
         X, y, test_size=TEST_SIZE, random_state=42, stratify=y
     )
 
-    # Cv=5 (chequeo de estabilidad, rapido con decision_function)
     cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []
 
@@ -106,7 +96,6 @@ def evaluar_features(features):
         "Precision": np.mean(cv_precs), "F1": np.mean(cv_f1s), "AUC": np.mean(cv_aucs),
     }
 
-    # Modelo final con el 100% del train, evaluado contra test real
     train_over = balancear(pd.concat([X_train, y_train], axis=1))
     X_train_final = train_over[features]
     y_train_final = train_over[TARGET]
@@ -128,7 +117,6 @@ def evaluar_features(features):
         "AUC": roc_auc_score(y_test, probs_test),
     }
 
-    # SVM-RBF no tiene importancia nativa -> permutation importance sobre el test
     perm = permutation_importance(
         modelo, X_test, y_test, n_repeats=20, random_state=42, scoring="f1"
     )
@@ -144,7 +132,6 @@ def evaluar_features(features):
         "importancias": importancias, "X_test": X_test, "y_test": y_test, "cm": cm,
     }
 
-
 def mostrar_matriz_confusion(res):
     """Imprime la matriz de confusion en consola (no se guarda imagen en esta fase)."""
     cm = res["cm"]
@@ -156,11 +143,6 @@ def mostrar_matriz_confusion(res):
     print(f"    Crisis perdidas   : {cm[1][0]}")
     print(f"    Falsas alarmas    : {cm[0][1]}")
 
-
-# ELIMINACION SECUENCIAL DE VARIABLES (backward elimination)
-# Nota: la importancia se recalcula con permutation_importance en cada paso,
-# usando siempre el subconjunto de variables vigente en ese paso.
-
 resultados_features = []
 resultados_por_paso = {}
 
@@ -168,7 +150,6 @@ print("\n" + "=" * 90)
 print(f"SVM - SELECCION DE VARIABLES (particion {PARTICION_LABEL} fija, CV={N_FOLDS} fija)")
 print("=" * 90)
 
-# Paso 1: 8 variables (todas)
 print(f"\n--- Paso 1: 8 variables (todas) ---")
 res_8 = evaluar_features(FEATURES_ALL)
 resultados_por_paso["8"] = res_8
@@ -178,7 +159,6 @@ for feat, imp in res_8["importancias"].items():
 mostrar_matriz_confusion(res_8)
 resultados_features.append({"# Variables": "8 (todas)", **res_8["test_metrics"]})
 
-# Paso 2: 5 variables (top 5 por importancia del modelo de 8)
 top5 = res_8["importancias"].head(5).index.tolist()
 print(f"\n--- Paso 2: 5 variables -> {top5} ---")
 res_5 = evaluar_features(top5)
@@ -189,7 +169,6 @@ for feat, imp in res_5["importancias"].items():
 mostrar_matriz_confusion(res_5)
 resultados_features.append({"# Variables": "5", **res_5["test_metrics"]})
 
-# Paso 3: 4 variables
 peor_de_5 = res_5["importancias"].idxmin()
 top4 = [f for f in top5 if f != peor_de_5]
 print(f"\n--- Paso 3: 4 variables (se quito '{peor_de_5}') -> {top4} ---")
@@ -201,7 +180,6 @@ for feat, imp in res_4["importancias"].items():
 mostrar_matriz_confusion(res_4)
 resultados_features.append({"# Variables": "4", **res_4["test_metrics"]})
 
-# Paso 4: 3 variables
 peor_de_4 = res_4["importancias"].idxmin()
 top3 = [f for f in top4 if f != peor_de_4]
 print(f"\n--- Paso 4: 3 variables (se quito '{peor_de_4}') -> {top3} ---")
@@ -212,8 +190,6 @@ for feat, imp in res_3["importancias"].items():
     print(f"    {feat:<18} {imp:.4f}")
 mostrar_matriz_confusion(res_3)
 resultados_features.append({"# Variables": "3", **res_3["test_metrics"]})
-
-# TABLA COMPARATIVA FINAL (metricas OFICIALES: sobre test real)
 
 tabla_features = pd.DataFrame(resultados_features)
 

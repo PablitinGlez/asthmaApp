@@ -430,7 +430,7 @@ class _EmergencyContactsScreenState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Handle
+                  
                   Center(
                     child: Container(
                       width: 40,
@@ -495,7 +495,7 @@ class _EmergencyContactsScreenState
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Toggle primario
+                  
                   GestureDetector(
                     onTap: () => setSheetState(() => isPrimary = !isPrimary),
                     child: Container(
@@ -729,8 +729,6 @@ class _EmergencyContactsScreenState
   }
 }
 
-// Contact card widget
-
 class _ContactCard extends StatelessWidget {
   final EmergencyContactModel contact;
   final VoidCallback onEdit;
@@ -765,7 +763,7 @@ class _ContactCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Avatar
+          
           Container(
             width: 48,
             height: 48,
@@ -846,7 +844,7 @@ class _ContactCard extends StatelessWidget {
               ],
             ),
           ),
-          // Acciones
+          
           Column(
             children: [
               GestureDetector(
