@@ -80,7 +80,7 @@ class SmartwatchLinkingBanner extends StatelessWidget {
                 ),
               ],
               
-              // Consola de Logs para Depuración (Solicitada por el usuario)
+              
               if (watchState.logs.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 const Divider(height: 1, color: Colors.black12),
@@ -107,7 +107,7 @@ class SmartwatchLinkingBanner extends StatelessWidget {
                 const SizedBox(height: 8),
                 Container(
                   width: double.infinity,
-                  height: 120, // Altura fija para no romper el layout
+                  height: 120, 
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.05),

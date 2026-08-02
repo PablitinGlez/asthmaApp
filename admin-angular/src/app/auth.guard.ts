@@ -7,7 +7,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Interceptar invitaciones de Supabase (Hash Check)
+  
   const hash = window.location.hash;
   if (hash && hash.includes('type=invite')) {
     console.log('Invitación detectada en authGuard, redirigiendo a set-password...');
@@ -15,7 +15,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     return false;
   }
 
-  // Comprobación de sesión real (esperando a Supabase)
+  
   const user = await authService.getSession();
   
   if (!user) {
@@ -23,11 +23,11 @@ export const authGuard: CanActivateFn = async (route, state) => {
     return false;
   }
 
-  // Verificación de Roles
+  
   const requiredRole = route.data?.['role'];
   if (requiredRole) {
-    // Si la ruta requiere un rol (ej. 'admin'), esperamos que el rol esté cargado
-    // Suscribirse temporalmente para obtener el valor más reciente del BehaviorSubject
+    
+    
     let currentRole = null;
     authService.currentUserRole$.pipe(take(1)).subscribe(role => currentRole = role);
 

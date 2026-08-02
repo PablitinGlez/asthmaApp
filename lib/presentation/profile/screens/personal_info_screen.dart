@@ -15,7 +15,7 @@ class PersonalInfoScreen extends ConsumerStatefulWidget {
 class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controladores
+  
   late TextEditingController _firstNameCtrl;
   late TextEditingController _lastNameCtrl;
   late TextEditingController _phoneCtrl;
@@ -32,7 +32,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   late TextEditingController _diagnosisDateCtrl;
   late TextEditingController _allergiesCtrl;
 
-  // Focus nodes
+  
   late FocusNode _firstNameNode;
   late FocusNode _lastNameNode;
   late FocusNode _phoneNode;
@@ -44,7 +44,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   late FocusNode _stateNode;
   late FocusNode _zipNode;
 
-  // Errores visuales
+  
   String? _firstNameError;
   String? _lastNameError;
   String? _phoneError;
@@ -62,13 +62,13 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
 
   bool _initialized = false;
   bool _isFormValid = true;
-  bool _isEditing = false; // Modo solo-lectura por defecto
-  bool _isDirty = false; // True si el usuario modificó algo
+  bool _isEditing = false; 
+  bool _isDirty = false; 
 
   @override
   void initState() {
     super.initState();
-    // Iniciamos vacíos — se llenarán desde la API en _initFields
+    
     _firstNameCtrl = TextEditingController();
     _lastNameCtrl = TextEditingController();
     _phoneCtrl = TextEditingController();
@@ -96,7 +96,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     _stateNode = FocusNode();
     _zipNode = FocusNode();
 
-    // Setup de validaciones on blur (solo actúan en modo edición)
+    
     _setupFocusValidation(
       _firstNameNode,
       _firstNameCtrl,
@@ -158,7 +158,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
       (e) => _zipError = e,
     );
 
-    // Detectar cambios para poner _isDirty = true
+    
     for (final ctrl in [
       _firstNameCtrl,
       _lastNameCtrl,
@@ -214,7 +214,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     super.dispose();
   }
 
-  // Logica de validación cada que se pierde el foco
+  
   void _setupFocusValidation(
     FocusNode node,
     TextEditingController ctrl,
@@ -232,7 +232,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   }
 
   void _validateAll() {
-    if (!_isEditing) return; // Solo validar en modo edición
+    if (!_isEditing) return; 
     bool valid = true;
 
     final nameErr = _validateName(_firstNameCtrl.text);
@@ -265,7 +265,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     final zipErr = _addressZipCtrl.text.isNotEmpty ? _validateZip(_addressZipCtrl.text) : null;
     if (zipErr != null) valid = false;
 
-    // Actualizar estados visuales inmediatamente para que el usuario sepa porqué no puede guardar
+    
     if (_firstNameError != nameErr) _firstNameError = nameErr;
     if (_lastNameError != lastErr) _lastNameError = lastErr;
     if (_phoneError != phoneErr) _phoneError = phoneErr;
@@ -288,7 +288,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     return null;
   }
 
-  // Validadores de texto
+  
   String? _validateName(String? val) {
     if (val == null || val.trim().isEmpty) return 'Campo requerido';
     if (val.trim().length > 50) return 'Máximo 50 caracteres';
@@ -299,7 +299,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   }
 
   String? _validatePhone(String? val) {
-    // Opcional — solo válida si tiene algo escrito
+    
     if (val == null || val.trim().isEmpty) return null;
     if (val.replaceAll(RegExp(r'\D'), '').length != 10)
       return 'Debe tener 10 dígitos';
@@ -307,7 +307,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   }
 
   String? _validateAge(String? val) {
-    if (val == null || val.trim().isEmpty) return null; // Opcional
+    if (val == null || val.trim().isEmpty) return null; 
     final age = int.tryParse(val);
     if (age == null || age <= 0 || age > 130) return 'Edad inválida (1-130)';
     return null;
@@ -321,7 +321,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   }
 
   String? _validateOptionalName(String? val) {
-    if (val == null || val.trim().isEmpty) return null; // Apellido es opcional
+    if (val == null || val.trim().isEmpty) return null; 
     if (val.trim().length > 50) return 'Máximo 50 caracteres';
     if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$').hasMatch(val)) {
       return 'Solo se permiten letras';
@@ -333,9 +333,9 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     if (_initialized) return;
 
     if (profile != null) {
-      // Nombre: preferimos profile.firstName si ya fue guardado antes
+      
       _firstNameCtrl.text = profile.firstName ?? '';
-      // Apellido: preferimos profile.lastName si ya fue guardado
+      
       _lastNameCtrl.text = profile.lastName ?? '';
 
       _ageCtrl.text = profile.age?.toString() ?? '';
@@ -375,8 +375,8 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           : null;
     }
 
-    // Si first_name aún vacío: auto-split del full_name de auth
-    // _isDirty = true porque son valores NUEVOS nunca persistidos en user_profiles
+    
+    
     if (_firstNameCtrl.text.isEmpty) {
       final fullName = ref.read(authStateProvider).value?.fullName.trim() ?? '';
       if (fullName.isNotEmpty) {
@@ -387,7 +387,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           _firstNameCtrl.text = fullName.substring(0, spaceIdx);
           _lastNameCtrl.text = fullName.substring(spaceIdx + 1);
         }
-        _isDirty = true; // Forzar guardado la primera vez
+        _isDirty = true; 
       }
     }
 
@@ -398,7 +398,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   Future<void> _saveOriginalChanges() async {
     if (!_isFormValid) return;
 
-    // Si no se modificó nada, solo salir del modo edición sin llamar al API
+    
     if (!_isDirty) {
       setState(() {
         _isEditing = false;
@@ -433,7 +433,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
       'health_insurance_number': _insuranceCtrl.text.trim().isEmpty
           ? null
           : _insuranceCtrl.text.trim(),
-      // Clinical
+      
       'height_cm': double.tryParse(_heightCtrl.text),
       'weight_kg': double.tryParse(_weightCtrl.text),
       'blood_type': _selectedBloodType,
@@ -457,7 +457,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
       setState(() {
         _isEditing = false;
         _isDirty = false;
-      }); // Volver a modo lectura
+      }); 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perfil guardado correctamente.')),
       );
@@ -508,7 +508,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           key: _formKey,
           child: Column(
             children: [
-              _buildHeaderBanner(), // Banner Premium restaurado con el escudo de fondo
+              _buildHeaderBanner(), 
 
               Container(
                 color: Colors.white,
@@ -585,17 +585,17 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // Header banner con escudo
+  
   Widget _buildHeaderBanner() {
     final user = ref.watch(authStateProvider).value;
     return Container(
       width: double.infinity,
       color: const Color(0xFF023E8A),
-      // Restaurando el recuadro que contiene el banner con Stack y Positioned
+      
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // ¡Aquí está el mega escudo de salud de fondo restaurado!
+          
           Positioned(
             right: -20,
             top: -40,
@@ -608,7 +608,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
               ),
             ),
           ),
-          // Contenido principal alineado con padding
+          
           Padding(
             padding: const EdgeInsets.only(
               left: 20,
@@ -649,7 +649,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        // Solo el primer nombre de la cuenta (evitar overflow con nombres largos)
+                        
                         (ref.watch(authStateProvider).value?.fullName ??
                                 'Paciente')
                             .trim()
@@ -694,7 +694,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // Tab 1
+  
   Widget _buildPersonalTab() {
     final profile = ref.watch(personalInfoProvider).profile;
     final hasMedicalData =
@@ -707,7 +707,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // Banner amarillo si faltan datos médicos
+          
           if (!hasMedicalData) ...[
             Container(
               width: double.infinity,
@@ -743,7 +743,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           _buildCardWrapper(
             title: 'Datos Personales',
             children: [
-              // Nombre en su propia fila
+              
               _buildTextField(
                 controller: _firstNameCtrl,
                 label: 'Nombre',
@@ -757,7 +757,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              // Apellido en su propia fila (opcional)
+              
               _buildTextField(
                 controller: _lastNameCtrl,
                 label: 'Apellido',
@@ -884,7 +884,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // Tab 2
+  
   Widget _buildMedicalTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -924,7 +924,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(3),
-                      ], // Max 999 cm
+                      ], 
                     ),
                   ),
                 ],
@@ -994,7 +994,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(4),
-                ], // Maximo digamos 9999
+                ], 
               ),
             ],
           ),
@@ -1016,7 +1016,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
     );
   }
 
-  // Componentes reusables
+  
   Widget _buildCardWrapper({
     required String title,
     required List<Widget> children,
@@ -1100,7 +1100,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           decoration: InputDecoration(
             errorText: _isEditing
                 ? errorText
-                : null, // Errores solo en modo edición
+                : null, 
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -1123,7 +1123,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
             ),
             errorStyle: const TextStyle(
               fontFamily: 'GeneralSans',
-              fontWeight: FontWeight.normal, // Sin bold en errores
+              fontWeight: FontWeight.normal, 
               fontSize: 12,
             ),
           ),

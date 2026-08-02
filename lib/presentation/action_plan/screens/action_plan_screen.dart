@@ -149,8 +149,8 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
                                 );
 
                             if (context.mounted) {
-                              Navigator.pop(context); // Cierra dialogo
-                              context.pop(); // Vuelve al home
+                              Navigator.pop(context); 
+                              context.pop(); 
 
                               if (settings.authorizationStatus ==
                                   AuthorizationStatus.authorized) {
@@ -254,7 +254,7 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // ZONA VERDE
+                
                 _ZoneCard(
                   title: 'Zona Verde - Todo en orden',
                   subtitle: 'Medicamentos de mantenimiento',
@@ -265,7 +265,7 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // ZONA AMARILLA
+                
                 _ZoneCard(
                   title: 'Zona Amarilla - Precaución',
                   subtitle: 'Medicamentos de rescate',
@@ -276,7 +276,7 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // ZONA ROJA
+                
                 _ZoneCard(
                   title: 'Zona Roja - Emergencia',
                   subtitle: 'Protocolo de crisis',
@@ -288,7 +288,7 @@ class _ActionPlanScreenState extends ConsumerState<ActionPlanScreen> {
 
                 const SizedBox(height: 48),
 
-                // BOTÓN GUARDAR
+                
                 if (!widget.isReadOnly)
                   SizedBox(
                     width: double.infinity,
@@ -380,7 +380,7 @@ class _ZoneCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Encabezado (Color Ribbon)
+          
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -423,7 +423,7 @@ class _ZoneCard extends StatelessWidget {
               ],
             ),
           ),
-          // Body (Input form)
+          
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextFormField(

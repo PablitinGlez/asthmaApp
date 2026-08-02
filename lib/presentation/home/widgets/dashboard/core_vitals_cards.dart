@@ -9,7 +9,7 @@ class WatchCoreVitals extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchar errores del Smartwatch
+    
     ref.listen<SmartwatchState>(smartwatchProvider, (previous, next) {
       if (next.errorMessage != null &&
           next.errorMessage != previous?.errorMessage) {
@@ -166,7 +166,7 @@ class VitalCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // MINI SPARKLINE (En lugar del icono)
+          
           SizedBox(
             height: 24,
             width: double.infinity,

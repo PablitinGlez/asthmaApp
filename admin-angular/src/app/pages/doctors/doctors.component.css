@@ -2,7 +2,6 @@
   background-color: var(--bg-body) !important;
 }
 
-/* Fondo superpuesto del panel lateral */
 .side-panel-overlay {
   position: fixed;
   top: 0;
@@ -22,12 +21,11 @@
   visibility: visible;
 }
 
-/* Panel lateral animado */
 .side-panel {
   position: fixed;
   top: 0;
   right: -500px;
-  /* Oculto fuera de pantalla por defecto */
+  
   width: 100%;
   max-width: 450px;
   height: 100vh;
@@ -40,10 +38,9 @@
 
 .side-panel.open {
   right: 0;
-  /* Animación de entrada */
+  
 }
 
-/* Botón de cierre personalizado */
 .close-btn {
   background: none;
   border: none;
@@ -59,7 +56,6 @@
   color: var(--text-color);
 }
 
-/* Grupos de detalle */
 .detail-group label {
   display: block;
   font-size: 0.75rem;

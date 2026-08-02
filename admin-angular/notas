@@ -7,17 +7,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -50,7 +45,6 @@ Database Tables
 schema
 
 public
-
 
 Search for a table
 
@@ -143,17 +137,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -207,7 +196,6 @@ updated_at
 timestamp without time zone	timestamp		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
 tabla de actions steps
 Supabase
 PablitinGlez's Org
@@ -218,17 +206,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -285,8 +268,6 @@ created_at
 timestamp without time zone	timestamp		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
-
 tabla de
 app settings Supabase
 PablitinGlez's Org
@@ -297,17 +278,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -376,17 +352,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -452,10 +423,7 @@ updated_at
 timestamp without time zone	timestamp		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
 tabla de docotrn aptienes
-
-
 
 Supabase
 PablitinGlez's Org
@@ -466,17 +434,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -527,13 +490,7 @@ is_active
 boolean	bool		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
-
-
-
 tabla de dcotro 
-
-
 
 Supabase
 PablitinGlez's Org
@@ -544,17 +501,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -617,9 +569,6 @@ is_verified
 boolean	bool		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
-
-
 tabla de 
 
 emergy contacts
@@ -633,17 +582,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -703,16 +647,8 @@ updated_at
 timestamp without time zone	timestamp		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
 tabla
 entrdas amnuales 
-
-
-
-
-
-
-
 
 Supabase
 PablitinGlez's Org
@@ -723,17 +659,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -790,12 +721,8 @@ created_at
 timestamp without time zone	timestamp		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
-
-
 tabla de 
 notificaiotns
-
 
 Supabase
 PablitinGlez's Org
@@ -806,17 +733,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -890,17 +812,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -996,11 +913,8 @@ respiratory_rate
 integer	int4		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
 tabla de 
 user profiles 
-
-
 
 Supabase
 PablitinGlez's Org
@@ -1011,17 +925,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -1099,15 +1008,9 @@ last_name
 character varying	varchar		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
 
-
 tabla de 
 
-
 users
-
-
-
-
 
 Supabase
 PablitinGlez's Org
@@ -1118,17 +1021,12 @@ asthma-predictor
 main
 Production
 
-
 Connect
 Feedback
 
 Search...
 
 K
-
-
-
-
 
 PablitinGlez
 
@@ -1205,5 +1103,4 @@ password
 
 character varying	varchar		
 Tables | Database | asthma-predictor | PablitinGlez's Org | Supabase
-
 

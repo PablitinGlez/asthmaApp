@@ -1,6 +1,6 @@
-/* Variables CSS / Design System */
+
 :root {
-    --primary: #0284c7;  /* Azul médico */
+    --primary: #0284c7;  
     --primary-hover: #0369a1;
     --secondary: #e2e8f0;
     --text-main: #0f172a;
@@ -195,7 +195,6 @@ small {
     margin-bottom: 20px;
 }
 
-/* Consola Fake */
 .console-box {
     background-color: #1e293b;
     border-radius: var(--radius);

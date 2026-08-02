@@ -54,14 +54,14 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
     final hasSeenTour = await storage.getValue('dashboard_tour_seen');
 
     if ((hasSeenTour != 'true' || alwaysShow) && !_isTutorialRunning) {
-      _isTutorialRunning = true; // Bloquear nuevas llamadas de inmediato
+      _isTutorialRunning = true; 
 
-      // Marcar como visto antes del delay para evitar colisiones de hilos
+      
       if (!alwaysShow) {
         await storage.saveValue('dashboard_tour_seen', 'true');
       }
 
-      // Retrasar el inicio del tour para permitir que la UI se asiente y evitar "flicker"
+      
       Future.delayed(const Duration(milliseconds: 500), () {
         if (!mounted) {
           _isTutorialRunning = false;
@@ -250,7 +250,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
       targets: targets,
       colorShadow: const Color(0xFF023E8A),
       opacityShadow:
-          0.7, // Reducido para mayor fluidez en dispositivos como Poco M4
+          0.7, 
       paddingFocus: 10,
       textSkip: "",
       textStyleSkip: const TextStyle(
@@ -278,7 +278,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
   Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).value;
     
-    // Si el usuario es Guardián, mostramos la vista de Guardián
+    
     if (user?.role == 'guardian') {
       return const GuardianView();
     }
@@ -306,7 +306,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // GREETING
+                
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -319,11 +319,11 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 ),
                 const SizedBox(height: 20),
 
-                // SIMULADOR DE PRUEBAS (Solo para Debug)
+                
                 const AISimulatorPanel(),
                 const SizedBox(height: 20),
 
-                // SEMÁFORO (GAUGE) & AI BUTTON
+                
                 Center(
                   key: _gaugeKey,
                   child: const MainGaugeSection(),
@@ -331,7 +331,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
 
                 const SizedBox(height: 24),
 
-                // ACCIONES RÁPIDAS
+                
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -362,16 +362,14 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                   ],
                 ),
 
-
-
                 const SizedBox(height: 24),
 
-                // 5 NEXT DOSE CARD
+                
                 const NextDoseCard(),
 
                 const SizedBox(height: 12),
 
-                // CTA Plan de Acción Médica
+                
                 SizedBox(
                   width: double.infinity,
                   child: QuickActionButton(
@@ -399,27 +397,27 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                 Divider(color: Colors.grey.shade100, thickness: 1),
                 const SizedBox(height: 22),
 
-                // 5 VITALES DEL RELOJ (CORE)
+                
                 const WatchCoreVitals(),
 
                 const SizedBox(height: 32),
 
-                // TENDENCIA SEMANAL
+                
                 WeeklyTrendChart(state: trendState),
 
                 const SizedBox(height: 32),
 
-                // RADAR AMBIENTAL
+                
                 const EnvironmentalRadar(),
 
                 const SizedBox(height: 32),
 
-                // 6 VITALES SECUNDARIOS (PERFORMANCE)
+                
                 const WatchPerformanceVitals(),
               ],
             ),
           ),
-          // BOTÓN S.O.S (Crisis)
+          
           Positioned(
             bottom: 16,
             right: 24,
@@ -432,5 +430,4 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
     );
   }
 }
-
 

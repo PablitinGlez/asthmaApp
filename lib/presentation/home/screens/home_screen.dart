@@ -79,7 +79,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'Mi Perfil',
     ];
 
-    // SOLICITAR Y CAPTURAR UBICACIÓN GPS EN ROL PACIENTE
+    
     ref.listen(authStateProvider, (previous, next) {
       final u = next.value;
       if (u != null && u.role != 'guardian') {
@@ -87,7 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    // ESCUCHAR ALERTAS DE PEF BAJO (ZONA DE RIESGO)
+    
     ref.listen<int?>(riskAlertProvider, (previous, next) {
       if (next != null && previous != next) {
         showRiskAlertSheet(context, ref, next);
@@ -95,7 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    // ESCUCHAR ALERTAS CRÍTICAS DE IA PARA SOS
+    
     ref.listen<PredictionState>(predictionProvider, (previous, next) {
       if (next.riskLevel == 'red' && previous?.riskLevel != 'red') {
         debugPrint(' SOS TRIGGER: IA detectó riesgo CRÍTICO. Navegando a SOS.');
@@ -127,7 +127,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 maxLines: 1,
               ),
               actions: [
-                // Icono de Exportar (Solo en Mediciones)
+                
                 if (_currentIndex == 1)
                   IconButton(
                     key: _exportKey,
@@ -166,7 +166,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       }
                     },
                   ),
-                // Icono de Notificaciones
+                
                 IconButton(
                   icon: const Icon(
                     Icons.notifications_none_outlined,
@@ -174,7 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   onPressed: () => context.push('/notifications'),
                 ),
-                // Mini Avatar
+                
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0, left: 8.0),
                   child: InkWell(
@@ -229,7 +229,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           fontSize: 12,
         ),
         elevation: 0,
-        iconSize: 22, // Ligeramente más pequeños para que se vean "finos"
+        iconSize: 22, 
         items: [
           BottomNavigationBarItem(
             icon: _buildTabIcon(Icons.home_outlined, false),
@@ -260,7 +260,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Indicador superior
+        
         Container(
           width: 24,
           height: 3,
@@ -270,7 +270,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        // Icono
+        
         Icon(icon),
       ],
     );

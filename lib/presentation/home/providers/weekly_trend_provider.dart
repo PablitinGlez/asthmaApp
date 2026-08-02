@@ -31,13 +31,13 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
 
   @override
   WeeklyTrendState build() {
-    // ARRANQUE TEMPRANO: Conectar WS tan pronto como tengamos el userId,
-    // sin esperar a que termine el HTTP fetch (evita race condition en cold start)
+    
+    
     final user = ref.read(authStateProvider).value;
     if (user != null) {
       Future.microtask(() => _initWebSocket(user.dbId));
     } else {
-      // Si el usuario aún no cargó (muy raro), reintentar en 3s
+      
       Future.delayed(const Duration(seconds: 3), () {
         final u = ref.read(authStateProvider).value;
         if (u != null && _channel == null) _initWebSocket(u.dbId);
@@ -54,7 +54,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
   }
 
   void _initWebSocket(int userId) {
-    if (_channel != null) return; // Ya estamos escuchando
+    if (_channel != null) return; 
 
     try {
       final dioClient = ref.read(dioClientProvider);
@@ -80,7 +80,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
         onError: (_) {
           print(' WebSocket: Error — reconectando en 5s...');
           _channel = null;
-          // Auto-reconectar después de 5 segundos
+          
           Future.delayed(const Duration(seconds: 5), () {
             if (state.data != null) _initWebSocket(userId);
           });
@@ -126,7 +126,7 @@ class WeeklyTrendNotifier extends Notifier<WeeklyTrendState> {
         final trendData = WeeklyTrendResponse.fromJson(response.data);
         state = state.copyWith(data: trendData, isLoading: false);
 
-        // Iniciar socket con DB ID numérico
+        
         _initWebSocket(user.dbId);
       } else {
         state = state.copyWith(isLoading: false, errorMessage: 'Error HTTP');

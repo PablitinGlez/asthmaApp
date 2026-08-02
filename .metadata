@@ -29,13 +29,3 @@ migration:
     - 'lib/main.dart'
     - 'ios/Runner.xcodeproj/project.pbxproj'
 
-
-
-
-
-
-
-
-
-
-

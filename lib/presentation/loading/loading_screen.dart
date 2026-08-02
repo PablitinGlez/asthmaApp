@@ -15,19 +15,19 @@ class _LoadingScreenState extends State<LoadingScreen> {
     _initializeApp();
   }
 
-  // TODO: Implementar lógica de inicialización
-  // - Verificar si el usuario tiene sesión activa (Firebase Auth)
-  // - Cargar configuración local (Isar/SharedPreferences)
-  // - Pre-cargar datos críticos si es necesario
-  // - Navegar a la pantalla correspondiente (Login o Home)
+  
+  
+  
+  
+  
   Future<void> _initializeApp() async {
-    // Simular tiempo de carga (eliminar después)
+    
     await Future.delayed(const Duration(seconds: 2));
 
-    // TODO: Verificar autenticación
-    // final isAuthenticated = await _checkAuthentication();
+    
+    
 
-    // Navegación temporal al HomeScreen (cambiar después según autenticación)
+    
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -35,32 +35,32 @@ class _LoadingScreenState extends State<LoadingScreen> {
       );
     }
 
-    // TODO: Implementar navegación condicional
-    // if (mounted) {
-    // if (isAuthenticated) {
-    // Navigator.pushReplacement(
-    // context,
-    // MaterialPageRoute(builder: (_) => const HomeScreen()),
-    // );
-    // } else {
-    // Navigator.pushReplacement(
-    // context,
-    // MaterialPageRoute(builder: (_) => const LoginScreen()),
-    // );
-    // }
-    // }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
   }
 
-  // TODO: Implementar verificación de autenticación
-  // Future<bool> _checkAuthentication() async {
-  // // Aquí verificarás si hay un token/sesión activa
-  // return false;
-  // }
+  
+  
+  
+  
+  
 
-  // TODO: Implementar precarga de datos
-  // Future<void> _preloadData() async {
-  // // Aquí cargarás datos críticos de la base de datos local
-  // }
+  
+  
+  
+  
 
   @override
   Widget build(BuildContext context) {

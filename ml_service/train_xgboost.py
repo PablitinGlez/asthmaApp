@@ -36,13 +36,11 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=TEST_SIZE, random_state=42, stratify=y
 )
 
-
 def balancear(df_in):
     sanos = df_in[df_in[TARGET] == 0]
     crisis = df_in[df_in[TARGET] == 1]
     crisis_over = crisis.sample(len(sanos), replace=True, random_state=42)
     return pd.concat([sanos, crisis_over], axis=0).sample(frac=1, random_state=42)
-
 
 cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
 cv_accs, cv_recs, cv_precs, cv_f1s, cv_aucs = [], [], [], [], []

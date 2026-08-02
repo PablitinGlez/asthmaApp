@@ -38,7 +38,7 @@ class GuardianView extends ConsumerWidget {
           DashboardGreeting(
             userName: userName,
             helpButtonKey: GlobalKey(),
-            onHelpTap: () {}, // Tutorial próximamente
+            onHelpTap: () {}, 
           ),
           const SizedBox(height: 32),
           

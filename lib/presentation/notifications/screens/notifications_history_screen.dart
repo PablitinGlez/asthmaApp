@@ -110,7 +110,7 @@ class _NotificationTile extends StatelessWidget {
         child: IntrinsicHeight(
           child: Row(
             children: [
-              // Barra lateral de color según el tipo
+              
               Container(
                 width: 6,
                 color: notification.color,
@@ -121,7 +121,7 @@ class _NotificationTile extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Icono con fondo circular
+                      
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -135,7 +135,7 @@ class _NotificationTile extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Contenido de texto
+                      
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

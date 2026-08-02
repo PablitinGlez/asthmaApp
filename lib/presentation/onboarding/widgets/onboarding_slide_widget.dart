@@ -20,7 +20,7 @@ class OnboardingSlideWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Área de Imagen + Badges
+          
           SizedBox(
             height: 320,
             width: double.infinity,
@@ -73,7 +73,7 @@ class OnboardingSlideWidget extends StatelessWidget {
   Widget _buildBadge(FloatingBadge badge) {
     Widget content = FloatingBadgeCard(badge: badge);
 
-    // Animación de entrada
+    
     if (badge.entranceAnimation == BadgeEntranceAnimation.fromLeft) {
       content = FadeInLeft(
         duration: const Duration(milliseconds: 600),
@@ -88,7 +88,7 @@ class OnboardingSlideWidget extends StatelessWidget {
       );
     }
 
-    // Animación de levitación
+    
     if (badge.animate) {
       return AnimatedBuilder(
         animation: badgeAnimation,

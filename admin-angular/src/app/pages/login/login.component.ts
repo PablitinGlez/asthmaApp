@@ -36,7 +36,7 @@ export class LoginComponent {
       const { user } = await this.authService.login(this.email, this.password);
       
       if (user) {
-        // Redirigimos sin bloquear; el AuthGuard y Sidebar se encargan de restringir vistas
+        
         this.router.navigate(['/dashboard']);
       }
     } catch (err: any) {

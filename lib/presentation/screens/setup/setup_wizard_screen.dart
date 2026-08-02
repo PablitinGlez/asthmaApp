@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// Importamos los Pasos Reales
+
 import 'steps/biometria_step.dart';
 import 'steps/historial_step.dart';
 import 'steps/disclaimer_step.dart';
@@ -25,7 +25,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
   Future<void> _nextStep() async {
     final formState = ref.read(setupFormProvider);
 
-    // Evitar multi-clics
+    
     if (formState.isPosting) return;
 
     if (_currentStep < _totalSteps - 1) {
@@ -34,34 +34,34 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // Tomar los datos del form locales
+      
       final profileData = formState.toJson();
       print(' Enviando payload a API (SetupWizard): $profileData');
 
       try {
-        // Bloquear Botón
+        
         ref.read(setupFormProvider.notifier).setPosting(true);
 
-        // Ejecutar la llamada a la API (FastAPI)
+        
         final repo = ref.read(authRepositoryProvider);
         await repo.createProfile(profileData: profileData);
         print(' Perfil guardado exitosamente en el backend');
 
-        // Forzar actualización en Memoria Local (El "Desfase")
+        
         final currentUser = ref.read(authStateProvider).value;
         if (currentUser != null) {
           final updatedUser = currentUser.copyWith(isSetupCompleted: true);
           ref.read(authStateProvider.notifier).updateUser(updatedUser);
         }
 
-        // Finalizar Setup localmente (Flags)
+        
         ref.read(setupCompletedProvider.notifier).complete();
 
-        // Enviamos la bienvenida al Paciente (Ahora que ya terminó su setup médico)
+        
         final name = currentUser?.fullName.split(' ').first ?? 'Paciente';
         await LocalNotificationService.showWelcomeNotification(name);
 
-        // Ir a Home (El router ahora sí te dejará pasar)
+        
         if (mounted) context.go('/home');
       } catch (e) {
         print(' Error guardando perfil: $e');
@@ -73,7 +73,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
           );
         }
       } finally {
-        // Desbloquear Botón (si falla)
+        
         if (mounted) {
           ref.read(setupFormProvider.notifier).setPosting(false);
         }
@@ -95,7 +95,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Light Mode Base
+      backgroundColor: Colors.white, 
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -118,22 +118,22 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
       ),
       body: Column(
         children: [
-          // Barra de progreso Lineal
+          
           LinearProgressIndicator(
             value: (_currentStep + 1) / _totalSteps,
             backgroundColor: Colors.grey[200],
             valueColor: const AlwaysStoppedAnimation<Color>(
-              Color(0xFF023E8A), // Azul Principal
+              Color(0xFF023E8A), 
             ),
             minHeight: 4,
           ),
 
-          // Contenido del Wizard (Pasos Reales)
+          
           Expanded(
             child: PageView(
               controller: _pageController,
               physics:
-                  const NeverScrollableScrollPhysics(), // Bloquear swipe manual
+                  const NeverScrollableScrollPhysics(), 
               onPageChanged: (index) {
                 setState(() {
                   _currentStep = index;
@@ -143,7 +143,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
             ),
           ),
 
-          // Botón de Acción Principal (con SafeArea)
+          
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
@@ -153,7 +153,7 @@ class _SetupWizardScreenState extends ConsumerState<SetupWizardScreen> {
                 child: ElevatedButton(
                   onPressed: _nextStep,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF023E8A), // Azul Principal
+                    backgroundColor: const Color(0xFF023E8A), 
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

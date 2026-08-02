@@ -9,18 +9,15 @@ import '../../../auth/providers/auth_provider.dart';
 import '../../../profile/providers/emergency_contacts_provider.dart';
 import '../../../../infrastructure/models/action_plan_model.dart';
 
-// Nivel de riesgo calculado con la última lectura
 enum PefRiskLevel { red, yellow }
 
-// Muestra el bottom sheet de alerta + vibración.
-// Llámalo con: showRiskAlertSheet(context, ref, pef)
 Future<void> showRiskAlertSheet(
   BuildContext context,
   WidgetRef ref,
   int pef,
 ) async {
   final risk = _classifyPef(pef);
-  // Registro en el backend (asíncrono sin bloquear la alerta)
+  
   Future.microtask(() async {
     debugPrint(
       '[ALERTA] Intentando registrar alerta en backend: PEF=$pef, Nivel=${risk == PefRiskLevel.red ? 'red' : 'yellow'}',
@@ -47,11 +44,11 @@ Future<void> showRiskAlertSheet(
     }
   });
 
-  // Vibración real según severidad
+  
   final canVibrate = await Vibration.hasVibrator();
   if (canVibrate) {
     if (risk == PefRiskLevel.red) {
-      // ~8 segundos de vibración INTENSA y casi continua (zona crítica)
+      
       Vibration.vibrate(
         pattern: [
           0,
@@ -91,7 +88,7 @@ Future<void> showRiskAlertSheet(
         ],
       );
     } else {
-      // ~6 segundos de vibración constante (zona amarilla)
+      
       Vibration.vibrate(
         pattern: [0, 800, 100, 800, 100, 800, 100, 800, 100, 800, 100, 800],
         intensities: [0, 220, 0, 220, 0, 220, 0, 220, 0, 220, 0, 220],
@@ -105,7 +102,7 @@ Future<void> showRiskAlertSheet(
 
   await showModalBottomSheet(
     context: context,
-    isDismissible: risk == PefRiskLevel.yellow, // Rojo solo cierra con botón explícito
+    isDismissible: risk == PefRiskLevel.yellow, 
     enableDrag: risk == PefRiskLevel.yellow,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -116,7 +113,7 @@ Future<void> showRiskAlertSheet(
 PefRiskLevel? _classifyPef(int pef) {
   if (pef < 200) return PefRiskLevel.red;
   if (pef < 350) return PefRiskLevel.yellow;
-  return null; // Verde
+  return null; 
 }
 
 class _RiskAlertSheet extends ConsumerWidget {
@@ -176,7 +173,7 @@ class _RiskAlertSheet extends ConsumerWidget {
         ? 'Tu PEF ($pef L/min) indica un flujo espiratorio muy bajo. Sigue el protocolo de crisis inmediatamente.'
         : 'Tu PEF ($pef L/min) está por debajo del rango normal. Revisa las indicaciones preventivas.';
 
-    // Extraer instrucción específica del plan médico asignado
+    
     ActionStepModel? targetStep;
     if (actionState.steps != null && actionState.steps!.isNotEmpty) {
       if (isRed) {
@@ -227,7 +224,7 @@ class _RiskAlertSheet extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Header con ícono y nivel de riesgo
+              
               Center(child: _PulsingIcon(color: accentColor, icon: icon)),
               const SizedBox(height: 16),
 
@@ -256,12 +253,12 @@ class _RiskAlertSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              // Sección 1: recomendaciones de emergencia inmediatas
+              
               _EmergencyRecommendationsCard(isRed: isRed, accentColor: accentColor),
 
               const SizedBox(height: 20),
 
-              // Sección 2: plan de crisis / instrucciones del médico
+              
               _DoctorCrisisPlanCard(
                 isRed: isRed,
                 accentColor: accentColor,
@@ -276,7 +273,7 @@ class _RiskAlertSheet extends ConsumerWidget {
 
               const SizedBox(height: 24),
 
-              // Botones de acción de emergencia
+              
               if (isRed && primaryContact != null) ...[
                 ElevatedButton.icon(
                   onPressed: () => _makeEmergencyCall(
@@ -332,7 +329,7 @@ class _RiskAlertSheet extends ConsumerWidget {
                 const SizedBox(height: 12),
               ],
 
-              // Botón Secundario de Cierre
+              
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
@@ -353,7 +350,6 @@ class _RiskAlertSheet extends ConsumerWidget {
   }
 }
 
-// Carda de recomendaciones de emergencia inmediatas
 class _EmergencyRecommendationsCard extends StatelessWidget {
   final bool isRed;
   final Color accentColor;
@@ -497,7 +493,6 @@ class _EmergencyRecommendationsCard extends StatelessWidget {
   }
 }
 
-// Carda del plan de crisis / instrucciones del médico
 class _DoctorCrisisPlanCard extends StatelessWidget {
   final bool isRed;
   final Color accentColor;
@@ -643,7 +638,6 @@ class _DoctorCrisisPlanCard extends StatelessWidget {
   }
 }
 
-// Ícono pulsante animado
 class _PulsingIcon extends StatefulWidget {
   final Color color;
   final IconData icon;

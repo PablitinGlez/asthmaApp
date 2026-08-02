@@ -135,7 +135,7 @@ class EnvironmentalRadar extends ConsumerWidget {
       );
     }
 
-    // Default: Mostrar datos (con o sin ellos)
+    
     return Row(
       children: [
         Expanded(
@@ -228,7 +228,7 @@ class EnvironmentalRadar extends ConsumerWidget {
     if (status == 'Peligroso') return const Color(0xFFF44336);
     if (status == 'Sensible') return const Color(0xFFFF9800);
     if (status == 'Moderado') return const Color(0xFFFFC107);
-    return const Color(0xFF4CAF50); // Excelente
+    return const Color(0xFF4CAF50); 
   }
 
   Color _getPollenColor(String? status) {
@@ -236,14 +236,14 @@ class EnvironmentalRadar extends ConsumerWidget {
       return const Color(0xFFF44336);
     if (status == 'Medio' || status == 'Precaución')
       return const Color(0xFFFFC107);
-    return const Color(0xFF8BC34A); // Bajo / Seguro / Normal
+    return const Color(0xFF8BC34A); 
   }
 
   Color _getHumidityColor(String? status) {
     if (status == 'Seco') return const Color(0xFFFF9800);
     if (status == 'Alta' || status == 'Peligroso')
       return const Color(0xFFF44336);
-    return const Color(0xFF03A9F4); // Ideal
+    return const Color(0xFF03A9F4); 
   }
 }
 
@@ -314,7 +314,6 @@ class _VerticalDivider extends StatelessWidget {
   }
 }
 
-// Extension sencilla para oscurecer colores
 extension ColorDarken on Color {
   Color darken([double amount = .1]) {
     assert(amount >= 0 && amount <= 1);

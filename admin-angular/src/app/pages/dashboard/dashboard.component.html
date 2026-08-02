@@ -17,7 +17,7 @@
         <p style="font-size: 1.5rem; font-weight: 800;">{{ (role$ | async) === 'admin' ? 'Administrador' : 'Doctor' }}</p>
       </div>
       
-      <!-- Novedad: Código del Doctor -->
+      
       <div class="stat-card" *ngIf="(role$ | async) === 'doctor' && doctorProfile" style="border-color: #6366f1; background: linear-gradient(to right, #eef2ff, #fff);">
         <p style="font-size: 0.75rem; color: #4338ca; font-weight: 800; text-transform: uppercase;">Mi Código Vinculante</p>
         <p style="font-size: 1.75rem; font-weight: 900; font-family: monospace; color: #4f46e5; margin-top: 0.25rem; letter-spacing: 2px;">

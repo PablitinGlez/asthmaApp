@@ -72,23 +72,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment:
-                        CrossAxisAlignment.start, // Alineación Izq
+                        CrossAxisAlignment.start, 
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Título Principal
+                      
                       const Text(
                         'Inicia sesión en\ntu cuenta',
                         style: TextStyle(
                           fontFamily: 'Satoshi',
                           fontSize: 32,
-                          fontWeight: FontWeight.w500, // Medium
+                          fontWeight: FontWeight.w500, 
                           color: Colors.black87,
                           height: 1.2,
                         ),
                       ),
                       const SizedBox(height: 48),
 
-                      // Email Input
+                      
                       _buildInputLabel('Correo electrónico'),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -106,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Password Input
+                      
                       _buildInputLabel('Contraseña'),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
                               color: Colors.grey,
-                              size: 20, // Icono fino y pequeño
+                              size: 20, 
                             ),
                             onPressed: () {
                               setState(() {
@@ -139,7 +139,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Remember Me & Forgot Password
+                      
                       Row(
                         children: [
                           SizedBox(
@@ -189,7 +189,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Login Button
+                      
                       SizedBox(
                         width: double.infinity,
                         height: 56,
@@ -198,7 +198,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(
                               0xFF023E8A,
-                            ), // Azul oscuro
+                            ), 
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -227,7 +227,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Divider
+                      
                       Row(
                         children: [
                           Expanded(child: Divider(color: Colors.grey.shade300)),
@@ -247,7 +247,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       const SizedBox(height: 32),
 
-                      // Google Sign In
+                      
                       const SizedBox(
                         width: double.infinity,
                         child: GoogleSignInButton(),
@@ -255,7 +255,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Register Link
+                      
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

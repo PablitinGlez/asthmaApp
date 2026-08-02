@@ -21,16 +21,16 @@ export class DoctorsComponent implements OnInit {
   isLoading = false;
   isError = false;
 
-  // Detalles del doctor (Panel Lateral)
+  
   selectedDoctor: any = null;
   showDetailsPanel = false;
 
-  // Estado de la notificación toast
+  
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
 
-  // Datos del formulario
+  
   newDoctor = {
     email: '',
     full_name: '',
@@ -56,13 +56,13 @@ export class DoctorsComponent implements OnInit {
 
   closeDetails() {
     this.showDetailsPanel = false;
-    setTimeout(() => this.selectedDoctor = null, 300); // Esperar a que termine la animación
+    setTimeout(() => this.selectedDoctor = null, 300); 
   }
 
   async loadDoctors() {
     try {
       this.doctors = await this.adminService.getDoctors();
-      this.cdr.detectChanges(); // Forzar actualización visual tras cargar
+      this.cdr.detectChanges(); 
     } catch (e) {
       console.error('Error loading doctors:', e);
     }
@@ -79,31 +79,31 @@ export class DoctorsComponent implements OnInit {
       const response = await this.adminService.inviteDoctor(this.newDoctor);
       console.log('[DEBUG] 3. Invitación exitosa (Respuesta API 200 OK):', response);
       
-      // Cerramos de inmediato el modal
+      
       this.showModal = false;
       console.log('[DEBUG] 4. showModal establecido a false');
       
-      // Disparamos el Toast
+      
       this.toastMessage = '¡Invitación enviada con éxito!';
       this.toastType = 'success';
       this.showToast = true;
       console.log('[DEBUG] 5. Toast configurado para mostrarse');
       
-      // Forzar a Angular a dibujar los cambios Inmediatamente
+      
       this.cdr.detectChanges();
       console.log('[DEBUG] 6. detectChanges() ejecutado para forzar cierre del modal en la UI');
 
       this.loadDoctors(); 
       console.log('[DEBUG] 7. loadDoctors() lanzado en segundo plano');
       
-      // Ocultar toast después de 3s
+      
       setTimeout(() => {
         this.showToast = false;
         this.cdr.detectChanges();
         console.log('[DEBUG] 8. Toast ocultado después de 3 segundos');
       }, 3000);
 
-      // Reset form
+      
       this.newDoctor = { email: '', full_name: '', specialty: '', license_number: '', hospital_name: '', bio: '' };
     } catch (e: any) {
       console.log('[DEBUG] Error atrapado en onInvite:', e);
@@ -111,7 +111,7 @@ export class DoctorsComponent implements OnInit {
       this.toastMessage = 'Error: ' + (e.error?.detail || 'No se pudo enviar la invitación');
       this.toastType = 'error';
       this.showToast = true;
-      this.cdr.detectChanges(); // Forzar dibujo del error en UI
+      this.cdr.detectChanges(); 
       setTimeout(() => {
         this.showToast = false;
         this.cdr.detectChanges();

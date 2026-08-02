@@ -14,12 +14,12 @@ export class AuthService {
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
     
-    // Escuchar cambios de autenticación sin bloquear Supabase
+    
     this.supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth event:', event);
       this.currentUserSubject.next(session?.user ?? null);
       if (session?.user) {
-        // Ejecutamos en segundo plano
+        
         this.getUserRole(session.user.id).then(role => {
           this.currentUserRoleSubject.next(role);
         });
@@ -29,7 +29,7 @@ export class AuthService {
     });
   }
 
-  // Permite al Guard esperar la sesión real en vez del BehaviorSubject inicial (null)
+  
   async getSession() {
     const { data: { session } } = await this.supabase.auth.getSession();
     this.currentUserSubject.next(session?.user ?? null);

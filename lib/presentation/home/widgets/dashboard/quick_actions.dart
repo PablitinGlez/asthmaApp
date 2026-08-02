@@ -70,7 +70,6 @@ class QuickActionButton extends StatelessWidget {
   }
 }
 
-// Extension sencilla para oscurecer colores
 extension ColorDarken on Color {
   Color darken([double amount = .1]) {
     assert(amount >= 0 && amount <= 1);

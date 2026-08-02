@@ -1,4 +1,4 @@
-// Elementos del DOM
+
 const patientEmailInput = document.getElementById('patientEmail');
 const pefInput = document.getElementById('pefValue');
 const fev1Input = document.getElementById('fev1Value');
@@ -9,7 +9,6 @@ const apiUrlInput = document.getElementById('apiUrl');
 const severityBadge = document.getElementById('severityBadge');
 const consoleOutput = document.getElementById('consoleOutput');
 
-// Función para imprimir en la terminal virtual
 function logToConsole(message, type = 'info') {
     const span = document.createElement('span');
     span.className = `log-${type}`;
@@ -18,33 +17,31 @@ function logToConsole(message, type = 'info') {
     span.textContent = `[${time}] ${message}`;
 
     consoleOutput.appendChild(span);
-    consoleOutput.scrollTop = consoleOutput.scrollHeight; // Auto-scroll
+    consoleOutput.scrollTop = consoleOutput.scrollHeight; 
 }
 
-// Variables Globales de Simulación
 let currentSimData = null;
 
-// Lógica de Generación Aleatoria Realista
 function generateRandomMeasurements() {
-    // PEF: Flujo Espiratorio Máximo (Litros por Minuto) L/min
-    // Rango normal-bajo para asmáticos: 150 a 650
+    
+    
     const pef = Math.floor(Math.random() * (600 - 150 + 1)) + 150;
 
-    // FVC: Capacidad Vital Forzada (Litros)
-    // Rango normal en adultos: 2.5 a 5.0 Litros
+    
+    
     const fvc = (Math.random() * (5.5 - 2.5) + 2.5).toFixed(2);
 
-    // FEV1: Volumen Espiratorio Forzado en 1 segundo (Litros)
-    // Relación FEV1/FVC típica en asma es < 80%
+    
+    
     const ratio = Math.random() * (0.85 - 0.45) + 0.45;
     let fev1 = (fvc * ratio).toFixed(2);
 
-    // Pintar en UI
+    
     pefInput.value = pef;
     fvcInput.value = fvc;
     fev1Input.value = fev1;
 
-    // Pintar severidad referencial en base al PEF (Estándar médico básico Zonas: Verde, Amarillo, Rojo)
+    
     severityBadge.classList.remove('hidden', 'green', 'yellow', 'red');
     if (pef >= 450) {
         severityBadge.textContent = "Zona Verde (Controlado)";
@@ -57,7 +54,7 @@ function generateRandomMeasurements() {
         severityBadge.classList.add('red');
     }
 
-    // Guardar para envío
+    
     currentSimData = {
         pef: parseInt(pef),
         fev1: parseFloat(fev1),
@@ -68,7 +65,6 @@ function generateRandomMeasurements() {
     logToConsole(`Nuevos valores biométricos generados: PEF=${pef}`, 'warn');
 }
 
-// Validar que se pueda enviar
 function validateForm() {
     const email = patientEmailInput.value.trim();
     if (email !== '' && currentSimData !== null && email.includes('@')) {
@@ -78,13 +74,12 @@ function validateForm() {
     }
 }
 
-// Lógica de Envío (POST a FastAPI)
 async function submitSpirometry() {
     const email = patientEmailInput.value.trim();
     const url = apiUrlInput.value.trim();
 
-    // Generar timestamp local "ingenuo" (sin offset ni Z)
-    // Esto coincide con el comportamiento de la App que sí está funcionando bien.
+    
+    
     const now = new Date();
     const pad = (num) => String(num).padStart(2, '0');
 
@@ -107,7 +102,7 @@ async function submitSpirometry() {
     btnSubmit.disabled = true;
     btnSubmit.textContent = "Obteniendo ubicación...";
 
-    // Obtener ubicación GPS (API HTML5) antes de enviar
+    
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -118,17 +113,16 @@ async function submitSpirometry() {
             },
             (error) => {
                 logToConsole(`Error GPS: ${error.message}. Enviando sin datos ambientales.`, 'warn');
-                enviarPayload(url, payload); // Enviar sin GPS
+                enviarPayload(url, payload); 
             },
-            { timeout: 10000 } // Esperar máximo 10 seg
+            { timeout: 10000 } 
         );
     } else {
         logToConsole("Tu navegador no soporta GPS. Enviando sin datos ambientales.", 'warn');
-        enviarPayload(url, payload); // Enviar sin GPS
+        enviarPayload(url, payload); 
     }
 }
 
-// Función auxiliar para realizar el POST una vez (con o sin GPS)
 async function enviarPayload(url, payload) {
     btnSubmit.textContent = "Transmitiendo...";
 
@@ -137,7 +131,7 @@ async function enviarPayload(url, payload) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "x-api-key": "ClaveSecretaParaMaestros" // <-- Llave maestra activada
+                "x-api-key": "ClaveSecretaParaMaestros" 
             },
             body: JSON.stringify(payload)
         });
@@ -146,7 +140,7 @@ async function enviarPayload(url, payload) {
             const data = await response.json();
             logToConsole(`¡Éxito! DB aceptó el registro.`, 'success');
 
-            // Limpiar tras éxito para evitar duplicados
+            
             currentSimData = null;
             pefInput.value = ''; fev1Input.value = ''; fvcInput.value = '';
             severityBadge.classList.add('hidden');
@@ -162,7 +156,6 @@ async function enviarPayload(url, payload) {
     }
 }
 
-// Listeners
 btnGenerate.addEventListener('click', generateRandomMeasurements);
 patientEmailInput.addEventListener('input', validateForm);
 btnSubmit.addEventListener('click', submitSpirometry);

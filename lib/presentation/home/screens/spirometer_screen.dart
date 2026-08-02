@@ -24,7 +24,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
   bool _isSendingWithSymptoms = false;
   bool _isSendingWithoutSymptoms = false;
 
-  // Síntomas
+  
   final List<String> _symptomOptions = [
     'Tos',
     'Sibilancias',
@@ -34,7 +34,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     'Flema',
   ];
   final Set<String> _selectedSymptoms = {};
-  String _selectedIntensity = 'Moderada'; // Leve / Moderada / Severa
+  String _selectedIntensity = 'Moderada'; 
   final TextEditingController _notesController = TextEditingController();
 
   @override
@@ -84,7 +84,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
       final token = await supabaseDs.getIdToken();
       if (token == null) throw Exception('No auth token');
 
-      // Obtener ubicación
+      
       double? lat;
       double? lng;
       try {
@@ -132,8 +132,8 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      // Primero regresamos al dashboard, luego el home_screen
-      // detecta el PEF riesgoso vía riskAlertProvider y muestra la alerta
+      
+      
       ref.read(measurementsProvider.notifier).silentRefresh(checkRisk: true);
       ref
           .read(weeklyTrendProvider.notifier)
@@ -199,7 +199,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     );
   }
 
-  // FLUJO PRINCIPAL (Entrada Manual)
+  
   Widget _buildMainFlow() {
     return Center(
       key: const ValueKey('main'),
@@ -287,7 +287,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     );
   }
 
-  // PANEL DE SÍNTOMAS
+  
   Widget _buildSymptomsPanel() {
     return SingleChildScrollView(
       key: const ValueKey('symptoms'),
@@ -295,7 +295,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Mini resumen del PEF arriba
+          
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
@@ -355,7 +355,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          // Chips de síntomas
+          
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -410,7 +410,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             }).toList(),
           ),
           const SizedBox(height: 24),
-          // Intensidad
+          
           if (_selectedSymptoms.isNotEmpty) ...[
             Text(
               'Intensidad',
@@ -463,7 +463,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             const SizedBox(height: 24),
           ] else
             const SizedBox(height: 20),
-          // Notas
+          
           Text(
             'Notas adicionales',
             style: TextStyle(
@@ -497,7 +497,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             ),
           ),
           const SizedBox(height: 32),
-          // Botón principal
+          
           SizedBox(
             width: double.infinity,
             height: 54,
@@ -536,7 +536,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          // Botón secundario
+          
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -567,7 +567,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
     );
   }
 
-  // WIDGETS REUTILIZABLES
+  
   Color _intensityColor(String level) {
     switch (level) {
       case 'Leve':
@@ -575,7 +575,7 @@ class _SpirometerScreenState extends ConsumerState<SpirometerScreen> {
       case 'Severa':
         return const Color(0xFFD90429);
       default:
-        return const Color(0xFFFF9800); // Moderada
+        return const Color(0xFFFF9800); 
     }
   }
 }

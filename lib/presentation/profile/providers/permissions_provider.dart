@@ -59,18 +59,18 @@ class PermissionsNotifier extends Notifier<PermissionsState>
   Future<void> checkPermissions() async {
     state = state.copyWith(isLoading: true);
 
-    // Revisar estatus actual de Bluetooth (depende de Android o general)
+    
     final bluetooth = await Permission.bluetooth.status;
 
-    // Revisar estatus actual de Notificaciones
+    
     final notification = await Permission.notification.status;
 
-    // Revisar estatus actual de Salud/Sensores
+    
     final health = Platform.isAndroid
         ? await Permission.activityRecognition.status
         : await Permission.sensors.status;
 
-    // Revisar estatus actual de Ubicación (Privacidad de Software)
+    
     final location = await Permission.location.status;
 
     state = state.copyWith(
@@ -89,7 +89,7 @@ class PermissionsNotifier extends Notifier<PermissionsState>
 
   Future<void> requestBluetoothPermission() async {
     await Permission.bluetooth.request();
-    // En Android 12+ tal vez se necesite bluetoothScan y bluetoothConnect.
+    
     await Permission.bluetoothConnect.request();
     await Permission.bluetoothScan.request();
     await checkPermissions();

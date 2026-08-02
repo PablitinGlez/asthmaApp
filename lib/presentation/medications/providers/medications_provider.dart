@@ -31,7 +31,7 @@ class MedicationsState {
 class MedicationsNotifier extends Notifier<MedicationsState> {
   @override
   MedicationsState build() {
-    // Cargar medicamentos al inicializar
+    
     Future.microtask(() => loadMedications());
     return MedicationsState();
   }

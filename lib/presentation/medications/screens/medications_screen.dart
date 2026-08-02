@@ -84,7 +84,7 @@ class MedicationsScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       itemCount: medications.length,
       onReorder: (oldIndex, newIndex) {
-        // Implementación de reordenamiento (opcional para persistencia si el backend lo soporta)
+        
       },
       itemBuilder: (context, index) {
         final med = medications[index];
@@ -256,7 +256,7 @@ class _AddMedicationModalState extends ConsumerState<_AddMedicationModal> {
   final _dosageCtrl = TextEditingController();
   final _freqCtrl = TextEditingController();
   TimeOfDay? _selectedTime = TimeOfDay.now();
-  List<int> _selectedDays = []; // 1=Mon, 7=Sun
+  List<int> _selectedDays = []; 
   bool _isSaving = false;
 
   @override

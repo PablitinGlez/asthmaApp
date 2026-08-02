@@ -29,7 +29,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Listener profesional: Solo actuar si esta es la pantalla activa
+    
     ref.listen(authNotifierProvider, (previous, next) {
       if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
 
@@ -44,7 +44,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           context,
           'Correo de recuperación enviado exitosamente',
         );
-        // Limpiamos el estado para evitar que el mensaje se repita si se redibuja
+        
         ref.read(authNotifierProvider.notifier).resetState();
       }
     });
@@ -52,10 +52,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF023E8A), // Fondo base azul
+      backgroundColor: const Color(0xFF023E8A), 
       body: Stack(
         children: [
-          // Fondo PNG (Blue with Stars)
+          
           Positioned.fill(
             child: Image.asset(
               'assets/images/fondoFortget.png',
@@ -67,7 +67,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Encabezado (Back Button)
+                
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: IconButton(
@@ -76,7 +76,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   ),
                 ),
 
-                // Title & Description
+                
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
@@ -108,7 +108,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
                 const SizedBox(height: 48),
 
-                // White Card with Form
+                
                 Expanded(
                   child: Container(
                     decoration: const BoxDecoration(

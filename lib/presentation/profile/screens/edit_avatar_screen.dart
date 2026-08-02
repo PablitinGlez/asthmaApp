@@ -15,23 +15,23 @@ class EditAvatarScreen extends ConsumerStatefulWidget {
 }
 
 class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
-  // Estado local
+  
   late String _currentSeed;
   late String _currentBackground;
   bool _isSaving = false;
 
-  // Colores predefinidos
+  
   final List<Color> _predefinedColors = [
-    const Color(0xFFB6E3F4), // Azul claro
-    const Color(0xFFFFE5B4), // Durazno
-    const Color(0xFFD4F1D4), // Verde menta
-    const Color(0xFFFFD4E5), // Rosa claro
+    const Color(0xFFB6E3F4), 
+    const Color(0xFFFFE5B4), 
+    const Color(0xFFD4F1D4), 
+    const Color(0xFFFFD4E5), 
   ];
 
   @override
   void initState() {
     super.initState();
-    // Obtener datos iniciales del usuario
+    
     final user = ref.read(authStateProvider).value;
     _currentSeed = user?.fullName ?? 'Usuario';
     _currentBackground = user?.avatarBackground ?? '023e8a';
@@ -47,7 +47,7 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
   }
 
   String _getAvatarUrl() {
-    // Usamos el estilo 'initials' de DiceBear
+    
     return 'https://api.dicebear.com/9.x/initials/svg?'
         'seed=$_currentSeed&'
         'backgroundColor=$_currentBackground';
@@ -59,8 +59,8 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
     setState(() => _isSaving = true);
 
     try {
-      // Ejecutar actualización real en Backend
-      // Nota: El seed ahora es el nombre, así que lo enviamos como tal
+      
+      
       await ref
           .read(authNotifierProvider.notifier)
           .updateAvatar(
@@ -168,7 +168,7 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Preview del avatar
+            
             Center(
               child: Container(
                 width: 180,
@@ -208,7 +208,7 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Paleta de colores predefinida incorporada
+            
             Wrap(
               spacing: 12,
               runSpacing: 12,
@@ -244,7 +244,7 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
 
             const SizedBox(height: 24),
 
-            // Botón para color personalizado
+            
             TextButton.icon(
               onPressed: _showColorPicker,
               icon: const Icon(Icons.colorize_rounded),
@@ -260,7 +260,7 @@ class _EditAvatarScreenState extends ConsumerState<EditAvatarScreen> {
 
             const SizedBox(height: 48),
 
-            // Botón guardar
+            
             SizedBox(
               height: 56,
               child: ElevatedButton(

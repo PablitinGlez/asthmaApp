@@ -42,7 +42,7 @@ class PatientGuardiansNotifier extends Notifier<PatientGuardiansState> {
     try {
       final repository = ref.read(authRepositoryProvider);
       
-      // Llamadas en paralelo para no bloquear mucho
+      
       final results = await Future.wait([
         repository.getLinkingCode(),
         repository.getMyGuardians(),
@@ -69,7 +69,7 @@ class PatientGuardiansNotifier extends Notifier<PatientGuardiansState> {
       final repository = ref.read(authRepositoryProvider);
       await repository.unlinkGuardian(guardianId: guardianId);
       
-      // Recargar lista
+      
       await loadData();
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());

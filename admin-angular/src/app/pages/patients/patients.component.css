@@ -54,7 +54,6 @@
   color: var(--text-color);
 }
 
-/* Estilos auxiliares de campos de formulario */
 .field-label {
   display: block;
   font-size: 0.72rem;

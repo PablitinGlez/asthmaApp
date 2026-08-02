@@ -7,7 +7,7 @@ class Medication {
   final DateTime? nextDose;
   final DateTime? lastDose;
   final bool isActive;
-  final List<int>? daysOfWeek; // 1=Mon, 7=Sun
+  final List<int>? daysOfWeek; 
   final DateTime createdAt;
   final DateTime updatedAt;
 

@@ -31,7 +31,7 @@ class SetupFormState {
     );
   }
 
-  // Convertimos a JSON para enviar por dio exclude nulls (como lo hace pydantic)
+  
   Map<String, dynamic> toJson() {
     return {
       if (gender != null) 'gender': gender,

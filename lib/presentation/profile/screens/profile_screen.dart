@@ -16,21 +16,21 @@ class ProfileScreen extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
     final user = authState.value;
 
-    // Datos REALES del usuario
+    
     final String userName = (user?.fullName ?? 'Usuario')
         .trim()
         .split(RegExp(r'\s+'))
         .first;
     final String userEmail = user?.email ?? "sin-email@example.com";
 
-    // Detectar método de login real desde Supabase
+    
     final supabaseUser = Supabase.instance.client.auth.currentUser;
     final String provider =
         supabaseUser?.appMetadata['provider'] as String? ?? 'email';
     final bool isGoogle = provider == 'google';
     final String loginMethod = isGoogle ? "Google" : "Email";
 
-    // Obtener información del perfil (incluyendo doctor vinculado)
+    
     final personalInfoState = ref.watch(personalInfoProvider);
     final profile = personalInfoState.profile;
     final String? linkedDoctorName = profile?.linkedDoctorName;
@@ -49,13 +49,13 @@ class ProfileScreen extends ConsumerWidget {
           left: 24.0,
           right: 24.0,
           bottom:
-              120.0, // Aumentado para evitar solapamiento con botones del sistema
-          top: kToolbarHeight + 48.0, // Espacio para la barra de cristal
+              120.0, 
+          top: kToolbarHeight + 48.0, 
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Avatar del usuario con Edición
+            
             Center(
               child: Stack(
                 children: [
@@ -112,7 +112,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
-            // Nombre del usuario
+            
             Text(
               userName,
               style: const TextStyle(
@@ -125,7 +125,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 8),
 
-            // Email del usuario
+            
             Text(
               userEmail,
               style: TextStyle(
@@ -137,7 +137,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 12),
 
-            // Badge del método de login
+            
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -182,7 +182,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 40),
 
-            // Sección: Cuenta
+            
             _buildSectionTitle("Cuenta"),
             const SizedBox(height: 16),
 
@@ -239,7 +239,7 @@ class ProfileScreen extends ConsumerWidget {
               onTap: () {
                 context.push('/change-password');
               },
-              isDisabled: loginMethod == "Google", // Deshabilitado si es Google
+              isDisabled: loginMethod == "Google", 
             ),
 
             const SizedBox(height: 12),
@@ -255,7 +255,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            // Sección: Dispositivos
+            
             _buildSectionTitle("Dispositivos"),
             const SizedBox(height: 16),
 
@@ -285,7 +285,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            // Sección: Preferencias
+            
             _buildSectionTitle("Preferencias"),
             const SizedBox(height: 16),
 
@@ -311,7 +311,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 32),
 
-            // Sección: Soporte
+            
             _buildSectionTitle("Soporte"),
             const SizedBox(height: 16),
 
@@ -337,7 +337,7 @@ class ProfileScreen extends ConsumerWidget {
 
             const SizedBox(height: 40),
 
-            // Botón de Cerrar Sesión
+            
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -526,7 +526,7 @@ class ProfileScreen extends ConsumerWidget {
               ],
               const SizedBox(height: 16),
               
-              // Fila de Código
+              
               Row(
                 children: [
                   const Icon(Icons.pin_outlined, size: 16, color: Colors.grey),

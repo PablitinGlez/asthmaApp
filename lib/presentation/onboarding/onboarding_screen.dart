@@ -23,11 +23,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
   @override
   void initState() {
     super.initState();
-    // Animación de "Levitación" suave
+    
     _badgeController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2), // Ciclo de 2 segundos
-    )..repeat(reverse: true); // Sube y baja infinitamente
+      duration: const Duration(seconds: 2), 
+    )..repeat(reverse: true); 
 
     _badgeAnimation = Tween<double>(begin: 0, end: 10).animate(
       CurvedAnimation(parent: _badgeController, curve: Curves.easeInOut),
@@ -116,7 +116,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo gradiente/imagen
+          
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -130,7 +130,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
             child: Column(
               children: [
                 const SizedBox(height: 24),
-                // Indicadores (Ahora arriba)
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
@@ -150,7 +150,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                       });
                     },
                     itemBuilder: (context, index) {
-                      // Usamos el nuevo Widget Modular
+                      
                       return OnboardingSlideWidget(
                         slide: _slides[index],
                         badgeAnimation: _badgeAnimation,
@@ -159,7 +159,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                   ),
                 ),
 
-                // Botón Siguiente / Empezar (Solo abajo)
+                
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                   child: SizedBox(
@@ -224,10 +224,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_completed', true);
 
-    // Actualizamos el estado global para que el Router reaccione
+    
     ref.read(onboardingCompletedProvider.notifier).complete();
 
-    // Navegar directamente al login para evitar el parpadeo del Splash
+    
     if (mounted) context.go('/login');
   }
 }

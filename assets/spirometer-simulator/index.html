@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Espirómetro - AsthmaApp</title>
-    <!-- Usaremos la fuente "Inter" para un diseño moderno y médico -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="simulation-container">
-        <!-- Encabezado con logo o icono simulado -->
+        
         <header class="app-header">
             <div class="icon-pulsing"></div>
             <h1>Simulador Clínico (PEF)</h1>
             <p>Herramienta para inyección de datos Bluetooth simulados a FastAPI</p>
         </header>
 
-        <!-- Formulario Principal -->
+        
         <main class="card">
             <form id="spirometerForm">
 
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="form-row">
-                    <!-- Valores Calculados Automáticamente o Manuales -->
+                    
                     <div class="form-group">
                         <label for="pefValue">PEF (L/min)</label>
                         <input type="number" id="pefValue" class="generated-input" placeholder="0" readonly>
@@ -50,7 +50,7 @@
 
                 <div class="action-buttons">
                     <button type="button" id="btnGenerate" class="btn-secondary">Aleatorizar Valores</button>
-                    <!-- Alerta de Severidad -->
+                    
                     <span id="severityBadge" class="badge hidden">Leve</span>
                 </div>
 
@@ -68,7 +68,7 @@
             <button type="button" id="btnSubmit" class="btn-primary" disabled>Emitir Soplido (POST)</button>
         </main>
 
-        <!-- Consola de Logs (Para impresionar a los profesores) -->
+        
         <footer class="console-box">
             <div class="console-header">Terminal de Salida</div>
             <div id="consoleOutput" class="console-content">
@@ -78,7 +78,7 @@
         </footer>
     </div>
 
-    <!-- Archivo JS con la lógica -->
+    
     <script src="app.js"></script>
 </body>
 
