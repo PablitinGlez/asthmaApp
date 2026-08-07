@@ -74,9 +74,11 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     HealthDataType.STEPS,
     HealthDataType.BLOOD_OXYGEN,
     HealthDataType.SLEEP_SESSION,
+    HealthDataType.RESPIRATORY_RATE,
   ];
 
   final permissions = [
+    HealthDataAccess.READ,
     HealthDataAccess.READ,
     HealthDataAccess.READ,
     HealthDataAccess.READ,
@@ -228,6 +230,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
         await health.hasPermissions([HealthDataType.STEPS], permissions: [HealthDataAccess.READ]);
         await health.hasPermissions([HealthDataType.BLOOD_OXYGEN], permissions: [HealthDataAccess.READ]);
         await health.hasPermissions([HealthDataType.SLEEP_SESSION], permissions: [HealthDataAccess.READ]);
+        await health.hasPermissions([HealthDataType.RESPIRATORY_RATE], permissions: [HealthDataAccess.READ]);
       } catch (e) {
         _addLog('[DEBUG] Error verificando permisos individuales: $e');
       }
