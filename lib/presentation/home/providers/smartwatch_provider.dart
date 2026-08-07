@@ -101,7 +101,7 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
       return SmartwatchState(isLinked: false, isLoading: false);
     }
 
-    Health().configure();
+    health.configure();
     Future.microtask(checkLocalPermissionsAndFetch);
     return SmartwatchState();
   }
@@ -194,28 +194,23 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     try {
       _addLog('--- INICIANDO VINCULACIÓN DE SMARTWATCH ---');
 
-      if (Platform.isAndroid) {
-        final activityStatus = await Permission.activityRecognition.request();
-        final sensorsStatus = await Permission.sensors.request();
+      final hcStatus = Platform.isAndroid
+          ? await health.getHealthConnectSdkStatus()
+          : HealthConnectSdkStatus.sdkAvailable;
 
-        if (activityStatus.isPermanentlyDenied && sensorsStatus.isPermanentlyDenied) {
-          state = state.copyWith(
-            isLoading: false,
-            isPermanentlyDenied: true,
-            errorMessage: 'Permisos bloqueados en ajustes. Actívalos manualmente.',
-          );
-          return;
-        }
+      if (Platform.isAndroid &&
+          hcStatus != HealthConnectSdkStatus.sdkAvailable) {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage:
+              'Health Connect no está disponible en tu dispositivo. '
+              'Abre Health Connect desde Google Play o actualízalo e '
+              'inténtalo de nuevo.',
+        );
+        return;
       }
 
-      final hcStatus = health.getHealthConnectSdkStatus();
-
-      bool? currentPerms;
-      try {
-        currentPerms = await health.hasPermissions(types, permissions: permissions);
-      } catch (e) {
-        _addLog('[DEBUG] No se pudo verificar permisos previos: $e');
-      }
+      _addLog('[INFO] Estado del SDK de Health Connect: $hcStatus');
 
       bool? authorized;
       try {
