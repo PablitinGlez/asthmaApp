@@ -11,6 +11,7 @@ import '../tabs/measurements_tab.dart';
 import '../tabs/analysis_tab.dart';
 import '../providers/measurements_provider.dart';
 import '../providers/prediction_provider.dart';
+import '../providers/smartwatch_provider.dart';
 import '../../../core/services/pdf_service.dart';
 
 import '../widgets/dashboard/risk_alert_sheet.dart';
@@ -98,8 +99,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     
     ref.listen<PredictionState>(predictionProvider, (previous, next) {
       if (next.riskLevel == 'red' && previous?.riskLevel != 'red') {
-        debugPrint(' SOS TRIGGER: IA detectó riesgo CRÍTICO. Navegando a SOS.');
-        context.push('/sos');
+        // Solo se activa la alerta automática cuando la predicción se apoya en
+        // datos reales (reloj vinculado) o en una simulación explícita. Sin un
+        // reloj conectado las vigas tienden a "rojo" por datos vacíos, lo que
+        // disparaba falsas alarmas e interrumpía el flujo de los permisos.
+        final watch = ref.read(smartwatchProvider);
+        if (next.isSimulationActive || watch.isLinked) {
+          debugPrint(' SOS TRIGGER: IA detectó riesgo CRÍTICO. Navegando a SOS.');
+          context.push('/sos');
+        }
       }
     });
 
