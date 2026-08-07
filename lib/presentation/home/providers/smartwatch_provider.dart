@@ -83,6 +83,8 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     HealthDataAccess.READ,
   ];
 
+  String _userId = '';
+
   @override
   SmartwatchState build() {
     WidgetsBinding.instance.addObserver(this);
@@ -91,9 +93,28 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
       WidgetsBinding.instance.removeObserver(this);
     });
 
+    final authState = ref.watch(authStateProvider);
+    final user = authState.value;
+    _userId = user?.id ?? '';
+
+    if (user == null) {
+      return SmartwatchState(isLinked: false, isLoading: false);
+    }
+
     Health().configure();
     Future.microtask(checkLocalPermissionsAndFetch);
     return SmartwatchState();
+  }
+
+  /// Deriva un identificador MAC estable a partir del id de la cuenta.
+  /// Cada cuenta registra su propio dispositivo, evitando colisiones cuando
+  /// el mismo reloj se vincula desde distintos perfiles.
+  String _deviceIdentifier() {
+    final raw = _userId.isEmpty ? '000000000000' : _userId.replaceAll('-', '');
+    final hex = raw.toUpperCase().padRight(12, '0').substring(0, 12);
+    return '${hex.substring(0, 2)}:${hex.substring(2, 4)}:'
+        '${hex.substring(4, 6)}:${hex.substring(6, 8)}:'
+        '${hex.substring(8, 10)}:${hex.substring(10, 12)}';
   }
 
   @override
@@ -154,7 +175,11 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
 
   void unlinkSmartwatch() {
     _refreshTimer?.cancel();
-    state = SmartwatchState(isLinked: false, isLoading: false);
+    state = SmartwatchState(
+      isLinked: false,
+      isLoading: false,
+      isPermanentlyDenied: state.isPermanentlyDenied,
+    );
   }
 
   Future<void> openSettings() async {
@@ -225,22 +250,39 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
       final token = await supabaseAuthDS.getIdToken();
 
       if (token != null) {
+        final String deviceMac = _deviceIdentifier();
+
+        final Map<String, dynamic> devicePayload = {
+          "device_type": "smartwatch",
+          "device_brand": Platform.isAndroid ? "Google Fit" : "Apple Health",
+          "device_model": "Simulación / API nativa",
+          "device_mac_address": deviceMac,
+        };
+
         try {
           await dioClient.post(
             '/api/devices',
-            data: {
-              "device_type": "smartwatch",
-              "device_brand": Platform.isAndroid
-                  ? "Google Fit"
-                  : "Apple Health",
-              "device_model": "Simulation/Native API",
-              "device_mac_address": "00:00:00:00:00:00",
-            },
+            data: devicePayload,
             options: Options(headers: {'Authorization': 'Bearer $token'}),
           );
+          _addLog('[OK] Dispositivo registrado con MAC $deviceMac');
         } on DioException catch (dioErr) {
-          if (dioErr.response?.statusCode == 400 &&
-              dioErr.response?.data.toString().contains('registrado') == true) {
+          final status = dioErr.response?.statusCode;
+          final body = dioErr.response?.data?.toString() ?? '';
+
+          final alreadyRegistered = status == 400 ||
+              status == 409 ||
+              status == 422;
+          final alreadyMessage = body.toLowerCase().contains('registrad') ||
+              body.toLowerCase().contains('ya existe') ||
+              body.toLowerCase().contains('duplic') ||
+              body.toLowerCase().contains('en uso') ||
+              body.toLowerCase().contains('exist');
+
+          if (alreadyRegistered && alreadyMessage) {
+            _addLog(
+              '[OK] El dispositivo ya estaba registrado en el sistema. Continuando.',
+            );
           } else {
             rethrow;
           }
@@ -252,7 +294,8 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Error vinculando Smartwatch: $e',
+        errorMessage: 'No fue posible vincular el reloj. Verifica los '
+            'permisos de Health Connect e inténtalo de nuevo. ($e)',
       );
     }
   }
