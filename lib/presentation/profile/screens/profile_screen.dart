@@ -301,6 +301,17 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 12),
 
             _buildOptionCard(
+              icon: Icons.palette_outlined,
+              title: "Apariencia",
+              subtitle: "Modo oscuro y color del sistema",
+              onTap: () {
+                context.push('/appearance');
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            _buildOptionCard(
               icon: Icons.privacy_tip_outlined,
               title: "Privacidad y Permisos",
               subtitle: "Gestiona accesos del teléfono",

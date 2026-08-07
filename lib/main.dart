@@ -11,6 +11,8 @@ import 'package:toastification/toastification.dart';
 import 'presentation/home/providers/push_notifications_provider.dart';
 import 'infrastructure/notifications/services/local_notification_service.dart';
 import 'infrastructure/services/background_sync_service.dart';
+import 'presentation/profile/providers/appearance_provider.dart';
+import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,18 +72,17 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(pushNotificationsProvider, (_, __) {});
-    
+
     final router = ref.watch(appRouterProvider);
+    final appearance = ref.watch(appearanceProvider);
 
     return ToastificationWrapper(
       child: MaterialApp.router(
         title: 'Asthma App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF023E8A)),
-          useMaterial3: true,
-          fontFamily: 'Satoshi',
-        ),
+        theme: buildAppTheme(appearance.seedColor, Brightness.light),
+        darkTheme: buildAppTheme(appearance.seedColor, Brightness.dark),
+        themeMode: appearance.themeMode,
         routerConfig: router,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

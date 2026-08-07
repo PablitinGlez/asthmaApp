@@ -36,6 +36,7 @@ import '../../presentation/profile/screens/mfa_setup_screen.dart';
 import '../../presentation/auth/screens/mfa_verification_screen.dart';
 import '../../presentation/medications/screens/medications_screen.dart';
 import '../../presentation/home/screens/sos_screen.dart';
+import '../../presentation/profile/screens/appearance_screen.dart';
 
 class AuthRouterNotifier extends ChangeNotifier {
   final Ref _ref;
@@ -353,6 +354,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/permissions',
         name: 'permissions',
         builder: (context, state) => const PermissionsScreen(),
+      ),
+      GoRoute(
+        path: '/appearance',
+        name: 'appearance',
+        builder: (context, state) => const AppearanceScreen(),
       ),
       GoRoute(
         path: '/personal-info',
