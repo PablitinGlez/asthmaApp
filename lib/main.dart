@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:toastification/toastification.dart';
 import 'presentation/home/providers/push_notifications_provider.dart';
+import 'presentation/home/providers/offline_sync_provider.dart';
 import 'infrastructure/notifications/services/local_notification_service.dart';
 import 'infrastructure/services/background_sync_service.dart';
 import 'presentation/profile/providers/appearance_provider.dart';
@@ -72,6 +73,7 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(pushNotificationsProvider, (_, __) {});
+    ref.watch(offlineSyncProvider);
 
     final router = ref.watch(appRouterProvider);
     final appearance = ref.watch(appearanceProvider);

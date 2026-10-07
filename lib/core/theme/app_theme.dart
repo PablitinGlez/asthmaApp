@@ -24,10 +24,6 @@ ThemeData buildAppTheme(Color seedColor, Brightness brightness) {
   final bool isDark = brightness == Brightness.dark;
 
   return ThemeData(
-    useMaterial3: true,
-    brightness: brightness,
-    colorScheme: scheme,
-    return ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,

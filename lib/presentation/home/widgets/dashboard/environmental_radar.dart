@@ -110,18 +110,29 @@ class EnvironmentalRadar extends ConsumerWidget {
     }
 
     if (envState.errorMessage != null) {
+      final offline = envState.errorMessage!.contains('Sin conexión');
       return Column(
         children: [
+          const SizedBox(height: 8),
+          Icon(
+            offline
+                ? Icons.cloud_off_rounded
+                : Icons.error_outline_rounded,
+            size: 36,
+            color: offline ? Colors.amber.shade700 : Colors.red.shade400,
+          ),
+          const SizedBox(height: 12),
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                'Error: ${envState.errorMessage}',
+                envState.errorMessage!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'GeneralSans',
                   fontSize: 12,
-                  color: Colors.red.shade400,
+                  fontWeight: FontWeight.w500,
+                  color: offline ? Colors.amber.shade800 : Colors.red.shade400,
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../providers/smartwatch_provider.dart';
 import '../../providers/background_sync_provider.dart';
 import 'smartwatch_linking_banner.dart';
@@ -102,6 +103,7 @@ class WatchCoreVitals extends ConsumerWidget {
                   subValue: 'SpO2',
                   color: const Color(0xFFD90429),
                   trendData: const [0.8, 0.9, 0.85, 0.95, 0.9, 0.98, 0.97],
+                  onTap: () => context.push('/vitals-detail'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -112,6 +114,7 @@ class WatchCoreVitals extends ConsumerWidget {
                   subValue: 'bpm',
                   color: const Color(0xFFFF5D8F),
                   trendData: const [0.6, 0.7, 0.65, 0.8, 0.75, 0.7, 0.72],
+                  onTap: () => context.push('/vitals-detail'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -122,6 +125,7 @@ class WatchCoreVitals extends ConsumerWidget {
                   subValue: 'Hoy',
                   color: const Color(0xFF7209B7),
                   trendData: const [0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85],
+                  onTap: () => context.push('/vitals-detail'),
                 ),
               ),
             ],
@@ -137,6 +141,7 @@ class VitalCard extends StatelessWidget {
   final String subValue;
   final Color color;
   final List<double> trendData;
+  final VoidCallback? onTap;
 
   const VitalCard({
     super.key,
@@ -145,11 +150,14 @@ class VitalCard extends StatelessWidget {
     required this.subValue,
     required this.color,
     required this.trendData,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -206,6 +214,7 @@ class VitalCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

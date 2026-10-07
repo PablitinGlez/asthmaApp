@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health/health.dart';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 import '../../auth/providers/auth_provider.dart';
 
@@ -354,12 +355,36 @@ class SmartwatchNotifier extends Notifier<SmartwatchState>
         lastSyncTime: DateTime.now(),
         isLoading: false,
       );
+
+      await _persistVitals(currentHr, currentSpO2, totalSteps, sleepHrs,
+          currentRespRate);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'No se pudieron extraer los datos del reloj',
       );
     }
+  }
+
+  /// Persiste las últimas lecturas para que el sync en segundo plano
+  /// (WorkManager) envíe datos reales y no los defaults, incluso si el
+  /// proceso de la app se cerró. Funciona sin internet: solo escribe en
+  /// almacenamiento local; el worker las sube cuando vuelve la conexión.
+  Future<void> _persistVitals(
+    int? hr,
+    int? spo2,
+    int steps,
+    double? sleep,
+    int? resp,
+  ) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (hr != null) await prefs.setInt('last_watch_hr', hr);
+      if (spo2 != null) await prefs.setInt('last_watch_spo2', spo2);
+      if (steps > 0) await prefs.setInt('last_watch_steps', steps);
+      if (sleep != null) await prefs.setDouble('last_watch_sleep', sleep);
+      if (resp != null) await prefs.setInt('last_watch_resp_rate', resp);
+    } catch (_) {}
   }
 }
 

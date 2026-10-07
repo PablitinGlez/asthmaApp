@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:ui' as ui;
 import '../../auth/providers/auth_provider.dart';
 import '../../common/widgets/snackbar_helper.dart';
+import '../../chat/screens/chat_list_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../tabs/dashboard_tab.dart';
 import '../tabs/measurements_tab.dart';
@@ -15,6 +16,7 @@ import '../providers/smartwatch_provider.dart';
 import '../../../core/services/pdf_service.dart';
 
 import '../widgets/dashboard/risk_alert_sheet.dart';
+import '../widgets/dashboard/offline_banner.dart';
 import '../providers/patient_location_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -31,6 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late final List<Widget> _screens = [
     const DashboardTab(),
     MeasurementsTab(exportKey: _exportKey),
+    const ChatListScreen(embedded: true),
     const AnalysisTab(),
     const ProfileScreen(),
   ];
@@ -76,6 +79,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final List<String> titles = [
       'Inicio',
       'Mediciones',
+      'Mensajes',
       'Análisis',
       'Mi Perfil',
     ];
@@ -186,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0, left: 8.0),
                   child: InkWell(
-                    onTap: () => setState(() => _currentIndex = 3),
+                    onTap: () => setState(() => _currentIndex = 4),
                     borderRadius: BorderRadius.circular(18),
                     child: CircleAvatar(
                       radius: 18,
@@ -212,7 +216,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: Column(
+        children: [
+          const OfflineBanner(),
+          Expanded(
+            child: IndexedStack(index: _currentIndex, children: _screens),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -248,6 +259,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: _buildTabIcon(Icons.monitor_heart_outlined, false),
             activeIcon: _buildTabIcon(Icons.monitor_heart_outlined, true),
             label: 'Mediciones',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildTabIcon(Icons.chat_bubble_outline_rounded, false),
+            activeIcon: _buildTabIcon(Icons.chat_bubble_outline_rounded, true),
+            label: 'Mensajes',
           ),
           BottomNavigationBarItem(
             icon: _buildTabIcon(Icons.bar_chart_outlined, false),

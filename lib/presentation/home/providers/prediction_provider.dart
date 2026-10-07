@@ -82,7 +82,7 @@ class PredictionNotifier extends Notifier<PredictionState> {
     final historyState = ref.read(measurementsProvider).value;
     final profile = ref.read(personalInfoProvider).profile;
 
-    final int personalBest = profile?.personalBestPef ?? 500;
+    final int personalBest = profile?.personalBestPef ?? 450;
     
     Map<String, dynamic> payload;
 

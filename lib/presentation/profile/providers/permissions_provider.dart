@@ -9,6 +9,7 @@ class PermissionsState {
   final PermissionStatus bluetoothStatus;
   final PermissionStatus healthStatus;
   final PermissionStatus locationStatus;
+  final bool batteryOptimizationExempt;
   final bool isLoading;
 
   PermissionsState({
@@ -16,6 +17,7 @@ class PermissionsState {
     this.bluetoothStatus = PermissionStatus.denied,
     this.healthStatus = PermissionStatus.denied,
     this.locationStatus = PermissionStatus.denied,
+    this.batteryOptimizationExempt = false,
     this.isLoading = true,
   });
 
@@ -24,6 +26,7 @@ class PermissionsState {
     PermissionStatus? bluetoothStatus,
     PermissionStatus? healthStatus,
     PermissionStatus? locationStatus,
+    bool? batteryOptimizationExempt,
     bool? isLoading,
   }) {
     return PermissionsState(
@@ -31,6 +34,8 @@ class PermissionsState {
       bluetoothStatus: bluetoothStatus ?? this.bluetoothStatus,
       healthStatus: healthStatus ?? this.healthStatus,
       locationStatus: locationStatus ?? this.locationStatus,
+      batteryOptimizationExempt:
+          batteryOptimizationExempt ?? this.batteryOptimizationExempt,
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -73,11 +78,18 @@ class PermissionsNotifier extends Notifier<PermissionsState>
     
     final location = await Permission.location.status;
 
+    final batteryExempt = Platform.isAndroid
+        ? await Permission.ignoreBatteryOptimizations.status
+        : null;
+
     state = state.copyWith(
       bluetoothStatus: bluetooth,
       notificationStatus: notification,
       healthStatus: health,
       locationStatus: location,
+      batteryOptimizationExempt: batteryExempt == null
+          ? true
+          : batteryExempt == PermissionStatus.granted,
       isLoading: false,
     );
   }
@@ -107,6 +119,26 @@ class PermissionsNotifier extends Notifier<PermissionsState>
 
   Future<void> requestLocationPermission() async {
     await Permission.location.request();
+    await checkPermissions();
+  }
+
+  /// Habilita el monitoreo continuo en segundo plano: ubicación "Permitir
+  /// siempre" (Android) y exención de optimización de batería para que el
+  /// WorkManager periódico no sea suspendido por Doze.
+  Future<void> requestBackgroundMonitoring() async {
+    if (Platform.isAndroid) {
+      await Permission.location.request();
+      if (await Permission.location.isPermanentlyDenied) {
+        await openAppSettings();
+      }
+      try {
+        await Permission.ignoreBatteryOptimizations.request();
+      } catch (_) {
+        // Algunos fabricantes no permiten pedir esta exención directamente;
+        // el usuario puede activarla desde Ajustes del sistema.
+        await openAppSettings();
+      }
+    }
     await checkPermissions();
   }
 }

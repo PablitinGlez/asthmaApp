@@ -58,5 +58,7 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>AsthmaApp usa el micrófono para calcular tu PEF soplando en el espirómetro digital.</string>
 </dict>
 </plist>

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import '../../home/providers/weekly_trend_provider.dart';
+import '../../profile/providers/personal_info_provider.dart';
 import '../../../domain/models/weekly_trend.dart';
 
 class AnalysisTab extends ConsumerWidget {
@@ -35,16 +36,19 @@ class AnalysisTab extends ConsumerWidget {
   }
 }
 
-class _StatsHeader extends StatelessWidget {
+class _StatsHeader extends ConsumerWidget {
   final WeeklyTrendState trendState;
   const _StatsHeader({required this.trendState});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final data = trendState.data;
     final avgPef = data?.avgPef;
     final maxPef = data?.maxPef;
     final minPef = data?.minPef;
+
+    final personalBest =
+        ref.watch(personalInfoProvider).profile?.personalBestPef ?? 450;
 
     
     double score = 0.0;
@@ -53,7 +57,7 @@ class _StatsHeader extends StatelessWidget {
 
     if (avgPef != null && avgPef > 0) {
       
-      score = (avgPef / 500.0).clamp(0.0, 1.0);
+      score = (avgPef / personalBest.toDouble()).clamp(0.0, 1.0);
       scoreText = (score * 100).round().toString();
       if (score >= 0.8) {
         scoreLabel = '¡Excelente control esta semana!';

@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  connectivity_plus
   firebase_core
   flutter_blue_plus_winrt
   flutter_secure_storage_windows
@@ -11,6 +12,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   geolocator_windows
   permission_handler_windows
   printing
+  record_windows
   url_launcher_windows
 )
 

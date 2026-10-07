@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as gc;
 import 'package:permission_handler/permission_handler.dart' as ph;
+import 'package:dio/dio.dart';
 import '../../auth/providers/auth_provider.dart';
 
 enum EnvironmentalStatus {
@@ -154,7 +155,7 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
       } else {
         state = state.copyWith(
           status: EnvironmentalStatus.error,
-          errorMessage: e.toString(),
+          errorMessage: _friendlyError(e),
         );
       }
     }
@@ -188,10 +189,37 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
       } else {
         state = state.copyWith(
           status: EnvironmentalStatus.error,
-          errorMessage: e.toString(),
+          errorMessage: _friendlyError(e),
         );
       }
     }
+  }
+
+  /// Traduce un error de red/Dio a un mensaje claro para el usuario,
+  /// conservando los últimos datos si ya estaban cargados.
+  String _friendlyError(Object e) {
+    String detail = e is DioException ? e.type.toString() : e.toString();
+    final lower = detail.toLowerCase();
+    final isOffline = e is DioException &&
+            (e.type == DioExceptionType.connectionError ||
+                e.type == DioExceptionType.connectionTimeout ||
+                e.type == DioExceptionType.receiveTimeout ||
+                e.type == DioExceptionType.sendTimeout)
+        ||
+        lower.contains('socketexception') ||
+        lower.contains('connection refused') ||
+        lower.contains('failed host lookup') ||
+        lower.contains('no internet');
+
+    if (isOffline) {
+      // Mantener los últimos datos ambientales si los hay.
+      if (state.aqi != null) {
+        state = state.copyWith(status: EnvironmentalStatus.authorized);
+        return 'Sin conexión. Mostrando los últimos datos del radar.';
+      }
+      return 'Sin conexión a internet. Conéctate para ver el aire local.';
+    }
+    return 'No se pudo actualizar el clima. Intenta de nuevo.';
   }
 
   Future<void> _fetchEnvironmentalData(Position pos) async {
@@ -250,7 +278,7 @@ class EnvironmentalNotifier extends Notifier<EnvironmentalState> {
     } catch (e) {
       state = state.copyWith(
         status: EnvironmentalStatus.error,
-        errorMessage: 'Error al obtener clima: $e',
+        errorMessage: _friendlyError(e),
       );
     }
   }

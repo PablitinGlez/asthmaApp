@@ -5,10 +5,15 @@ import '../datasources/supabase_auth_datasource.dart';
 import '../datasources/auth_api_datasource.dart';
 import '../mappers/auth_mapper.dart';
 import '../models/user_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final SupabaseAuthDataSource _supabaseDataSource;
   final AuthApiDataSource _apiDataSource;
+
+  static const _fullNameKey = 'cached_full_name';
+  static const _tokenKey = 'user_jwt_token';
 
   AuthRepositoryImpl({
     required SupabaseAuthDataSource supabaseDataSource,
@@ -20,6 +25,41 @@ class AuthRepositoryImpl implements AuthRepository {
   DateTime? _lastVerificationTime;
   final _cacheDuration = const Duration(seconds: 10);
 
+  /// Persiste el nombre real del usuario para poder mostrarlo sin conexión.
+  Future<void> _cacheFullName(String fullName) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (fullName.isNotEmpty && fullName != 'Usuario') {
+        await prefs.setString(_fullNameKey, fullName);
+      }
+    } catch (_) {}
+  }
+
+  Future<String?> _readCachedFullName() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_fullNameKey);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Persiste el token de sesión para que el sync en segundo plano
+  /// (WorkManager) pueda autenticarse sin acceso a Supabase.
+  Future<void> _cacheToken(String token) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_tokenKey, token);
+    } catch (_) {}
+  }
+
+  Future<void> _clearCachedToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_tokenKey);
+    } catch (_) {}
+  }
+
   Future<UserModel?> _verifyWithCache(String token) async {
     final now = DateTime.now();
     if (_cachedUser != null &&
@@ -29,9 +69,21 @@ class AuthRepositoryImpl implements AuthRepository {
     }
 
     final user = await _apiDataSource.verifyTokenInBackend(token);
+    if (user == null) return null;
     _cachedUser = user;
     _lastVerificationTime = now;
+    await _cacheFullName(user.fullName);
     return user;
+  }
+
+  /// Fallback sin internet: conserva el nombre real del usuario si la sesión
+  /// persistente de Supabase no trae metadata de nombre.
+  Future<UserEntity> _offlineEntity(supabase.User supabaseUser) async {
+    final cachedName = await _readCachedFullName();
+    return AuthMapper.supabaseUserToEntity(
+      supabaseUser,
+      fullNameOverride: cachedName,
+    );
   }
 
   @override
@@ -40,6 +92,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final supabaseUser = authState.session?.user;
 
       if (supabaseUser == null) {
+        await _clearCachedToken();
         return null;
       }
 
@@ -48,6 +101,8 @@ class AuthRepositoryImpl implements AuthRepository {
       if (token == null) {
         return AuthMapper.supabaseUserToEntity(supabaseUser);
       }
+
+      await _cacheToken(token);
 
       try {
         final userModel = await _verifyWithCache(token);
@@ -83,13 +138,14 @@ class AuthRepositoryImpl implements AuthRepository {
 
             _cachedUser = newUser;
             _lastVerificationTime = DateTime.now();
+            await _cacheFullName(newUser.fullName);
             return newUser.toEntity();
           } catch (registerError) {
-            return AuthMapper.supabaseUserToEntity(supabaseUser);
+            return _offlineEntity(supabaseUser);
           }
         }
       } catch (e) {
-        return AuthMapper.supabaseUserToEntity(supabaseUser);
+        return _offlineEntity(supabaseUser);
       }
     });
   }
@@ -217,10 +273,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
       _cachedUser = newUser;
       _lastVerificationTime = DateTime.now();
+      await _cacheFullName(newUser.fullName);
 
       return newUser.toEntity();
     } catch (e) {
-      return AuthMapper.supabaseUserToEntity(response.user!);
+      return _offlineEntity(response.user!);
     }
   }
 

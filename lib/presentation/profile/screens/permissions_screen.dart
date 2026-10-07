@@ -59,6 +59,10 @@ class PermissionsScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
+                  _GuideBanner(
+                    onTap: () => context.push('/permissions-guide'),
+                  ),
+                  const SizedBox(height: 24),
                   _PermissionTile(
                     title: 'Notificaciones',
                     description:
@@ -94,6 +98,17 @@ class PermissionsScreen extends ConsumerWidget {
                     status: permissions.healthStatus,
                     onRequest: notifier.requestHealthPermission,
                   ),
+                  const SizedBox(height: 16),
+                  _PermissionTile(
+                    title: 'Monitoreo en segundo plano',
+                    description:
+                        'Permite que la app siga vigilando tus signos y sincronice aunque la pantalla esté apagada. Activa la ubicación "siempre" y exime a la app de la optimización de batería.',
+                    icon: Icons.battery_saver_outlined,
+                    status: permissions.batteryOptimizationExempt
+                        ? PermissionStatus.granted
+                        : PermissionStatus.denied,
+                    onRequest: notifier.requestBackgroundMonitoring,
+                  ),
                   const SizedBox(
                     height: 80,
                   ), 
@@ -104,8 +119,7 @@ class PermissionsScreen extends ConsumerWidget {
   }
 }
 
-class _PermissionTile extends StatelessWidget {
-  final String title;
+class _PermissionTile extends StatelessWidget {  final String title;
   final String description;
   final IconData icon;
   final PermissionStatus status;
@@ -227,6 +241,78 @@ class _PermissionTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GuideBanner extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _GuideBanner({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF023E8A), Color(0xFF0077B6)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.help_outline_rounded,
+                color: Colors.white,
+                size: 26,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '¿Cómo activo los permisos?',
+                    style: TextStyle(
+                      fontFamily: 'Satoshi',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Te guiamos paso a paso',
+                    style: TextStyle(
+                      fontFamily: 'GeneralSans',
+                      fontSize: 12.5,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white,
+              size: 26,
+            ),
+          ],
+        ),
       ),
     );
   }

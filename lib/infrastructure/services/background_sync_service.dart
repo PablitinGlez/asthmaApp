@@ -19,7 +19,7 @@ void callbackDispatcher() {
 }
 
 class BackgroundSyncService {
-  static const String _baseUrl = 'https://asthma-app.onrender.com';
+  static const String _baseUrl = 'https://asthma-predictor-api.onrender.com';
 
   static Future<void> initialize() async {
     if (kIsWeb) return;
@@ -72,11 +72,20 @@ class BackgroundSyncService {
         }
       } catch (e) {}
 
-      final int heartRate = prefs.getInt('last_watch_hr') ?? 72;
-      final int spO2 = prefs.getInt('last_watch_spo2') ?? 98;
-      final int steps = prefs.getInt('last_watch_steps') ?? 3400;
-      final double sleepHours = prefs.getDouble('last_watch_sleep') ?? 7.5;
-      final int respRate = prefs.getInt('last_watch_resp_rate') ?? 16;
+      final bool hasVitals =
+          prefs.containsKey('last_watch_hr') ||
+          prefs.containsKey('last_watch_spo2') ||
+          prefs.containsKey('last_watch_steps') ||
+          prefs.containsKey('last_watch_sleep') ||
+          prefs.containsKey('last_watch_resp_rate');
+
+      // Solo enviamos lecturas reales del reloj. Sin datos no fabricamos
+      // valores: el payload queda con nulls y el servidor lo descarta.
+      final int? heartRate = prefs.getInt('last_watch_hr');
+      final int? spO2 = prefs.getInt('last_watch_spo2');
+      final int? steps = prefs.getInt('last_watch_steps');
+      final double? sleepHours = prefs.getDouble('last_watch_sleep');
+      final int? respRate = prefs.getInt('last_watch_resp_rate');
 
       final Map<String, dynamic> payload = {
         'measured_at': now.toIso8601String(),
@@ -102,25 +111,21 @@ class BackgroundSyncService {
         headers['Authorization'] = 'Bearer $token';
       }
 
-      try {
-        await dio.post(
-          '$_baseUrl/api/measurements/background',
-          data: payload,
-          options: Options(headers: headers),
+      if (!hasVitals) {
+        debugPrint('[BACKGROUND SYNC] Sin lecturas del reloj; se omite el envío.');
+        await prefs.setString(
+          'last_background_sync_time',
+          now.toIso8601String(),
         );
-      } catch (e) {
-        try {
-          await dio.post(
-            '$_baseUrl/api/measurements/spirometer',
-            data: {
-              ...payload,
-              'pef': 450,
-              'fev1': 3.6,
-            },
-            options: Options(headers: headers),
-          );
-        } catch (_) {}
+        await prefs.setBool('last_background_sync_success', true);
+        return true;
       }
+
+      await dio.post(
+        '$_baseUrl/api/measurements/background',
+        data: payload,
+        options: Options(headers: headers),
+      );
 
       await prefs.setString('last_background_sync_time', now.toIso8601String());
       await prefs.setBool('last_background_sync_success', true);

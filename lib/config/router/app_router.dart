@@ -19,6 +19,7 @@ import '../../presentation/notifications/screens/notifications_history_screen.da
 import '../../presentation/symptoms/screens/register_symptom_screen.dart';
 import '../../presentation/action_plan/screens/action_plan_screen.dart';
 import '../../presentation/profile/screens/permissions_screen.dart';
+import '../../presentation/profile/screens/permission_guide_screen.dart';
 import '../../presentation/profile/screens/personal_info_screen.dart';
 import '../../presentation/profile/screens/help_support_screen.dart';
 import '../../presentation/profile/screens/about_screen.dart';
@@ -37,6 +38,9 @@ import '../../presentation/auth/screens/mfa_verification_screen.dart';
 import '../../presentation/medications/screens/medications_screen.dart';
 import '../../presentation/home/screens/sos_screen.dart';
 import '../../presentation/profile/screens/appearance_screen.dart';
+import '../../presentation/chat/screens/chat_list_screen.dart';
+import '../../presentation/chat/screens/chat_detail_screen.dart';
+import '../../presentation/home/screens/vitals_detail_screen.dart';
 
 class AuthRouterNotifier extends ChangeNotifier {
   final Ref _ref;
@@ -356,6 +360,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const PermissionsScreen(),
       ),
       GoRoute(
+        path: '/permissions-guide',
+        name: 'permissions-guide',
+        builder: (context, state) => const PermissionGuideScreen(),
+      ),
+      GoRoute(
         path: '/appearance',
         name: 'appearance',
         builder: (context, state) => const AppearanceScreen(),
@@ -446,6 +455,29 @@ Puedes solicitar la eliminación de tu cuenta y todos tus datos en cualquier mom
         path: '/sos',
         name: 'sos',
         builder: (context, state) => const SosScreen(),
+      ),
+      GoRoute(
+        path: '/chat',
+        name: 'chat-list',
+        builder: (context, state) => const ChatListScreen(),
+        routes: [
+          GoRoute(
+            path: ':conversationId',
+            name: 'chat-detail',
+            builder: (context, state) {
+              final id = state.pathParameters['conversationId'] ?? '';
+              return ChatDetailScreen(
+                conversationId: id,
+                conversation: state.extra,
+              );
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/vitals-detail',
+        name: 'vitals-detail',
+        builder: (context, state) => const VitalsDetailScreen(),
       ),
     ],
   );
